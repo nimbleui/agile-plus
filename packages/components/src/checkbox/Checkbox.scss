@@ -1,0 +1,148 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 结构与 Radix 一致：触发元素本身就是那个方框，Indicator 是框内的勾或横线，
+// 可见文本由消费者放在组件外部（配合 Flex / label），因此本层不定义 label 相关变量。
+
+@include b('checkbox') {
+  @include set-component-css-var(
+    'checkbox',
+    (
+      'size': 16px,
+      'radius': var(--y-border-radius-sm),
+      'border': var(--y-color-border),
+      'border-hover': var(--y-color-primary-hover),
+      'border-checked': var(--y-color-primary),
+      'bg': var(--y-color-bg-container),
+      'bg-checked': var(--y-color-primary),
+      'bg-disabled': var(--y-color-fill-secondary),
+      'color-on-checked': var(--y-color-bg-container),
+      'border-disabled': var(--y-color-border),
+      'dash-width': 8px,
+      'dash-height': 2px,
+    )
+  );
+
+  // 状态层变量，避免与上面的设计层同名造成循环引用。
+  --y-checkbox-state-border: var(--y-checkbox-border);
+  --y-checkbox-state-bg: var(--y-checkbox-bg);
+}
+
+// ---------------------------------------------------------------------------
+// 触发元素（方框本体）
+// ---------------------------------------------------------------------------
+
+@include b('checkbox') {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  width: getCssVar('checkbox', 'size');
+  height: getCssVar('checkbox', 'size');
+  margin: 0;
+  padding: 0;
+  cursor: pointer;
+  background: var(--y-checkbox-state-bg);
+  border: 1px solid var(--y-checkbox-state-border);
+  border-radius: getCssVar('checkbox', 'radius');
+
+  transition:
+    background-color var(--y-motion-duration-fast),
+    border-color var(--y-motion-duration-fast);
+
+  @include focus-ring(getCssVar('checkbox', 'border-checked'));
+}
+
+// ---------------------------------------------------------------------------
+// 状态
+// ---------------------------------------------------------------------------
+
+@include b('checkbox') {
+  &:hover:not([data-disabled]) {
+    --y-checkbox-state-border: getCssVar('checkbox', 'border-hover');
+  }
+
+  &[data-state='checked'],
+  &[data-state='indeterminate'] {
+    --y-checkbox-state-border: getCssVar('checkbox', 'border-checked');
+    --y-checkbox-state-bg: getCssVar('checkbox', 'bg-checked');
+  }
+
+  &[data-disabled] {
+    --y-checkbox-state-border: getCssVar('checkbox', 'border');
+    --y-checkbox-state-bg: getCssVar('checkbox', 'bg-disabled');
+
+    cursor: not-allowed;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Indicator：勾与横线
+// ---------------------------------------------------------------------------
+
+@include b('checkbox') {
+  @include e('indicator') {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: getCssVar('checkbox', 'color-on-checked');
+
+    // Indicator 只在选中或半选时挂载，元素从不存在到存在不会触发 transition，
+    // 因此入场用 animation。
+    animation: #{$block}-in var(--y-motion-duration-fast) var(--y-motion-ease-out);
+  }
+
+  // 勾与横线都由 data-part 标记，靠 Indicator 自己的 data-state 二选一显示，
+  // 这样不需要把完整 class 名硬写进复合选择器。
+  [data-part='check'],
+  [data-part='dash'] {
+    display: none;
+  }
+
+  [data-state='checked'] [data-part='check'] {
+    display: block;
+  }
+
+  [data-state='indeterminate'] [data-part='dash'] {
+    display: block;
+    width: getCssVar('checkbox', 'dash-width');
+    height: getCssVar('checkbox', 'dash-height');
+    background: currentcolor;
+    border-radius: 1px;
+  }
+
+  @keyframes #{$block}-in {
+    from {
+      transform: scale(0.6);
+      opacity: 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 组容器：只负责排列
+// ---------------------------------------------------------------------------
+
+@include b('checkbox-group') {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--y-padding-sm);
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+
+@include b('checkbox') {
+  @include reduced-motion {
+    transition: none;
+
+    &__indicator {
+      animation: none;
+    }
+  }
+}
