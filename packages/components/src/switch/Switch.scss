@@ -1,0 +1,121 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 变量只声明在 .y-switch 上即可：滑块是它的后代，能继承到。表单用的隐藏 input 是
+// 兄弟节点，但它的定位与尺寸样式由 headless 内联给出，不读组件变量，因此不存在
+// 「父级读子级变量」的方向问题（这点与 Toast 视口相反，改动时别把它的样式搬进来）。
+
+@include b('switch') {
+  @include set-component-css-var(
+    'switch',
+    (
+      'width': 40px,
+      'height': 22px,
+      'gap': 2px,
+      'radius': var(--y-border-radius-round),
+      'bg': var(--y-color-fill),
+      'bg-hover': var(--y-color-fill-secondary),
+      'bg-checked': var(--y-color-primary),
+      'bg-checked-hover': var(--y-color-primary-hover),
+      'thumb-bg': var(--y-color-bg-elevated),
+      'thumb-shadow': var(--y-shadow-sm),
+      // 滑块位移写成可继承的变量而不是在状态块里再嵌套元素选择器：
+      // e() 嵌进 &[data-state] 会生成 .y-switch[data-state='checked']__thumb 这种
+      // 永不命中的选择器。位移基准用百分比，正好等于滑块自身宽度=轨道内容高度。
+      'thumb-position': 0%,
+      'border': var(--y-color-border-secondary),
+      'disabled-opacity': 0.5,
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 轨道：根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('switch') {
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  align-items: center;
+  width: getCssVar('switch', 'width');
+  height: getCssVar('switch', 'height');
+  margin: 0;
+  padding: 0 getCssVar('switch', 'gap');
+  background: getCssVar('switch', 'bg');
+  border: 1px solid getCssVar('switch', 'border');
+  border-radius: getCssVar('switch', 'radius');
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+
+  transition:
+    background-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out),
+    border-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+
+  @include focus-ring(getCssVar('switch', 'bg-checked'));
+
+  // ---------------------------------------------------------------------------
+  // 状态
+  // ---------------------------------------------------------------------------
+
+  &:hover:not(:disabled) {
+    background: getCssVar('switch', 'bg-hover');
+  }
+
+  &[data-state='checked'] {
+    background: getCssVar('switch', 'bg-checked');
+    border-color: getCssVar('switch', 'bg-checked');
+    --y-switch-thumb-position: 100%;
+
+    &:hover:not(:disabled) {
+      background: getCssVar('switch', 'bg-checked-hover');
+      border-color: getCssVar('switch', 'bg-checked-hover');
+    }
+  }
+
+  // 禁用既可能来自原生 disabled，也可能来自 data-disabled（Radix 两者都给）。
+  &:disabled,
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: getCssVar('switch', 'disabled-opacity');
+  }
+
+  // ---------------------------------------------------------------------------
+  // 滑块
+  // ---------------------------------------------------------------------------
+  //
+  // 用 height:100% + aspect-ratio:1 得到正方形滑块：宽度自动等于轨道内容高度，
+  // 因此 translateX(100%) 恰好把它推到另一端，不需要跟着尺寸重算距离。
+
+  @include e('thumb') {
+    display: block;
+    height: calc(100% - var(--y-switch-gap) * 2);
+    aspect-ratio: 1 / 1;
+    background: getCssVar('switch', 'thumb-bg');
+    border-radius: getCssVar('switch', 'radius');
+    box-shadow: getCssVar('switch', 'thumb-shadow');
+    transform: translateX(var(--y-switch-thumb-position));
+
+    transition: transform var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reduced Motion
+  // ---------------------------------------------------------------------------
+  //
+  // 关掉位移动画后状态仍然可辨：轨道配色与 aria-checked 表达同一件事，
+  // 位移只是过程提示。
+
+  @include reduced-motion {
+    transition: none;
+
+    &__thumb {
+      transition: none;
+    }
+  }
+}
