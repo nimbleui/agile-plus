@@ -1,0 +1,158 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 变量表同时声明在 .y-toggle 与 .y-toggle-group 上：自定义属性只向下继承，
+// 两个 Block 都可能独立使用（组内项是后者的后代，独立开关没有父级可读）。
+
+$toggle-vars: (
+  'height': var(--y-control-height),
+  'padding-inline': var(--y-padding-md),
+  'radius': var(--y-border-radius),
+  'bg': var(--y-color-bg-container),
+  'color': var(--y-color-text),
+  'border': var(--y-color-border),
+  'hover-color': var(--y-color-primary-hover),
+  'hover-border': var(--y-color-primary-hover),
+  'active-border': var(--y-color-primary-active),
+  'checked-bg': var(--y-color-primary-bg),
+  'checked-border': var(--y-color-primary),
+  'checked-color': var(--y-color-primary-active),
+  'disabled-bg': var(--y-color-fill-quaternary),
+  'disabled-border': var(--y-color-border-secondary),
+  'disabled-color': var(--y-color-text-disabled),
+);
+
+// ---------------------------------------------------------------------------
+// 按钮基础外观
+// ---------------------------------------------------------------------------
+//
+// 独立开关与组内项是同一套外观，只差圆角与相邻边框，因此抽成本文件内的局部
+// mixin，而不是复制两遍。
+//
+// 没有复用 light-interactions：那个 mixin 表达的是「hover 换背景」，而开关的
+// hover 语义是「边框与文字提示可按」，背景要保持中性，否则看不出按下态的差异。
+
+@mixin toggle-base {
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  justify-content: center;
+  min-height: getCssVar('toggle', 'height');
+  margin: 0;
+  padding: 0 getCssVar('toggle', 'padding-inline');
+  font-family: var(--y-font-family);
+  font-size: var(--y-font-size);
+  line-height: 1;
+  color: getCssVar('toggle', 'color');
+  background: getCssVar('toggle', 'bg');
+  border: 1px solid getCssVar('toggle', 'border');
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+
+  transition:
+    color var(--y-motion-duration-mid),
+    background-color var(--y-motion-duration-mid),
+    border-color var(--y-motion-duration-mid);
+
+  @include focus-ring(getCssVar('toggle', 'checked-border'));
+
+  &:hover:not(:disabled) {
+    color: getCssVar('toggle', 'hover-color');
+    border-color: getCssVar('toggle', 'hover-border');
+  }
+
+  &:active:not(:disabled) {
+    border-color: getCssVar('toggle', 'active-border');
+  }
+
+  // Radix 的词表是 on / off，不是 open / closed。
+  &[data-state='on'] {
+    color: getCssVar('toggle', 'checked-color');
+    background: getCssVar('toggle', 'checked-bg');
+    border-color: getCssVar('toggle', 'checked-border');
+  }
+
+  // 禁用可能来自两种来源：项自己的 disabled，或整组禁用时下发的 data-disabled。
+  // 组禁用只标记 data-disabled 而不会给每个原生按钮加 disabled，因此两条都要写。
+  &:disabled,
+  &[data-disabled] {
+    color: getCssVar('toggle', 'disabled-color');
+    background: getCssVar('toggle', 'disabled-bg');
+    border-color: getCssVar('toggle', 'disabled-border');
+    cursor: not-allowed;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 独立开关
+// ---------------------------------------------------------------------------
+
+@include b('toggle') {
+  @include set-component-css-var('toggle', $toggle-vars);
+
+  @include toggle-base;
+
+  border-radius: getCssVar('toggle', 'radius');
+}
+
+// ---------------------------------------------------------------------------
+// 开关组：拼接成一段，选中项压在相邻项之上
+// ---------------------------------------------------------------------------
+
+@include b('toggle-group') {
+  @include set-component-css-var('toggle', $toggle-vars);
+
+  display: inline-flex;
+  align-items: stretch;
+
+  @include e('item') {
+    @include toggle-base;
+
+    // 相邻边框合并：除第一项外向左压 1px，避免出现 2px 的视觉粗边。
+    margin-left: -1px;
+    border-radius: 0;
+
+    &:first-child {
+      margin-left: 0;
+      border-top-left-radius: getCssVar('toggle', 'radius');
+      border-bottom-left-radius: getCssVar('toggle', 'radius');
+    }
+
+    &:last-child {
+      border-top-right-radius: getCssVar('toggle', 'radius');
+      border-bottom-right-radius: getCssVar('toggle', 'radius');
+    }
+
+    // 选中项的边框必须盖住邻居的边框，否则整组看起来只有一条连续的线。
+    // 键盘焦点圈同理，不能被相邻项压住。
+    &[data-state='on'] {
+      z-index: 1;
+    }
+
+    &:focus-visible {
+      z-index: 2;
+    }
+
+    @include reduced-motion {
+      transition: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+//
+// 开关只有颜色过渡，关闭动画不损失任何状态信息：按下态由 data-state 的配色与
+// aria-pressed 共同表达，读屏与视觉都能判断。
+
+@include b('toggle') {
+  @include reduced-motion {
+    transition: none;
+  }
+}
