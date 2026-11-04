@@ -1,0 +1,307 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 滑动手势的位移变量（--y-toast-swipe-move-* / --y-toast-swipe-end-*）由 headless
+// 写成内联样式，这里只声明外观与定位；两者不要混用同一批变量名。
+//
+// 这份变量表必须同时声明在 .y-toast 与 .y-toast-viewport 上：自定义属性只向下继承，
+// 而视口是卡片.portal 进来的父级，读不到子节点上声明的变量。只挂在 .y-toast 时，
+// 视口的 top/right/width/z-index 会整条声明失效（invalid at computed-value time），
+// position: fixed 退化成停在原地——表现就是通知「点不出来 / 位置不对」。
+// 两个 Block 各自声明一次，换来的各自独立可用，比要求消费者必须套一层父级更合理。
+
+$toast-vars: (
+  'viewport-width': 356px,
+  'offset': var(--y-padding-md),
+  'gap': var(--y-padding-sm),
+  'inner-gap': var(--y-padding-xs),
+  'padding': var(--y-padding-md),
+  'radius': var(--y-border-radius-lg),
+  'bg': var(--y-color-bg-elevated),
+  'color': var(--y-color-text),
+  'title-color': var(--y-color-text-heading),
+  'description-color': var(--y-color-text-secondary),
+  'border': var(--y-color-border-secondary),
+  'shadow': var(--y-shadow),
+  'action-color': var(--y-color-primary),
+  'action-hover-bg': var(--y-color-fill-tertiary),
+  'action-active-bg': var(--y-color-fill),
+  'close-color': var(--y-color-text-tertiary),
+  'close-hover-color': var(--y-color-text),
+  'enter-offset': 8px,
+  'z-index': var(--y-z-index-notification),
+);
+
+@include b('toast') {
+  @include set-component-css-var('toast', $toast-vars);
+}
+
+// ---------------------------------------------------------------------------
+// 通知卡片：根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('toast') {
+  position: relative;
+  display: flex;
+  box-sizing: border-box;
+  flex-direction: column;
+  gap: getCssVar('toast', 'inner-gap');
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
+  padding: getCssVar('toast', 'padding');
+  font-family: var(--y-font-family);
+  font-size: var(--y-font-size);
+  line-height: var(--y-line-height);
+  color: getCssVar('toast', 'color');
+  background: getCssVar('toast', 'bg');
+  border: 1px solid getCssVar('toast', 'border');
+  border-radius: getCssVar('toast', 'radius');
+  box-shadow: getCssVar('toast', 'shadow');
+  overflow-wrap: anywhere;
+
+  // 通知本体可聚焦（Tab 直达），因此要给出键盘焦点反馈。
+  @include focus-ring(getCssVar('toast', 'action-color'));
+
+  // ---------------------------------------------------------------------------
+  // 进出场
+  // ---------------------------------------------------------------------------
+
+  &[data-state='open'] {
+    animation: #{$block}-show var(--y-motion-duration-slow) var(--y-motion-ease-out);
+  }
+
+  &[data-state='closed'] {
+    animation: #{$block}-hide var(--y-motion-duration-mid) var(--y-motion-ease-in) forwards;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 滑动手势
+  // ---------------------------------------------------------------------------
+
+  // 拖动过程中必须关掉 animation，否则动画的 transform 会与手指位移互相覆盖。
+  &[data-swipe='move'] {
+    animation: none;
+    transition: none;
+    transform: translate(var(--y-toast-swipe-move-x, 0px), var(--y-toast-swipe-move-y, 0px));
+  }
+
+  &[data-swipe='cancel'] {
+    animation: #{$block}-snap-back var(--y-motion-duration-mid) var(--y-motion-ease-out);
+  }
+
+  // end 时 move 变量已被清掉，只剩 end 变量；继续朝同一方向飞出并淡出。
+  &[data-swipe='end'] {
+    animation: #{$block}-swipe-out var(--y-motion-duration-mid) var(--y-motion-ease-out) forwards;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 语义变体
+  // ---------------------------------------------------------------------------
+  //
+  // 只有颜色不同，因此按已有语义色 Token 生成，不复制卡片基础样式。
+
+  @each $name in ('success', 'warning', 'danger', 'info') {
+    @include m($name) {
+      background: var(--y-color-#{$name}-bg);
+      border-color: var(--y-color-#{$name});
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 子元素
+  // ---------------------------------------------------------------------------
+
+  @include e('title') {
+    margin: 0;
+    font-weight: 600;
+    color: getCssVar('toast', 'title-color');
+  }
+
+  @include e('description') {
+    margin: 0;
+    color: getCssVar('toast', 'description-color');
+  }
+
+  @include e('actions') {
+    display: flex;
+    gap: var(--y-padding-sm);
+    align-items: center;
+    margin-top: var(--y-padding-xs);
+  }
+
+  @include e('action') {
+    padding: 0 var(--y-padding-sm);
+    font-family: inherit;
+    font-size: var(--y-font-size);
+    line-height: var(--y-control-height-sm);
+    color: getCssVar('toast', 'action-color');
+    background: transparent;
+    border: none;
+    border-radius: var(--y-border-radius);
+    cursor: pointer;
+
+    @include light-interactions(
+      getCssVar('toast', 'action-hover-bg'),
+      getCssVar('toast', 'action-active-bg')
+    );
+    @include focus-ring(getCssVar('toast', 'action-color'));
+  }
+
+  @include e('close') {
+    position: absolute;
+    top: var(--y-padding);
+    right: var(--y-padding);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--y-control-height-sm);
+    height: var(--y-control-height-sm);
+    padding: 0;
+    font-size: var(--y-font-size-lg);
+    line-height: 1;
+    color: getCssVar('toast', 'close-color');
+    background: transparent;
+    border: none;
+    border-radius: var(--y-border-radius);
+    cursor: pointer;
+
+    &:hover:not(:disabled) {
+      color: getCssVar('toast', 'close-hover-color');
+    }
+
+    @include focus-ring(getCssVar('toast', 'action-color'));
+  }
+
+  // ---------------------------------------------------------------------------
+  // 动画
+  // ---------------------------------------------------------------------------
+
+  @keyframes #{$block}-show {
+    from {
+      opacity: 0;
+      transform: translateY(getCssVar('toast', 'enter-offset'));
+    }
+
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  @keyframes #{$block}-hide {
+    from {
+      opacity: 1;
+      transform: none;
+    }
+
+    to {
+      opacity: 0;
+      transform: translateY(getCssVar('toast', 'enter-offset'));
+    }
+  }
+
+  @keyframes #{$block}-snap-back {
+    from {
+      transform: translate(var(--y-toast-swipe-move-x, 0px), var(--y-toast-swipe-move-y, 0px));
+    }
+
+    to {
+      transform: none;
+    }
+  }
+
+  @keyframes #{$block}-swipe-out {
+    from {
+      opacity: 1;
+      transform: translate(var(--y-toast-swipe-end-x, 0px), var(--y-toast-swipe-end-y, 0px));
+    }
+
+    to {
+      opacity: 0;
+      transform: translate(
+        calc(var(--y-toast-swipe-end-x, 0px) * 2),
+        calc(var(--y-toast-swipe-end-y, 0px) * 2)
+      );
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reduced Motion
+  // ---------------------------------------------------------------------------
+  //
+  // 只压缩时长，不能写 animation: none —— Presence 靠 animationend 决定卸载时机，
+  // 去掉动画会让元素在关闭那一帧直接消失，反而失去了状态反馈。
+
+  @include reduced-motion {
+    &[data-state='open'],
+    &[data-state='closed'],
+    &[data-swipe='cancel'],
+    &[data-swipe='end'] {
+      animation-duration: 1ms;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 视口：固定在视口边缘的堆叠容器
+// ---------------------------------------------------------------------------
+//
+// 定位写在列表而不是包裹层：消费者传入的 class 落到 <ol> 上，包裹层只承担
+// role="region" 与 pointer-events 的开关。
+
+@include b('toast-viewport') {
+  @include set-component-css-var('toast', $toast-vars);
+
+  position: fixed;
+  z-index: getCssVar('toast', 'z-index');
+  display: flex;
+  flex-direction: column;
+  gap: getCssVar('toast', 'gap');
+  box-sizing: border-box;
+  width: min(100%, getCssVar('toast', 'viewport-width'));
+  max-width: calc(100vw - getCssVar('toast', 'offset') * 2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  @include m('top-right') {
+    top: getCssVar('toast', 'offset');
+    right: getCssVar('toast', 'offset');
+  }
+
+  @include m('top-left') {
+    top: getCssVar('toast', 'offset');
+    left: getCssVar('toast', 'offset');
+  }
+
+  @include m('top-center') {
+    top: getCssVar('toast', 'offset');
+    right: getCssVar('toast', 'offset');
+    left: getCssVar('toast', 'offset');
+    margin-inline: auto;
+  }
+
+  @include m('bottom-right') {
+    right: getCssVar('toast', 'offset');
+    bottom: getCssVar('toast', 'offset');
+    flex-direction: column-reverse;
+  }
+
+  @include m('bottom-left') {
+    bottom: getCssVar('toast', 'offset');
+    left: getCssVar('toast', 'offset');
+    flex-direction: column-reverse;
+  }
+
+  @include m('bottom-center') {
+    right: getCssVar('toast', 'offset');
+    bottom: getCssVar('toast', 'offset');
+    left: getCssVar('toast', 'offset');
+    margin-inline: auto;
+    flex-direction: column-reverse;
+  }
+}
