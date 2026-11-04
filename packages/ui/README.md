@@ -153,5 +153,5 @@ const on = ref(false);
 
 ## 版本与许可
 
-当前 `0.1.0`，MIT。`sideEffects: false`。发布产物含 `dist` 与 `src`，`src` 供源码级排查对照，
+许可 MIT。`sideEffects: false`。发布产物含 `dist` 与 `src`，`src` 供源码级排查对照，
 不构成公共 API。`__tests__` 下 11 个测试文件。

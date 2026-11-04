@@ -135,5 +135,5 @@ getProgressRatio('NaN' as unknown, 100); // null —— 不确定进度，调用
 
 ## 版本与许可
 
-当前 `0.1.0`，MIT。`sideEffects: false`，可安全 tree-shake。
+许可 MIT。`sideEffects: false`，可安全 tree-shake。
 发布产物含 `dist` 与 `src`，`src` 供源码级排查对照，不构成公共 API。

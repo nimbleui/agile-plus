@@ -1,6 +1,6 @@
 {
   "name": "@agile-plus/headless",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "Vue Composables 适配层：响应式桥接、生命周期、DOM 绑定",
   "license": "MIT",

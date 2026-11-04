@@ -147,5 +147,5 @@ const sw = useSwitch({ checked, onCheckedChange: (v) => (checked.value = v) });
 
 ## 版本与许可
 
-当前 `0.1.0`，MIT。`sideEffects: false`。发布产物含 `dist` 与 `src`，`src` 供源码级排查对照，
+许可 MIT。`sideEffects: false`。发布产物含 `dist` 与 `src`，`src` 供源码级排查对照，
 不构成公共 API。`__tests__` 下 8 个测试文件。

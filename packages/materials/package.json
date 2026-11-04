@@ -1,6 +1,6 @@
 {
   "name": "@agile-plus/materials",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "type": "module",
   "description": "低代码物料插件：把成品组件与 ui 原子件登记成平台的 materials 贡献，纯数据清单与组件名字表分两个产物",
   "license": "MIT",

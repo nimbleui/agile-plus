@@ -176,6 +176,6 @@ description）时改用 `slots`，此时顺序有意义：先写窄条区域，�
 
 ## 版本与许可
 
-当前 `0.1.0`，MIT。清单里的 `version` 与本包版本同步维护，`engines.lowcode`（`^0.1.0`）
+许可 MIT。清单里的 `version` 与本包版本同步维护（当前都是 `0.1.1`），`engines.lowcode`（`^0.1.0`）
 约束可装载它的平台版本，`certification: 'verified'`、`executionProfile: 'inline'`。
 `sideEffects: false`。`__tests__` 下 1 个测试文件，校验名字表键与清单条目一一对应。
