@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "type": "module",
   "description": "框架无关的无头组件原语层：状态机、纯计算、稳定协议",
+  "license": "MIT",
+  "keywords": [
+    "headless",
+    "primitives",
+    "state-machine",
+    "wai-aria",
+    "a11y",
+    "component-kernel"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

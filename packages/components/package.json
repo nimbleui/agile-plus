@@ -3,6 +3,15 @@
   "version": "0.1.0",
   "type": "module",
   "description": "带样式组件层：Design Token、BEM、主题化",
+  "license": "MIT",
+  "keywords": [
+    "vue",
+    "components",
+    "design-token",
+    "theme",
+    "ui-library",
+    "a11y"
+  ],
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -3,6 +3,14 @@
   "version": "0.1.0",
   "type": "module",
   "description": "Vue Composables 适配层：响应式桥接、生命周期、DOM 绑定",
+  "license": "MIT",
+  "keywords": [
+    "headless",
+    "composables",
+    "vue",
+    "wai-aria",
+    "a11y"
+  ],
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
