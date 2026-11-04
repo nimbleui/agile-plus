@@ -1,0 +1,133 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('slider') {
+  @include set-component-css-var(
+    'slider',
+    (
+      'track-size': 6px,
+      'thumb-size': 16px,
+      'length': 200px,
+      'track-bg': var(--y-color-fill),
+      'range-bg': var(--y-color-primary),
+      'thumb-bg': var(--y-color-bg-elevated),
+      'thumb-border': var(--y-color-primary),
+      'thumb-shadow': var(--y-shadow-sm),
+      'disabled-opacity': 0.5,
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点
+// ---------------------------------------------------------------------------
+
+@include b('slider') {
+  position: relative;
+  display: inline-flex;
+  box-sizing: border-box;
+  align-items: center;
+  width: 100%;
+  height: getCssVar('slider', 'thumb-size');
+  touch-action: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+
+  &[data-orientation='vertical'] {
+    justify-content: center;
+    width: getCssVar('slider', 'thumb-size');
+    height: getCssVar('slider', 'length');
+  }
+
+  &[data-disabled] {
+    cursor: not-allowed;
+    opacity: getCssVar('slider', 'disabled-opacity');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 轨道
+// ---------------------------------------------------------------------------
+
+@include b('slider') {
+  @include e('track') {
+    position: relative;
+    flex: none;
+    overflow: hidden;
+    background: getCssVar('slider', 'track-bg');
+    border-radius: var(--y-border-radius-round);
+
+    &[data-orientation='horizontal'] {
+      width: 100%;
+      height: getCssVar('slider', 'track-size');
+    }
+
+    &[data-orientation='vertical'] {
+      width: getCssVar('slider', 'track-size');
+      height: 100%;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 已填充区间
+// ---------------------------------------------------------------------------
+
+@include b('slider') {
+  @include e('range') {
+    position: absolute;
+    background: getCssVar('slider', 'range-bg');
+    border-radius: inherit;
+
+    &[data-orientation='horizontal'] {
+      top: 0;
+      bottom: 0;
+    }
+
+    &[data-orientation='vertical'] {
+      right: 0;
+      left: 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Thumb
+// ---------------------------------------------------------------------------
+//
+// 主轴位置与一半尺寸的贴边偏移由 useSlider 写在 left/top 与 transform 上；
+// 这里只负责交叉轴居中。用 margin 而不是再写一个 transform，避免覆盖内联位移。
+
+@include b('slider') {
+  @include e('thumb') {
+    display: block;
+    box-sizing: border-box;
+    width: getCssVar('slider', 'thumb-size');
+    height: getCssVar('slider', 'thumb-size');
+    background: getCssVar('slider', 'thumb-bg');
+    border: 2px solid getCssVar('slider', 'thumb-border');
+    border-radius: 50%;
+    box-shadow: getCssVar('slider', 'thumb-shadow');
+    cursor: grab;
+
+    @include focus-ring(getCssVar('slider', 'thumb-border'));
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    &[data-orientation='horizontal'] {
+      top: 50%;
+      margin-top: calc(getCssVar('slider', 'thumb-size') * -0.5);
+    }
+
+    &[data-orientation='vertical'] {
+      left: 50%;
+      margin-left: calc(getCssVar('slider', 'thumb-size') * -0.5);
+    }
+  }
+}

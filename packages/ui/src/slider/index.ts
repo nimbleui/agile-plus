@@ -1,0 +1,15 @@
+export type {
+  SliderRangeProps,
+  SliderRootEmits,
+  SliderRootProps,
+  SliderThumbProps,
+  SliderTrackProps,
+} from './types';
+
+export { default as SliderRoot } from './SliderRoot.vue';
+
+export { default as SliderTrack } from './SliderTrack.vue';
+
+export { default as SliderRange } from './SliderRange.vue';
+
+export { default as SliderThumb } from './SliderThumb.vue';
