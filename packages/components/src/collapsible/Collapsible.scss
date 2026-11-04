@@ -1,0 +1,154 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 高度动画的终点来自无头层测量的 --y-collapsible-content-height（内联在 Content 上）。
+// 这里只声明视觉与节奏相关的变量；测量变量不在本层重复声明，否则会把内联值盖掉。
+
+@include b('collapsible') {
+  @include set-component-css-var(
+    'collapsible',
+    (
+      'radius': var(--y-border-radius),
+      'border': var(--y-color-border-secondary),
+      'bg': var(--y-color-bg-container),
+      'trigger-hover-bg': var(--y-color-fill-tertiary),
+      'padding-block': var(--y-padding-sm),
+      'padding-inline': var(--y-padding),
+      'content-padding-inline': var(--y-padding),
+      'duration': var(--y-motion-duration-mid),
+      'ease': var(--y-motion-ease-in-out),
+      'arrow-size': 7px,
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('collapsible') {
+  // 高度动画期间内容会被裁切，溢出必须藏住。
+  overflow: hidden;
+  background: getCssVar('collapsible', 'bg');
+  border: 1px solid getCssVar('collapsible', 'border');
+  border-radius: getCssVar('collapsible', 'radius');
+}
+
+// ---------------------------------------------------------------------------
+// 触发按钮
+// ---------------------------------------------------------------------------
+
+@include b('collapsible') {
+  @include e('trigger') {
+    display: flex;
+    gap: var(--y-padding-xs);
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: getCssVar('collapsible', 'padding-block') getCssVar('collapsible', 'padding-inline');
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    transition: background-color getCssVar('collapsible', 'duration');
+
+    @include focus-ring(getCssVar('color-primary'));
+
+    &:hover:not([data-disabled]) {
+      background: getCssVar('collapsible', 'trigger-hover-bg');
+    }
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    // 箭头是两条边拼出的 chevron，旋转角度由 data-state 决定：
+    // 纯 CSS 表达状态，不需要额外 DOM 或 JS。
+    &::after {
+      flex: none;
+      width: getCssVar('collapsible', 'arrow-size');
+      height: getCssVar('collapsible', 'arrow-size');
+      content: '';
+      border-right: 1.5px solid currentcolor;
+      border-bottom: 1.5px solid currentcolor;
+      transform: rotate(45deg) translate(-1px, -1px);
+      transition: transform getCssVar('collapsible', 'duration') getCssVar('collapsible', 'ease');
+    }
+
+    &[data-state='open']::after {
+      transform: rotate(-135deg) translate(-1px, -1px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 内容区与进出场动画
+// ---------------------------------------------------------------------------
+
+@include b('collapsible') {
+  @include e('content') {
+    overflow: hidden;
+    padding: 0 getCssVar('collapsible', 'content-padding-inline')
+      getCssVar('collapsible', 'padding-block');
+
+    &[data-state='open'] {
+      animation: #{$block}-open getCssVar('collapsible', 'duration')
+        getCssVar('collapsible', 'ease');
+    }
+
+    // forwards 让收起停在 height: 0，直到 Presence 在动画结束后卸载节点。
+    &[data-state='closed'] {
+      animation: #{$block}-close getCssVar('collapsible', 'duration')
+        getCssVar('collapsible', 'ease') forwards;
+    }
+  }
+
+  @keyframes #{$block}-open {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+
+    to {
+      height: var(--y-collapsible-content-height);
+      opacity: 1;
+    }
+  }
+
+  @keyframes #{$block}-close {
+    from {
+      height: var(--y-collapsible-content-height);
+      opacity: 1;
+    }
+
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  // 减少动效：动画整体关闭。此时 Presence 判定「没有退出动画」，退场回到即时卸载，
+  // 折叠区仍然可用，只是没有过渡。
+  @include reduced-motion {
+    @include e('content') {
+      &[data-state='open'],
+      &[data-state='closed'] {
+        animation: none;
+      }
+    }
+
+    @include e('trigger') {
+      transition: none;
+
+      &::after {
+        transition: none;
+      }
+    }
+  }
+}
