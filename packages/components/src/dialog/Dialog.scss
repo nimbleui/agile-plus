@@ -1,0 +1,134 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('dialog') {
+  @include set-component-css-var(
+    'dialog',
+    (
+      'overlay-bg': rgba(0, 0, 0, 0.5),
+      'bg': getCssVar('color-bg-container'),
+      'radius': getCssVar('border-radius-lg'),
+      'shadow': getCssVar('shadow-modal'),
+      'padding': getCssVar('padding-lg'),
+      'title-color': getCssVar('color-text-heading'),
+      'description-color': getCssVar('color-text-secondary'),
+      'close-size': 32px,
+      'close-color': getCssVar('color-text-tertiary'),
+      'close-hover-bg': getCssVar('fill-tertiary'),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 遮罩层
+// ---------------------------------------------------------------------------
+
+@include b('dialog') {
+  &[data-part='overlay'] {
+    position: fixed;
+    inset: 0;
+    z-index: getCssVar('z-index-modal-backdrop');
+    background: getCssVar('dialog', 'overlay-bg');
+    transition: opacity var(--y-motion-duration-mid);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 内容区域
+// ---------------------------------------------------------------------------
+
+@include b('dialog') {
+  &[data-part='content'] {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    z-index: getCssVar('z-index-modal');
+    transform: translate(-50%, -50%);
+    width: 90vw;
+    max-width: 520px;
+    max-height: 85vh;
+    padding: getCssVar('dialog', 'padding');
+    overflow-y: auto;
+    background: getCssVar('dialog', 'bg');
+    border-radius: getCssVar('dialog', 'radius');
+    box-shadow: getCssVar('dialog', 'shadow');
+    outline: none;
+
+    @include focus-ring(getCssVar('color-primary'));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 标题
+// ---------------------------------------------------------------------------
+
+@include b('dialog') {
+  &[data-part='title'] {
+    margin: 0 0 var(--y-padding-sm);
+    font-size: var(--y-font-size-lg);
+    font-weight: 600;
+    line-height: 1.4;
+    color: getCssVar('dialog', 'title-color');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 描述
+// ---------------------------------------------------------------------------
+
+@include b('dialog') {
+  &[data-part='description'] {
+    margin: 0 0 var(--y-padding);
+    font-size: var(--y-font-size);
+    line-height: 1.6;
+    color: getCssVar('dialog', 'description-color');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 关闭按钮
+// ---------------------------------------------------------------------------
+
+@include b('dialog') {
+  @include e('close') {
+    position: absolute;
+    top: var(--y-padding-sm);
+    right: var(--y-padding-sm);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: getCssVar('dialog', 'close-size');
+    height: getCssVar('dialog', 'close-size');
+    padding: 0;
+    color: getCssVar('dialog', 'close-color');
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: getCssVar('border-radius');
+    transition:
+      background-color var(--y-motion-duration-fast),
+      color var(--y-motion-duration-fast);
+
+    &:hover {
+      color: getCssVar('color-text');
+      background: getCssVar('dialog', 'close-hover-bg');
+    }
+
+    @include focus-ring(getCssVar('color-primary'));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+
+@include b('dialog') {
+  @include reduced-motion {
+    &[data-part='overlay'] {
+      transition: none;
+    }
+  }
+}
