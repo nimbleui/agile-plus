@@ -1,0 +1,90 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 数值通道只有一个入口：无头层在根节点写 `--y-progress-value`（0~1 的无单位比例），
+// 轨道宽度由这里换算。宽度、圆角、动画时长都留在本层，换主题或把 width 改成
+// transform 都不需要动逻辑层。
+//
+// indeterminate 的段落宽度与位移是**成对**的：段落占轨道 40%，自身位移 250%
+// 正好走满轨道（40% × 250% = 100%）。只改其中一个会让动画在轨道中途折返或溢出，
+// 因此两个变量放在一起声明并注明换算关系。
+
+@include b('progress') {
+  @include set-component-css-var(
+    'progress',
+    (
+      'height': 8px,
+      'radius': var(--y-border-radius-round),
+      'bg': var(--y-color-fill-secondary),
+      'indicator-bg': var(--y-color-primary),
+      // 进度更新的反馈比常规 hover 过渡长一档，否则快速连续赋值会看成闪烁。
+      'duration': var(--y-motion-duration-slow),
+      'ease': var(--y-motion-ease-in-out),
+      'indeterminate-width': 40%,
+      'indeterminate-shift': 250%,
+      'indeterminate-duration': 1.6s,
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 轨道：根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('progress') {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: getCssVar('progress', 'height');
+  overflow: hidden;
+  background: getCssVar('progress', 'bg');
+  border-radius: getCssVar('progress', 'radius');
+}
+
+// ---------------------------------------------------------------------------
+// 指示条
+// ---------------------------------------------------------------------------
+
+@include b('progress') {
+  @include e('indicator') {
+    height: 100%;
+    // 变量缺失按 0 处理：不确定进度下无头层不写这个变量，宽度随后被下面的分支覆盖。
+    width: calc(var(--y-progress-value, 0) * 100%);
+    background: getCssVar('progress', 'indicator-bg');
+    border-radius: inherit;
+    transition: width getCssVar('progress', 'duration') getCssVar('progress', 'ease');
+
+    // 不确定进度没有可显示的比例，用一段来回扫动的轨道表达「正在进行」。
+    &[data-state='indeterminate'] {
+      width: getCssVar('progress', 'indeterminate-width');
+      transition: none;
+      animation: #{$block}-indeterminate getCssVar('progress', 'indeterminate-duration') linear
+        infinite;
+    }
+  }
+
+  @keyframes #{$block}-indeterminate {
+    from {
+      transform: translateX(-100%);
+    }
+
+    to {
+      transform: translateX(var(--y-progress-indeterminate-shift));
+    }
+  }
+
+  // 减少动效时不能把不确定状态变成一条静止的空轨道——那是「没有进度」的语义。
+  // 这里只把扫动放慢，保留可识别的反馈；宽度过渡仍然关掉。
+  @include reduced-motion {
+    @include e('indicator') {
+      transition: none;
+
+      &[data-state='indeterminate'] {
+        animation-duration: 3.2s;
+      }
+    }
+  }
+}
