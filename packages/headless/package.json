@@ -1,0 +1,159 @@
+{
+  "name": "@agile-plus/headless",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Vue Composables 适配层：响应式桥接、生命周期、DOM 绑定",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./useDialog": {
+      "source": "./src/useDialog/index.ts",
+      "types": "./dist/useDialog/index.d.ts",
+      "import": "./dist/useDialog/index.js",
+      "require": "./dist/useDialog/index.cjs"
+    },
+    "./useTabs": {
+      "source": "./src/useTabs/index.ts",
+      "types": "./dist/useTabs/index.d.ts",
+      "import": "./dist/useTabs/index.js",
+      "require": "./dist/useTabs/index.cjs"
+    },
+    "./useRadioGroup": {
+      "source": "./src/useRadioGroup/index.ts",
+      "types": "./dist/useRadioGroup/index.d.ts",
+      "import": "./dist/useRadioGroup/index.js",
+      "require": "./dist/useRadioGroup/index.cjs"
+    },
+    "./useCheckbox": {
+      "source": "./src/useCheckbox/index.ts",
+      "types": "./dist/useCheckbox/index.d.ts",
+      "import": "./dist/useCheckbox/index.js",
+      "require": "./dist/useCheckbox/index.cjs"
+    },
+    "./useCollapsible": {
+      "source": "./src/useCollapsible/index.ts",
+      "types": "./dist/useCollapsible/index.d.ts",
+      "import": "./dist/useCollapsible/index.js",
+      "require": "./dist/useCollapsible/index.cjs"
+    },
+    "./useForm": {
+      "source": "./src/useForm/index.ts",
+      "types": "./dist/useForm/index.d.ts",
+      "import": "./dist/useForm/index.js",
+      "require": "./dist/useForm/index.cjs"
+    },
+    "./useFormField": {
+      "source": "./src/useFormField/index.ts",
+      "types": "./dist/useFormField/index.d.ts",
+      "import": "./dist/useFormField/index.js",
+      "require": "./dist/useFormField/index.cjs"
+    },
+    "./useFormControl": {
+      "source": "./src/useFormControl/index.ts",
+      "types": "./dist/useFormControl/index.d.ts",
+      "import": "./dist/useFormControl/index.js",
+      "require": "./dist/useFormControl/index.cjs"
+    },
+    "./useFormMessage": {
+      "source": "./src/useFormMessage/index.ts",
+      "types": "./dist/useFormMessage/index.d.ts",
+      "import": "./dist/useFormMessage/index.js",
+      "require": "./dist/useFormMessage/index.cjs"
+    },
+    "./useCheckboxGroup": {
+      "source": "./src/useCheckboxGroup/index.ts",
+      "types": "./dist/useCheckboxGroup/index.d.ts",
+      "import": "./dist/useCheckboxGroup/index.js",
+      "require": "./dist/useCheckboxGroup/index.cjs"
+    },
+    "./useScrollArea": {
+      "source": "./src/useScrollArea/index.ts",
+      "types": "./dist/useScrollArea/index.d.ts",
+      "import": "./dist/useScrollArea/index.js",
+      "require": "./dist/useScrollArea/index.cjs"
+    },
+    "./usePresence": {
+      "source": "./src/usePresence/index.ts",
+      "types": "./dist/usePresence/index.d.ts",
+      "import": "./dist/usePresence/index.js",
+      "require": "./dist/usePresence/index.cjs"
+    },
+    "./useToastProvider": {
+      "source": "./src/useToastProvider/index.ts",
+      "types": "./dist/useToastProvider/index.d.ts",
+      "import": "./dist/useToastProvider/index.js",
+      "require": "./dist/useToastProvider/index.cjs"
+    },
+    "./useToastViewport": {
+      "source": "./src/useToastViewport/index.ts",
+      "types": "./dist/useToastViewport/index.d.ts",
+      "import": "./dist/useToastViewport/index.js",
+      "require": "./dist/useToastViewport/index.cjs"
+    },
+    "./useToast": {
+      "source": "./src/useToast/index.ts",
+      "types": "./dist/useToast/index.d.ts",
+      "import": "./dist/useToast/index.js",
+      "require": "./dist/useToast/index.cjs"
+    },
+    "./useToggle": {
+      "source": "./src/useToggle/index.ts",
+      "types": "./dist/useToggle/index.d.ts",
+      "import": "./dist/useToggle/index.js",
+      "require": "./dist/useToggle/index.cjs"
+    },
+    "./useToggleGroup": {
+      "source": "./src/useToggleGroup/index.ts",
+      "types": "./dist/useToggleGroup/index.d.ts",
+      "import": "./dist/useToggleGroup/index.js",
+      "require": "./dist/useToggleGroup/index.cjs"
+    },
+    "./useSwitch": {
+      "source": "./src/useSwitch/index.ts",
+      "types": "./dist/useSwitch/index.d.ts",
+      "import": "./dist/useSwitch/index.js",
+      "require": "./dist/useSwitch/index.cjs"
+    },
+    "./useSlider": {
+      "source": "./src/useSlider/index.ts",
+      "types": "./dist/useSlider/index.d.ts",
+      "import": "./dist/useSlider/index.js",
+      "require": "./dist/useSlider/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "pnpm run build",
+    "build": "tsup",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@agile-plus/primitives": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^2.2.0"
+  }
+}

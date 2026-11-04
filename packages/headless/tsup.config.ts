@@ -1,0 +1,32 @@
+import { defineConfig } from 'tsup';
+
+export default defineConfig({
+  entry: {
+    index: 'src/index.ts',
+    'useDialog/index': 'src/useDialog/index.ts',
+    'useTabs/index': 'src/useTabs/index.ts',
+    'useRadioGroup/index': 'src/useRadioGroup/index.ts',
+    'useCheckbox/index': 'src/useCheckbox/index.ts',
+    'useForm/index': 'src/useForm/index.ts',
+    'useFormField/index': 'src/useFormField/index.ts',
+    'useFormControl/index': 'src/useFormControl/index.ts',
+    'useFormMessage/index': 'src/useFormMessage/index.ts',
+    'useCollapsible/index': 'src/useCollapsible/index.ts',
+    'useCheckboxGroup/index': 'src/useCheckboxGroup/index.ts',
+    'useScrollArea/index': 'src/useScrollArea/index.ts',
+    'usePresence/index': 'src/usePresence/index.ts',
+    'useToastProvider/index': 'src/useToastProvider/index.ts',
+    'useToastViewport/index': 'src/useToastViewport/index.ts',
+    'useToast/index': 'src/useToast/index.ts',
+    'useToggle/index': 'src/useToggle/index.ts',
+    'useToggleGroup/index': 'src/useToggleGroup/index.ts',
+    'useSwitch/index': 'src/useSwitch/index.ts',
+    'useSlider/index': 'src/useSlider/index.ts',
+  },
+  format: ['esm', 'cjs'],
+  dts: true,
+  clean: true,
+  splitting: false,
+  sourcemap: true,
+  external: ['vue'],
+});

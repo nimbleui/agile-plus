@@ -1,0 +1,121 @@
+{
+  "name": "@agile-plus/components",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "带样式组件层：Design Token、BEM、主题化",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./dialog": {
+      "source": "./src/dialog/index.ts",
+      "types": "./dist/dialog/index.d.ts",
+      "import": "./dist/dialog/index.js",
+      "require": "./dist/dialog/index.cjs"
+    },
+    "./tabs": {
+      "source": "./src/tabs/index.ts",
+      "types": "./dist/tabs/index.d.ts",
+      "import": "./dist/tabs/index.js",
+      "require": "./dist/tabs/index.cjs"
+    },
+    "./radio-group": {
+      "source": "./src/radio-group/index.ts",
+      "types": "./dist/radio-group/index.d.ts",
+      "import": "./dist/radio-group/index.js",
+      "require": "./dist/radio-group/index.cjs"
+    },
+    "./flex": {
+      "source": "./src/flex/index.ts",
+      "types": "./dist/flex/index.d.ts",
+      "import": "./dist/flex/index.js",
+      "require": "./dist/flex/index.cjs"
+    },
+    "./checkbox": {
+      "source": "./src/checkbox/index.ts",
+      "types": "./dist/checkbox/index.d.ts",
+      "import": "./dist/checkbox/index.js",
+      "require": "./dist/checkbox/index.cjs"
+    },
+    "./scroll-area": {
+      "source": "./src/scroll-area/index.ts",
+      "types": "./dist/scroll-area/index.d.ts",
+      "import": "./dist/scroll-area/index.js",
+      "require": "./dist/scroll-area/index.cjs"
+    },
+    "./toast": {
+      "source": "./src/toast/index.ts",
+      "types": "./dist/toast/index.d.ts",
+      "import": "./dist/toast/index.js",
+      "require": "./dist/toast/index.cjs"
+    },
+    "./toggle": {
+      "source": "./src/toggle/index.ts",
+      "types": "./dist/toggle/index.d.ts",
+      "import": "./dist/toggle/index.js",
+      "require": "./dist/toggle/index.cjs"
+    },
+    "./switch": {
+      "source": "./src/switch/index.ts",
+      "types": "./dist/switch/index.d.ts",
+      "import": "./dist/switch/index.js",
+      "require": "./dist/switch/index.cjs"
+    },
+    "./slider": {
+      "source": "./src/slider/index.ts",
+      "types": "./dist/slider/index.d.ts",
+      "import": "./dist/slider/index.js",
+      "require": "./dist/slider/index.cjs"
+    },
+    "./collapsible": {
+      "source": "./src/collapsible/index.ts",
+      "types": "./dist/collapsible/index.d.ts",
+      "import": "./dist/collapsible/index.js",
+      "require": "./dist/collapsible/index.cjs"
+    },
+    "./progress": {
+      "source": "./src/progress/index.ts",
+      "types": "./dist/progress/index.d.ts",
+      "import": "./dist/progress/index.js",
+      "require": "./dist/progress/index.cjs"
+    },
+    "./style.css": "./dist/components.css"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": [
+    "**/*.css",
+    "**/*.scss"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "pnpm run build",
+    "build": "vite build && vue-tsc --declaration --emitDeclarationOnly --outDir dist",
+    "typecheck": "vue-tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "@agile-plus/ui": "workspace:*"
+  },
+  "peerDependencies": {
+    "vue": "^3.5.0"
+  },
+  "devDependencies": {
+    "sass": "^1.80.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0",
+    "vue": "^3.5.0",
+    "vue-tsc": "^2.2.0"
+  }
+}

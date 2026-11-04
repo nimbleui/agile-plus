@@ -1,0 +1,127 @@
+{
+  "name": "@agile-plus/primitives",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "框架无关的无头组件原语层：状态机、纯计算、稳定协议",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "source": "./src/index.ts",
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./dialog": {
+      "source": "./src/dialog/index.ts",
+      "types": "./dist/dialog/index.d.ts",
+      "import": "./dist/dialog/index.js",
+      "require": "./dist/dialog/index.cjs"
+    },
+    "./flex": {
+      "source": "./src/flex/index.ts",
+      "types": "./dist/flex/index.d.ts",
+      "import": "./dist/flex/index.js",
+      "require": "./dist/flex/index.cjs"
+    },
+    "./tabs": {
+      "source": "./src/tabs/index.ts",
+      "types": "./dist/tabs/index.d.ts",
+      "import": "./dist/tabs/index.js",
+      "require": "./dist/tabs/index.cjs"
+    },
+    "./radio-group": {
+      "source": "./src/radio-group/index.ts",
+      "types": "./dist/radio-group/index.d.ts",
+      "import": "./dist/radio-group/index.js",
+      "require": "./dist/radio-group/index.cjs"
+    },
+    "./checkbox": {
+      "source": "./src/checkbox/index.ts",
+      "types": "./dist/checkbox/index.d.ts",
+      "import": "./dist/checkbox/index.js",
+      "require": "./dist/checkbox/index.cjs"
+    },
+    "./scroll-area": {
+      "source": "./src/scroll-area/index.ts",
+      "types": "./dist/scroll-area/index.d.ts",
+      "import": "./dist/scroll-area/index.js",
+      "require": "./dist/scroll-area/index.cjs"
+    },
+    "./toast": {
+      "source": "./src/toast/index.ts",
+      "types": "./dist/toast/index.d.ts",
+      "import": "./dist/toast/index.js",
+      "require": "./dist/toast/index.cjs"
+    },
+    "./presence": {
+      "source": "./src/presence/index.ts",
+      "types": "./dist/presence/index.d.ts",
+      "import": "./dist/presence/index.js",
+      "require": "./dist/presence/index.cjs"
+    },
+    "./toggle": {
+      "source": "./src/toggle/index.ts",
+      "types": "./dist/toggle/index.d.ts",
+      "import": "./dist/toggle/index.js",
+      "require": "./dist/toggle/index.cjs"
+    },
+    "./switch": {
+      "source": "./src/switch/index.ts",
+      "types": "./dist/switch/index.d.ts",
+      "import": "./dist/switch/index.js",
+      "require": "./dist/switch/index.cjs"
+    },
+    "./slider": {
+      "source": "./src/slider/index.ts",
+      "types": "./dist/slider/index.d.ts",
+      "import": "./dist/slider/index.js",
+      "require": "./dist/slider/index.cjs"
+    },
+    "./dom": {
+      "source": "./src/dom/index.ts",
+      "types": "./dist/dom/index.d.ts",
+      "import": "./dist/dom/index.js",
+      "require": "./dist/dom/index.cjs"
+    },
+    "./form": {
+      "source": "./src/form/index.ts",
+      "types": "./dist/form/index.d.ts",
+      "import": "./dist/form/index.js",
+      "require": "./dist/form/index.cjs"
+    },
+    "./collapsible": {
+      "source": "./src/collapsible/index.ts",
+      "types": "./dist/collapsible/index.d.ts",
+      "import": "./dist/collapsible/index.js",
+      "require": "./dist/collapsible/index.cjs"
+    },
+    "./progress": {
+      "source": "./src/progress/index.ts",
+      "types": "./dist/progress/index.d.ts",
+      "import": "./dist/progress/index.js",
+      "require": "./dist/progress/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepublishOnly": "pnpm run build",
+    "build": "tsup",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
+  }
+}
