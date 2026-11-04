@@ -1,0 +1,120 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 取值映射表
+// ---------------------------------------------------------------------------
+//
+// 键是无头层输出的 data-* 值，值是最终 CSS 声明。表与本库 primitives 的枚举
+// 一一对应，新增枚举值必须同时补 primitives 与这里，否则属性存在但没有声明，
+// 表现为「设置了却不生效」。
+
+/// align / alignSelf 的语义值到 align-items、align-self 的映射。
+$flex-align-map: (
+  'start': flex-start,
+  'center': center,
+  'end': flex-end,
+  'baseline': baseline,
+  'stretch': stretch,
+);
+
+/// justify 的语义值到 justify-content 的映射。
+$flex-justify-map: (
+  'start': flex-start,
+  'end': flex-end,
+  'center': center,
+  'between': space-between,
+  'around': space-around,
+  'evenly': space-evenly,
+);
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 只有 gap 档位需要变量隔离：它把「组件需要什么间距」与「设计系统提供哪个 Token」
+// 分开，调整间距体系或换主题时只改这一段，枚举选择器本身不动。
+//
+// flex-direction、align-items 这类声明由 CSS 规范定义、不随主题变化，
+// 因此不为它们包一层变量，避免制造只多一跳的无意义间接。
+
+@include b('flex') {
+  @include set-component-css-var(
+    'flex',
+    (
+      'gap-xs': getCssVar('padding-xs'),
+      'gap-sm': getCssVar('padding-sm'),
+      'gap-md': getCssVar('padding-md'),
+      'gap-lg': getCssVar('padding-lg'),
+      'gap-xl': getCssVar('padding-xl'),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('flex') {
+  display: flex;
+}
+
+// ---------------------------------------------------------------------------
+// 布局变体：由 data-* 钩子驱动，未设置的轴保持 CSS 初始值
+// ---------------------------------------------------------------------------
+//
+// 刻意不在 .y-flex 上写 flex-direction / align-items 等默认值：无头层只在消费者
+// 显式传参时才输出属性，样式层若补上默认声明，就会覆盖外层容器对同一元素的设置。
+
+@include b('flex') {
+  @each $direction in ('row', 'column', 'row-reverse', 'column-reverse') {
+    &[data-direction='#{$direction}'] {
+      flex-direction: #{$direction};
+    }
+  }
+
+  @each $align, $value in $flex-align-map {
+    &[data-align='#{$align}'] {
+      align-items: #{$value};
+    }
+  }
+
+  @each $justify, $value in $flex-justify-map {
+    &[data-justify='#{$justify}'] {
+      justify-content: #{$value};
+    }
+  }
+
+  @each $wrap in ('nowrap', 'wrap', 'wrap-reverse') {
+    &[data-wrap='#{$wrap}'] {
+      flex-wrap: #{$wrap};
+    }
+  }
+
+  @each $scale in ('xs', 'sm', 'md', 'lg', 'xl') {
+    &[data-gap='#{$scale}'] {
+      gap: getCssVar('flex', 'gap-#{$scale}');
+    }
+  }
+
+  &[data-inline] {
+    display: inline-flex;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 单项
+// ---------------------------------------------------------------------------
+//
+// flex / grow / shrink / basis / order 是任意 CSS 值，由无头层写成元素自身的内联
+// 声明，样式层不参与；只有有限枚举 alignSelf 走属性选择器。
+// 'auto' 有意不在表内：它是 align-self 的 CSS 初始值，不输出声明即得到正确结果。
+// 独立成块而不是 .y-flex__item：单项可以出现在任意容器里，元素级选择器会把它
+// 绑死在 Flex 容器的后代位置上。
+
+@include b('flex-item') {
+  @each $align, $value in $flex-align-map {
+    &[data-align-self='#{$align}'] {
+      align-self: #{$value};
+    }
+  }
+}
