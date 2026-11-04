@@ -1,0 +1,6 @@
+export type { TabsRootEmits, TabsRootProps } from './types';
+
+export { default as TabsRoot } from './TabsRoot.vue';
+export { default as TabsList } from './TabsList.vue';
+export { default as TabsTrigger } from './TabsTrigger.vue';
+export { default as TabsContent } from './TabsContent.vue';

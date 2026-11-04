@@ -1,0 +1,107 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('tabs') {
+  @include set-component-css-var(
+    'tabs',
+    (
+      'trigger-color': getCssVar('color-text-secondary'),
+      'trigger-active-color': getCssVar('color-primary'),
+      'trigger-hover-bg': getCssVar('fill-quaternary'),
+      'trigger-padding': getCssVar('padding-sm') getCssVar('padding-md'),
+      'trigger-radius': getCssVar('border-radius'),
+      'indicator-color': getCssVar('color-primary'),
+      'indicator-height': 2px,
+      'content-padding': getCssVar('padding-md') 0,
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// Tab List
+// ---------------------------------------------------------------------------
+
+@include b('tabs') {
+  &[data-part='list'] {
+    display: flex;
+    gap: var(--y-padding-xs);
+    border-bottom: 1px solid getCssVar('color-border-secondary');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tab Trigger
+// ---------------------------------------------------------------------------
+
+@include b('tabs') {
+  &__trigger {
+    position: relative;
+    padding: getCssVar('tabs', 'trigger-padding');
+    font-size: var(--y-font-size);
+    font-weight: 500;
+    line-height: 1.5;
+    color: getCssVar('tabs', 'trigger-color');
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: getCssVar('tabs', 'trigger-radius');
+    transition:
+      color var(--y-motion-duration-fast),
+      background-color var(--y-motion-duration-fast);
+
+    &:hover:not([aria-selected='true']) {
+      color: getCssVar('color-text');
+      background: getCssVar('tabs', 'trigger-hover-bg');
+    }
+
+    &[aria-selected='true'] {
+      color: getCssVar('tabs', 'trigger-active-color');
+    }
+
+    // 激活指示条
+    &[aria-selected='true']::after {
+      content: '';
+      position: absolute;
+      right: 0;
+      bottom: -1px;
+      left: 0;
+      height: getCssVar('tabs', 'indicator-height');
+      background: getCssVar('tabs', 'indicator-color');
+      border-radius: getCssVar('tabs', 'indicator-height') getCssVar('tabs', 'indicator-height') 0 0;
+    }
+
+    @include focus-ring(getCssVar('color-primary'));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Tab Content
+// ---------------------------------------------------------------------------
+
+@include b('tabs') {
+  &[data-part='content'] {
+    padding: getCssVar('tabs', 'content-padding');
+    outline: none;
+
+    &[hidden] {
+      display: none;
+    }
+
+    @include focus-ring(getCssVar('color-primary'));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+
+@include b('tabs') {
+  @include reduced-motion {
+    &__trigger {
+      transition: none;
+    }
+  }
+}
