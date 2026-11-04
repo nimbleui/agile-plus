@@ -1,0 +1,191 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 变量分两层，命名必须隔开，否则会出现 --x: var(--x) 这类循环引用，
+// 浏览器会将整条声明判定为无效：
+//
+//   --y-radio-*      设计层默认值，由 set-component-css-var 生成，主题可覆盖
+//   --y-radio-state-* 状态层变量，随 data-state / data-disabled 改变，子元素只消费它
+//
+// 状态沿自定义属性继承传递，因此不需要「父状态 + 子元素」的深层复合选择器。
+//
+// 自定义属性的值不参与 Sass 求值：写 --x: getCssVar(...) 会把函数名原样输出成
+// 非法值，因此状态层变量一律直接写 var() 引用。
+
+@include b('radio-group') {
+  @include set-component-css-var(
+    'radio-group',
+    (
+      'gap': var(--y-padding-sm),
+      'item-gap': var(--y-padding-sm),
+    )
+  );
+}
+
+@include b('radio') {
+  @include set-component-css-var(
+    'radio',
+    (
+      'size': 16px,
+      'dot-size': 8px,
+      'border': var(--y-color-border),
+      'border-hover': var(--y-color-primary-hover),
+      'border-checked': var(--y-color-primary),
+      'dot-color': var(--y-color-primary),
+      'bg-indicator': var(--y-color-bg-container),
+      'bg-indicator-disabled': var(--y-color-fill-secondary),
+      'color-label': var(--y-color-text),
+      'color-label-disabled': var(--y-color-text-disabled),
+    )
+  );
+
+  // 状态层默认值：未选中、未禁用。
+  --y-radio-state-border: var(--y-radio-border);
+  --y-radio-state-bg-indicator: var(--y-radio-bg-indicator);
+  --y-radio-state-color-label: var(--y-radio-color-label);
+  --y-radio-state-dot-scale: 0;
+  --y-radio-state-dot-opacity: 0;
+}
+
+// ---------------------------------------------------------------------------
+// 组容器：只负责排列，不介入单项视觉
+// ---------------------------------------------------------------------------
+
+@include b('radio-group') {
+  display: inline-flex;
+  flex-direction: column;
+  gap: getCssVar('radio-group', 'gap');
+
+  &[data-orientation='horizontal'] {
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 选项根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('radio') {
+  position: relative;
+  display: inline-flex;
+  gap: getCssVar('radio-group', 'item-gap');
+  align-items: center;
+  margin: 0;
+  padding: 0;
+  font-family: var(--y-font-family);
+  font-size: var(--y-font-size);
+  line-height: var(--y-line-height);
+  text-align: left;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  -webkit-user-select: none;
+  user-select: none;
+
+  @include focus-ring(getCssVar('radio', 'border-checked'));
+}
+
+// ---------------------------------------------------------------------------
+// 状态：hover / checked / disabled
+// ---------------------------------------------------------------------------
+
+@include b('radio') {
+  &:hover:not([data-disabled]) {
+    --y-radio-state-border: var(--y-radio-border-hover);
+  }
+
+  &[data-state='checked'] {
+    --y-radio-state-border: var(--y-radio-border-checked);
+    --y-radio-state-dot-scale: 1;
+    --y-radio-state-dot-opacity: 1;
+  }
+
+  &[data-disabled] {
+    --y-radio-state-border: var(--y-radio-border);
+    --y-radio-state-bg-indicator: var(--y-radio-bg-indicator-disabled);
+    --y-radio-state-color-label: var(--y-radio-color-label-disabled);
+
+    cursor: not-allowed;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 子元素
+// ---------------------------------------------------------------------------
+
+@include b('radio') {
+  @include e('indicator') {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: getCssVar('radio', 'size');
+    height: getCssVar('radio', 'size');
+    background: var(--y-radio-state-bg-indicator);
+    border: 1px solid var(--y-radio-state-border);
+    border-radius: 50%;
+
+    transition:
+      border-color var(--y-motion-duration-fast),
+      background-color var(--y-motion-duration-fast);
+  }
+
+  @include e('dot') {
+    width: getCssVar('radio', 'dot-size');
+    height: getCssVar('radio', 'dot-size');
+    background: getCssVar('radio', 'dot-color');
+    border-radius: 50%;
+    opacity: var(--y-radio-state-dot-opacity);
+    transform: scale(var(--y-radio-state-dot-scale));
+
+    transition:
+      transform var(--y-motion-duration-fast) var(--y-motion-ease-out),
+      opacity var(--y-motion-duration-fast);
+
+    // Indicator 默认只在选中时挂载，元素从「不存在」到「存在」不会触发 transition，
+    // 所以入场改用 animation。终点取状态变量：这样在 forceMount 且未选中时，
+    // 动画结束后圆点自然落回 scale(0)，不会闪现成选中态。
+    animation: #{$block}-dot-in var(--y-motion-duration-fast) var(--y-motion-ease-out);
+  }
+
+  @include e('label') {
+    color: var(--y-radio-state-color-label);
+  }
+
+  @keyframes #{$block}-dot-in {
+    from {
+      transform: scale(0.4);
+      opacity: 0;
+    }
+
+    to {
+      transform: scale(var(--y-radio-state-dot-scale));
+      opacity: var(--y-radio-state-dot-opacity);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+
+@include b('radio') {
+  @include reduced-motion {
+    &__indicator,
+    &__dot {
+      transition: none;
+    }
+
+    // 关闭动画后圆点必须瞬时可见，否则选中状态缺少可识别的反馈。
+    &__dot {
+      animation: none;
+      transform: scale(var(--y-radio-state-dot-scale));
+      opacity: var(--y-radio-state-dot-opacity);
+    }
+  }
+}
