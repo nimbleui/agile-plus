@@ -1,0 +1,53 @@
+// ---------------------------------------------------------------------------
+// BEM 命名空间 Mixin
+// ---------------------------------------------------------------------------
+//
+// 提供统一的 BEM class 生成能力，避免手写完整 class 名导致命名冲突。
+// 所有公共组件必须通过这些 mixin 生成选择器，不直接书写 .y-xxx 类名。
+//
+// 用法：
+//   @include b('button') { ... }           → .y-button { ... }
+//   @include e('icon') { ... }             → .y-button__icon { ... }
+//   @include m('primary') { ... }          → .y-button--primary { ... }
+//   @include when('disabled') { ... }      → .y-button.is-disabled { ... }
+
+$namespace: 'y' !default;
+$block: '' !default;
+
+/// 生成 Block 选择器，并设置当前 block 上下文供 e()/m()/when() 使用。
+/// @param {String} $name - Block 名称（不含命名空间前缀）
+@mixin b($name) {
+  $block: #{$namespace}-#{$name} !global;
+
+  .#{$block} {
+    @content;
+  }
+}
+
+/// 生成 Element 选择器，必须在 b() 内部使用。
+/// @param {String} $name - Element 名称
+@mixin e($name) {
+  @if $block == '' {
+    @error 'e() must be used inside b(). Current $block is empty.';
+  }
+
+  &__#{$name} {
+    @content;
+  }
+}
+
+/// 生成 Modifier 选择器，必须在 b() 或 e() 内部使用。
+/// @param {String} $name - Modifier 名称
+@mixin m($name) {
+  &--#{$name} {
+    @content;
+  }
+}
+
+/// 生成状态选择器（.is-xxx），必须在 b() 或 e() 内部使用。
+/// @param {String} $name - 状态名称
+@mixin when($name) {
+  &.is-#{$name} {
+    @content;
+  }
+}

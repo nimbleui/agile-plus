@@ -1,0 +1,101 @@
+// ---------------------------------------------------------------------------
+// 交互与工具 Mixin
+// ---------------------------------------------------------------------------
+//
+// 提供组件样式中反复使用的交互模式、CSS Variable 读写、Focus Ring、
+// Reduced Motion 等共享能力。多个组件存在相同交互规律时必须复用这些 mixin，
+// 不在每个组件里复制选择器。
+
+@use 'sass:list';
+@use 'sass:map';
+
+/// 读取全局 CSS Variable。
+/// @param {String} $args... - 1 个参数为令牌名，2 个参数为组件名+键名
+/// @returns CSS var() 引用
+@function getCssVar($args...) {
+  @if list.length($args) == 1 {
+    @return var(--y-#{list.nth($args, 1)});
+  }
+
+  @if list.length($args) == 2 {
+    @return var(--y-#{list.nth($args, 1)}-#{list.nth($args, 2)});
+  }
+
+  @error 'getCssVar() accepts 1 or 2 arguments, got #{list.length($args)}.';
+}
+
+/// 在组件根节点上批量声明组件级 CSS Variables。
+///
+/// 生成的变量名为 --y-{component}-{key}，值为 map 中对应的 CSS 值。
+/// 组件样式后续通过 getCssVar('component', 'key') 读取，
+/// 实现全局 Token → 组件变量 → 具体样式的三层隔离。
+///
+/// @param {String} $component - 组件名称（如 button、dialog）
+/// @param {Map} $vars - 键值对，key 为变量后缀，value 为 CSS 值
+@mixin set-component-css-var($component, $vars) {
+  @each $key, $value in $vars {
+    --y-#{$component}-#{$key}: #{$value};
+  }
+}
+
+/// 实心交互模式：hover 变亮、active 变暗。
+///
+/// 适用于 primary 等实心按钮、实心标签等需要强视觉反馈的场景。
+///
+/// @param {String} $hover-bg - hover 状态背景色
+/// @param {String} $active-bg - active 状态背景色
+@mixin solid-interactions($hover-bg, $active-bg) {
+  &:hover:not(:disabled):not(.is-disabled) {
+    background: $hover-bg;
+    border-color: $hover-bg;
+  }
+
+  &:active:not(:disabled):not(.is-disabled) {
+    background: $active-bg;
+    border-color: $active-bg;
+  }
+}
+
+/// 浅色交互模式：hover/active 仅改变背景透明度或浅色底色。
+///
+/// 适用于 secondary、text、danger-light 等浅色或透明按钮。
+///
+/// @param {String} $hover-bg - hover 状态背景色
+/// @param {String} $active-bg - active 状态背景色
+@mixin light-interactions($hover-bg, $active-bg) {
+  &:hover:not(:disabled):not(.is-disabled) {
+    background: $hover-bg;
+  }
+
+  &:active:not(:disabled):not(.is-disabled) {
+    background: $active-bg;
+  }
+}
+
+/// 统一的键盘焦点环样式。
+///
+/// 使用 outline + outline-offset 实现，不依赖 box-shadow，
+/// 确保在高对比度模式下仍然可见。颜色默认跟随组件主色。
+///
+/// @param {String} $color - 焦点环颜色，默认使用全局 focus-ring-color
+@mixin focus-ring($color: null) {
+  &:focus-visible {
+    @if $color != null {
+      outline: var(--y-focus-ring-width) solid $color;
+    } @else {
+      outline: var(--y-focus-ring-width) solid getCssVar('focus-ring-color');
+    }
+
+    outline-offset: var(--y-focus-ring-offset);
+  }
+}
+
+/// Reduced Motion 适配。
+///
+/// 包裹的内容在用户开启"减少动画"偏好时生效。
+/// 具体是禁用动画还是降低速度，应根据交互可理解性在调用处决定。
+@mixin reduced-motion {
+  @media (prefers-reduced-motion: reduce) {
+    @content;
+  }
+}
