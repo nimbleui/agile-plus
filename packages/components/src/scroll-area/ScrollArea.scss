@@ -1,0 +1,129 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// thumb 的长轴长度与位移由测量结果写成内联样式，这里只声明外观。
+// 轨道用 padding 让 thumb 视觉内缩，因此 thumb 不写死交叉轴尺寸。
+
+@include b('scroll-area') {
+  @include set-component-css-var(
+    'scroll-area',
+    (
+      'size': 10px,
+      'thumb-color': var(--y-color-text-tertiary),
+      'thumb-color-hover': var(--y-color-text-secondary),
+      'corner-bg': var(--y-color-bg-container),
+      'radius': var(--y-border-radius-round),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根容器与视口
+// ---------------------------------------------------------------------------
+
+@include b('scroll-area') {
+  position: relative;
+  overflow: hidden;
+}
+
+// ---------------------------------------------------------------------------
+// 视口：承载真实滚动，并隐藏原生滚动条
+// ---------------------------------------------------------------------------
+
+@include b('scroll-area') {
+  @include e('viewport') {
+    width: 100%;
+    height: 100%;
+    max-height: inherit;
+    overflow: scroll;
+    overscroll-behavior: contain;
+    outline: none;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 轨道
+// ---------------------------------------------------------------------------
+
+@include b('scroll-area') {
+  @include e('scrollbar') {
+    display: flex;
+    touch-action: none;
+    -webkit-user-select: none;
+    user-select: none;
+    opacity: 1;
+
+    transition: opacity var(--y-motion-duration-fast) var(--y-motion-ease-out);
+
+    // 不用 forceMount 时轨道只在可见时存在；用了 forceMount 才由这条规则淡出，
+    // 而不是直接消失，这样消费者能自己写进出两段过渡。
+    &[data-state='hidden'] {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    &[data-orientation='vertical'] {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      flex-direction: column;
+      width: getCssVar('scroll-area', 'size');
+      padding: 1px;
+    }
+
+    &[data-orientation='horizontal'] {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      flex-direction: row;
+      height: getCssVar('scroll-area', 'size');
+      padding: 1px;
+    }
+  }
+
+  @include e('thumb') {
+    position: relative;
+    flex: 1;
+    cursor: pointer;
+    background: getCssVar('scroll-area', 'thumb-color');
+    border-radius: getCssVar('scroll-area', 'radius');
+
+    transition: background-color var(--y-motion-duration-fast);
+
+    &:hover {
+      background: getCssVar('scroll-area', 'thumb-color-hover');
+    }
+  }
+
+  // 遮住横竖轨道交汇处的空隙，底色与视口一致才不会显得多了两块阴影。
+  @include e('corner') {
+    flex-shrink: 0;
+    width: getCssVar('scroll-area', 'size');
+    height: getCssVar('scroll-area', 'size');
+    background: getCssVar('scroll-area', 'corner-bg');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+
+@include b('scroll-area') {
+  @include reduced-motion {
+    &__scrollbar,
+    &__thumb {
+      transition: none;
+    }
+  }
+}
