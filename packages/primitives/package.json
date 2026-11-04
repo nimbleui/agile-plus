@@ -1,6 +1,6 @@
 {
   "name": "@agile-plus/primitives",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "框架无关的无头组件原语层：状态机、纯计算、稳定协议",
   "license": "MIT",

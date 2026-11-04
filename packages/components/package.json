@@ -1,6 +1,6 @@
 {
   "name": "@agile-plus/components",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "type": "module",
   "description": "带样式组件层：Design Token、BEM、主题化",
   "license": "MIT",
