@@ -6,7 +6,7 @@
 
 ## 四层模型
 
-<div class="layer-card"><strong>@agile-plus/primitives — 框架无关内核</strong>状态机、纯计算、稳定协议。不含 <code>ref</code>、<code>onMounted</code>、DOM API，可脱离浏览器运行。</div>
+<div class="layer-card"><strong>@agile-plus/primitives — 框架无关内核</strong>状态机、纯计算、稳定协议。不含 <code>ref</code>、<code>onMounted</code>，也不自行查找元素或注册监听；13 个测试文件里 9 个在纯 node 环境下跑通。</div>
 
 <div class="layer-card"><strong>@agile-plus/headless — Vue 适配层</strong><code>useXxx</code> Composables，负责响应式桥接、生命周期与资源清理、DOM 事件绑定。</div>
 
@@ -34,8 +34,8 @@ components → ui → headless → primitives
 判断新代码属于哪一层的三个问题：
 
 1. 文件是否出现 `ref()` / `watch()` / `onMounted()`？→ Headless 层。
-2. 文件是否读写 DOM（`addEventListener`、`focus`、`getBoundingClientRect`）？→ Headless 层。
-3. 文件是否能脱离浏览器运行？→ Primitives 层。
+2. 文件是否**主动**去找 DOM（`querySelector`、`addEventListener`、`getBoundingClientRect`、自己记下元素引用）？→ Headless 层。
+3. 文件是否只处理调用方交进来的参数？→ Primitives 层。接收一个元素参数并就地 `focus()` 或读一次文本不算越界，这层有且只有三处这样的触点：`dom/tabbable`、`form/hidden-input`、`toast/announce`。
 
 ## 公共能力登记表
 

@@ -51,7 +51,9 @@
 └─────────────────────────────────────────────────────┘
 ```
 
-依赖方向严格单向：`components → ui → headless → primitives`。禁止反向依赖、跨层引用、循环依赖。
+依赖方向严格单向：`components → ui → headless → primitives`。禁止反向依赖与循环依赖。
+
+跨层向下引用不在这条禁令之内：只要经包的公开出口（如 `@agile-plus/primitives/slider`），UI 层可以直接消费 Primitives。原因是这层的属性映射与几何计算两类 API 没有需要响应式包装的状态，强行绕经 Headless 只会多出一层不做任何事的转发。真正被禁止的是低层引用高层，以及引用未从包出口导出的内部路径（见 3.3、6.3）。
 
 ### 2.2 各层职责详解
 
@@ -70,10 +72,22 @@
 **约束**：
 
 - 禁止导入 Vue、React 或任何框架 API。
-- 禁止直接操作 DOM（`document`、`window`、`HTMLElement`）。
 - 禁止使用响应式原语（`ref`、`reactive`、`watch`）。
+- 禁止主动去找元素、注册监听或订阅生命周期：全层没有 `querySelector`、`addEventListener`，也没有一次 `setTimeout` 调用（Toast 的自动关闭只存 `startedAt` 与 `remaining` 两个数，时间戳由调用方注入，所以暂停与恢复能在 node 环境下直接断言，不依赖 fake timers）。要操作谁，一律由调用方作为参数传进来，这层自己永远不主动取。
 - 所有导出必须有明确 TypeScript 类型和 JSDoc 注释。
-- 测试必须是纯单元测试，无需 mount 组件或 jsdom。
+- 测试必须是纯单元测试，无需 mount 组件。
+
+**允许存在的 DOM 触点**：接收传入的元素，就地读一次或写一次，不缓存引用、不遍历文档全局。当前只有三处：
+
+| 模块 | 函数 | 用到什么 |
+| --- | --- | --- |
+| `dom/tabbable` | `getTabbableCandidates` `focusFirst` | 以传入容器为根遍历子树；`focus()` 后读 `document.activeElement` 判断焦点是否真的落下 |
+| `form/hidden-input` | `writeNativeChecked` | 取 `window.HTMLInputElement.prototype` 上的原生 setter 写 `checked`（带 SSR 回退），绕开框架对值的接管 |
+| `toast/announce` | `getToastAnnounceTextContent` | 按文档顺序读传入容器的文本片段 |
+
+这条界线可以机械验证：13 个测试文件里 9 个声明 `// @vitest-environment node` 并在完全没有 DOM 的环境下跑通，上面三处所在模块（`dom` `form` `toast`）的测试才需要 DOM。所以判断新逻辑能不能进这层，先问一句「把它丢进 node 环境跑，会不会因为自己要去取元素而失败」——会因为调用方传了元素而失败是允许的。
+
+注意 `focusFirst` 与 `writeNativeChecked` 确实改变了 DOM 状态，这与「不操作 DOM」的字面表述冲突，但不是越界：转换规则仍在这层（可单测、可跨框架复用），**何时**执行由上层决定。Headless 层负责的是「在哪一次点击或哪一个生命周期里调它」。
 
 **示例导出**：
 
@@ -273,80 +287,57 @@ defineExpose({ open, close, isOpen });
 ### 3.1 Monorepo 布局
 
 ```text
-root
+root                                    pnpm workspace：packages/* + apps/*
+├─ pnpm-workspace.yaml
+├─ eslint.config.mjs                    扁平配置，只在 root 一份
+├─ tsconfig.base.json                   各包 tsconfig.json extends 它
+├─ vitest.config.ts                     全仓单测入口（jsdom + 源码 alias）
+├─ scripts/workspace-source-alias.mts    从各包 exports.source 生成 Vite alias
+├─ docs/                                本文档与 Dialog 原型稿
+│
 ├─ packages
-│  ├─ primitives
-│  │  ├─ src
-│  │  │  ├─ dialog
-│  │  │  │  ├─ types.ts
-│  │  │  │  ├─ machine.ts
-│  │  │  │  ├─ keyboard.ts
-│  │  │  │  └─ index.ts
-│  │  │  ├─ select
-│  │  │  ├─ tabs
-│  │  │  ├─ shared
-│  │  │  │  ├─ id.ts
-│  │  │  │  ├─ keyboard.ts
-│  │  │  │  └─ types.ts
-│  │  │  └─ index.ts
-│  │  ├─ __tests__
-│  │  ├─ package.json
-│  │  └─ tsconfig.json
-│  │
-│  ├─ headless
-│  │  ├─ src
-│  │  │  ├─ useDialog.ts
-│  │  │  ├─ useSelect.ts
-│  │  │  ├─ useTabs.ts
-│  │  │  ├─ utils
-│  │  │  │  ├─ useFocusTrap.ts
-│  │  │  │  ├─ useScrollLock.ts
-│  │  │  │  └─ useId.ts
-│  │  │  └─ index.ts
-│  │  ├─ __tests__
-│  │  ├─ package.json
-│  │  └─ tsconfig.json
-│  │
-│  ├─ ui
-│  │  ├─ src
-│  │  │  ├─ Dialog
-│  │  │  │  ├─ Dialog.vue
-│  │  │  │  ├─ DialogTrigger.vue
-│  │  │  │  ├─ DialogContent.vue
-│  │  │  │  ├─ DialogClose.vue
-│  │  │  │  └─ index.ts
-│  │  │  ├─ Select
-│  │  │  ├─ Tabs
-│  │  │  └─ index.ts
-│  │  ├─ __tests__
-│  │  ├─ package.json
-│  │  └─ tsconfig.json
-│  │
-│  └─ components
-│     ├─ src
-│     │  ├─ Dialog
-│     │  │  ├─ Dialog.vue
-│     │  │  ├─ Dialog.scss
-│     │  │  └─ index.ts
-│     │  ├─ Select
-│     │  ├─ Button
-│     │  ├─ styles
-│     │  │  ├─ _index.scss
-│     │  │  ├─ _mixins.scss
-│     │  │  └─ _tokens.scss
-│     │  └─ index.ts
-│     ├─ __tests__
-│     ├─ package.json
-│     └─ tsconfig.json
+│  ├─ primitives/src                    目录名用 kebab-case
+│  │  ├─ dialog/{types,machine,index}.ts
+│  │  ├─ tabs/{types,machine,keyboard,index}.ts
+│  │  ├─ slider/{types,value,index}.ts
+│  │  ├─ form/{validity,hidden-input,index}.ts    跨组件能力按主题成目录
+│  │  ├─ dom/{tabbable,index}.ts                  没有 shared/ 这种万能目录
+│  │  └─ index.ts
+│  ├─ headless/src                      一个 composable 一个目录
+│  │  ├─ useDialog/{types,useDialog,index}.ts
+│  │  ├─ utils/                          内部零件，不进公共 API
+│  │  │  ├─ useControllable.ts  useCollection.ts  useBubbleInput.ts
+│  │  │  ├─ useFocusTrap.ts  useScrollLock.ts  usePointerDrag.ts
+│  │  │  └─ useResizeObserver.ts  useFormResetListener.ts  env.ts
+│  │  └─ index.ts
+│  ├─ ui/src                            目录 PascalCase，文件按部件命名
+│  │  ├─ dialog/{DialogRoot,DialogTrigger,DialogOverlay,DialogContent,
+│  │  │          DialogTitle,DialogDescription,DialogClose}.vue
+│  │  ├─ dialog/{types,index}.ts
+│  │  ├─ slot/Slot.ts                   asChild 的共用基元
+│  │  ├─ context.ts                     跨层 inject key 登记表
+│  │  └─ index.ts
+│  ├─ components/src
+│  │  ├─ dialog/{Dialog.vue,Dialog.scss,index}.ts
+│  │  ├─ styles/{_index,_tokens,_mixins,_bem}.scss
+│  │  └─ index.ts
+│  └─ materials/src                     低代码物料登记，不含控件实现
+│     ├─ protocol.ts                    平台物料协议的最小镜像
+│     ├─ define.ts                      清单条目构造器（包内，不对外导出）
+│     ├─ manifest.ts                    入口一：纯数据清单，零组件依赖
+│     ├─ index.ts                       入口二：物料名 → 组件名字表
+│     ├─ styled/{components,materials,materials-composite}.ts
+│     └─ atoms/{components,materials,materials-composite,materials-controls,materials}.ts
 │
-├─ apps
-│  └─ main
-│
-└─ internal
-   ├─ eslint-config
-   ├─ tsconfig
-   └─ vite-config
+└─ apps/docs                            VitePress 文档站，目前唯一的 app
+   ├─ .vitepress/{config.mts,theme/,components/}
+   ├─ guide/                            架构说明与快速开始
+   └─ components/                       逐组件文档与可交互示例
 ```
+
+每个包根固定有 `package.json`、`tsconfig.json`、`README.md`、`LICENSE`。构建配置按包的能力分：`primitives` `headless` `ui` `components` 用 `tsup.config.ts`，涉及 SFC 的 `ui` `components` 与产物为 ESM 单入口的 `materials` 另配 `vite.config.ts`。测试放在包根的 `__tests__/` 而不是 `src/` 内，因此不会进产物。
+
+**没有 `internal/` 工程配置包**：lint、tsconfig、vitest 三件都收在 root。内部配置包要在「多份配置互相冲突」或「外部要复用同一套规则」时才值得拆，现在两者都不成立。
 
 ### 3.2 Package.json 关键字段
 
@@ -413,9 +404,9 @@ Primitives 层必须保持框架无关。判断标准：
 
 - 文件中是否出现了 `ref()`、`reactive()`、`watch()`、`onMounted()`、`onUnmounted()`？→ 属于 Headless 层。
 - 文件中是否出现了 `document.querySelector()`、`element.addEventListener()`？→ 属于 Headless 层。
-- 文件是否可以脱离浏览器环境运行？→ 属于 Primitives 层。
+- 文件是否自己去查找元素、缓存元素引用或订阅事件？→ 属于 Headless 层。接收调用方传入的元素并就地读或写一次不算，见 2.2.1 的三处触点。
 
-如果某个逻辑既包含纯计算又包含 DOM 操作，必须拆分：纯计算下沉到 Primitives，DOM 操作留在 Headless。
+如果某个逻辑既包含纯计算又包含 DOM 操作，必须拆分：纯计算下沉到 Primitives，DOM 操作留在 Headless。这条界线可机械验证——Primitives 的 13 个测试文件里 9 个声明 `// @vitest-environment node`，在完全没有 DOM 的环境下跑通，剩下需要 DOM 的正是那三处所在的模块。
 
 ### 4.2 状态机驱动
 
@@ -600,7 +591,7 @@ UI 层推荐复合组件（Compound Components）API，而非单一巨型组件�
 
 ### 6.3 禁止行为
 
-- 禁止在 Primitives 中引入 Vue/React/DOM API。
+- 禁止在 Primitives 中引入 Vue/React，禁止该层自行查找元素、注册监听或缓存 DOM 引用（2.2.1 表中的三处传入型触点除外）。
 - 禁止在 Headless 中重新实现 Primitives 已有的算法。
 - 禁止在 UI 层添加任何视觉样式（颜色、尺寸、阴影、圆角、字体）。
 - 禁止在 Components 层直接引用 Primitives 内部路径。

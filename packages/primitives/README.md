@@ -128,10 +128,13 @@ getProgressRatio('NaN' as unknown, 100); // null —— 不确定进度，调用
 
 - 禁止导入框架 API（`ref` / `reactive` / `watch` / 生命周期）。
 - 不主动读写 DOM，但少数函数把元素当参数：`getTabbableCandidates` / `focusFirst` 接收容器元素，
-  `writeNativeChecked` 接收 `HTMLInputElement`（走原型 setter 写值），`getFirstInvalidControl` 接收候选集合。
+  `writeNativeChecked` 接收 `HTMLInputElement`（走原型 setter 写值），`getToastAnnounceTextContent`
+  遍历传入容器的子节点取文本，`getFirstInvalidControl` 接收候选集合。
   `readValiditySnapshot` 拿的是 `ValidityLike` 对象，`getCollapsibleContentVars` 拿的是尺寸对象，
   连元素都不需要。这些都由上层决定何时调用、调不调，这层自己永远不主动去取。
-- 所有导出都有明确类型与 JSDoc；`__tests__` 下 13 个纯单元测试文件，不依赖 mount 或 jsdom。
+- 所有导出都有明确类型与 JSDoc；`__tests__` 下 13 个测试文件没有一个挂载 Vue 组件，其中 9 个声明
+  `// @vitest-environment node`、在完全没有 DOM 的环境下跑通，另 `dom` `form` `toast` 三处的测试需要
+  jsdom 提供真实元素——正是上一条那三个接收元素的模块。
 
 ## 版本与许可
 
