@@ -121,26 +121,20 @@ defineMaterial({
 });
 ```
 
-`accepts` 会被展开成一个覆盖整个容器的 `default` 插槽；需要逐格落点（对话框的 trigger / title /
-description）时改用 `slots`，此时顺序有意义：先写窄条区域，最后写覆盖全容器的兜底插槽。
+`container: true` 的条目一定会拿到一格 `default`：只写 `accepts` 时构造器补一格并把 `accepts` 填进它，
+连 `accepts` 都不写也补一格不限类型的。需要逐格落点（对话框的 trigger / title / description）时才自己
+写 `slots`，这时构造器不再代劳，漏了 `default` 由包内测试挡下。`slots` 的声明顺序有意义：多格覆盖范围
+重叠时按声明顺序取先者，所以先写窄条区域，最后写覆盖全容器的兜底插槽。
 
 `spec` 字段：`name` `title` `category` `icon` 必填，另有 `props` `size` `initial` `container`
-`accepts` / `slots`（互斥，同时给出会抛错）`parent` `events`。
-`size` 缺省 120×32（部件与无独立外观的条目：够选拖，但不假装是一块内容区）。
-`parent` 会被写成 `allowedParents: [parent]`。
-
-刻意不做的一件事：不自动从 `props` 的 `default` 生成 snippet 初值。落点节点只读 `snippet.props`，
-组件默认值由组件自己的运行时 default 生效，两条路径混在一起反而看不清哪个值真正落进了 schema；
-需要拖出来就带特定初值时显式写 `initial`。
-
-`spec` 字段：`name` `title` `category` `icon` 必填，另有 `props` `size` `initial` `container`
-`accepts` / `slots`（互斥，同时给出会抛错）`parent` `events`。
+`accepts` / `slots`（两者都在定义分发点，同时给出抛错；`accepts` 用在非容器件上同样抛错，因为它
+只能落在 `default` 那一格）`parent` `events`。
 `size` 缺省 120×32（部件与无独立外观的条目：够选够拖，但不假装是一块内容区）。
 `parent` 会被写成 `allowedParents: [parent]`。
 
-`initial` 决定拖入时的取值；`props[].default` 面板不读，不要指望它生效。这里刻意不自动从
-`props` 生成 snippet 初值——落点节点只读 `snippet.props`，与组件运行时默认值是两条路径，
-混起来反而看不清哪个值真正落进了 schema。
+`initial` 决定拖入时的取值；`props[].default` 面板不读，不要指望它生效。这里刻意不自动从 `props`
+生成 snippet 初值——落点节点只读 `snippet.props`，组件默认值由组件自己的运行时 default 生效，
+两条路径混在一起反而看不清哪个值真正落进了 schema。需要拖出来就带特定初值时显式写 `initial`。
 
 ## 协议
 
@@ -161,9 +155,11 @@ description）时改用 `slots`，此时顺序有意义：先写窄条区域，�
 - **数组与对象属性还不能登记**。`object` / `array` 在面板里退化成文本框且写回字符串，
   所以 Slider 的 `defaultValue: number[]` 这类属性暂未登记，等平台补列表设置器。
 - **表达式绑定只对文本型属性开放**，布尔与数值属性无法绑 `{{ }}`。
-- **具名插槽只改变数据落位**。拖入时按 `region`（容器矩形的 0–1 比例）判定落进哪一格并写进
-  `parent.slots[<name>]`，但渲染层目前仍把 children 与全部插槽压成同一份默认插槽内容，组件还收不到分开的插槽。
-  因此 `slots` 的声明顺序有意义：先写窄条区域，最后写覆盖全容器的兜底插槽。
+- **插槽漏声明是静默降级，不报错**。拖入时 `canvas-drop` 按 `region`（容器矩形的 0–1 比例）判定落到哪一格，
+  被 `accepts` 拒绝或 `maxChildren` 占满时降级到 `default`，再不行回落 `children`；渲染时
+  `splitSlotChildren` 只把「已声明插槽」里的子节点交给组件对应的具名插槽，没声明的退回兄弟节点平铺。
+  部件于是拿不到父件上下文，而画布上看着一切正常。前面「清单条目」一节要求容器必须有一格 `default`，
+  就是为了堵掉这条路。
 - **`allowedParents` 目前没有消费点**，只是元数据；真正生效的归属约束是父件的 `slots[].accepts`。
 - 事件名必须与组件 `emit` 的名字逐字一致。
 - `icon` 必须取自平台共享图标注册表，未注册名会回退成方箱。

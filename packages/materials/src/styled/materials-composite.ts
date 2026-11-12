@@ -8,10 +8,14 @@ import { defineMaterial } from '../define';
  * description / action / close / default —— 所以它们用 `slots` 逐格声明区域，而不是
  * `accepts` 简写。区域比例按「窄条在前、兜底在后」的顺序写，这是平台落点判定的要求。
  *
- * 落点判定今天生效（`canvas-drop` 按 `region` 决定归档到哪一格，`accepts` 会拒绝不匹配的
- * 物料），组件收不到的部分也如实说明：渲染层仍把 children 与全部插槽压成同一份默认插槽
- * 内容，所以「放进 title 格」目前只改变数据落位。清单先按真实的插槽契约写对，渲染接上时
- * 不需要再改物料。
+ * 两个执行点都已生效：拖入时 `canvas-drop` 按 `region` 决定归档到哪一格、按 `accepts` 与
+ * `maxChildren` 拒绝不匹配的物料；渲染时 `splitSlotChildren` 把已声明插槽里的子节点交给
+ * 组件对应的具名插槽。换句话说，这里的 `slots` 声明决定了「放进 title 格的内容最终落在
+ * 组件的 title 插槽」，漏声明的插槽名会退回兄弟平铺而不是报错。
+ *
+ * 只收子内容、不需要分格的容器（如 `agile-plus.scroll-area`）故意不写 `slots`：
+ * `defineMaterial` 会给 `container: true` 补一格不限类型的 `default`，子内容照样进得了
+ * 组件的默认插槽。真正会退回兄弟平铺的是上面那种「显式声明了 slots 却漏掉某个插槽名」。
  *
  * 事件只声明组件真的会 emit 的那些：样式层 Toast 只转发 `update:open`，无头层的
  * `swipe-*` / `pause` / `resume` 到不了这里，照抄声明会让表达式里凭空多出读不到的变量。

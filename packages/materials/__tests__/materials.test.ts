@@ -90,6 +90,18 @@ describe('物料插槽声明', () => {
     }
   });
 
+  it('容器件必须有 default 插槽', () => {
+    for (const item of materials) {
+      if (item.container !== true) continue;
+
+      // 渲染层只把「已声明插槽」里的子节点交给组件；容器没有 default 格时，
+      // 拖进去的部件会退回兄弟平铺，拿不到父件上下文，看起来像组件坏了
+      const hasDefault = (item.slots ?? []).some((slot) => slot.name === 'default');
+
+      expect(hasDefault, `${item.name} 是容器但没有 default 插槽`).toBe(true);
+    }
+  });
+
   it('插槽名唯一，default 至多一个，标题与区域比例合法', () => {
     for (const item of materials) {
       const slots = item.slots ?? [];

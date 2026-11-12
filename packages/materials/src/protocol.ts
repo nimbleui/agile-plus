@@ -128,10 +128,11 @@ export type MaterialContribution = {
   /**
    * 组件对外暴露的具名插槽。
    *
-   * 执行点在拖入：`canvas-drop` 按 `region` 判定落到哪一格，写进 `parent.slots[<name>]`，
-   * 被 `accepts` 拒绝或 `maxChildren` 占满时降级到 `default`，再不行回落 `children`。
-   * 渲染层目前仍把 children 与全部插槽压成同一份默认插槽内容，所以具名分档只改变数据
-   * 落位，组件还收不到分开的插槽。
+   * 两个执行点：拖入时 `canvas-drop` 按 `region` 判定落到哪一格，被 `accepts` 拒绝或
+   * `maxChildren` 占满时降级到 `default`，再不行回落 `children`；渲染时
+   * `splitSlotChildren` 把「已声明插槽」里的子节点交给组件对应的具名插槽，没声明的内容
+   * 继续按兄弟节点平铺。所以这份声明不只是元数据 —— 不写插槽，放进容器里的部件就进不到
+   * 组件内部，拿不到父级上下文。
    */
   slots?: SlotDefinition[];
   /**

@@ -56,18 +56,27 @@ export type MaterialSpec = {
  * 混在一起反而看不清哪个值真正落进了 schema。需要拖出来就带特定初值时显式写 `initial`。
  *
  * @throws 同时给出 `accepts` 与 `slots` 时抛错：两者都在定义分发点，静默合并会让「到底
- * 有几格、哪格收什么」这件事看不出来。
+ * 有几格、哪格收什么」这件事看不出来。`accepts` 用在非容器件上同样抛错。
  */
 export function defineMaterial(spec: MaterialSpec): MaterialContribution {
   if (spec.accepts !== undefined && spec.slots !== undefined) {
     throw new Error(`[materials] ${spec.name} 同时声明了 accepts 与 slots，只留一个`);
   }
 
-  const slots: SlotDefinition[] | undefined =
+  if (spec.accepts !== undefined && spec.container !== true && spec.slots === undefined) {
+    throw new Error(`[materials] ${spec.name} 不是容器，accepts 无处生效`);
+  }
+
+  /**
+   * 容器件必须有一格能收内容：渲染层只把「已声明插槽」里的子节点交给组件，没声明的退回
+   * 兄弟平铺 —— 漏一格，拖进去的东西就永远进不了组件（表现为部件拿不到父级上下文）。
+   * 因此这里给容器默认补一格不限类型的 `default`，具名插槽由调用方显式声明。
+   */
+  const slots: SlotDefinition[] =
     spec.slots ??
-    (spec.accepts === undefined
-      ? undefined
-      : [{ name: 'default', title: '内容', accepts: spec.accepts }]);
+    (spec.container === true
+      ? [{ name: 'default', title: '内容', ...(spec.accepts ? { accepts: spec.accepts } : {}) }]
+      : []);
 
   return {
     name: spec.name,
@@ -92,7 +101,7 @@ export function defineMaterial(spec: MaterialSpec): MaterialContribution {
       props: spec.initial ?? {},
     },
     ...(spec.container === undefined ? {} : { container: spec.container }),
-    ...(slots === undefined ? {} : { slots }),
+    ...(slots.length === 0 ? {} : { slots }),
     ...(spec.parent === undefined ? {} : { allowedParents: [spec.parent] }),
     ...(spec.events === undefined ? {} : { events: spec.events }),
   };
