@@ -22,6 +22,8 @@ export * from './useScrollArea';
 
 export * from './usePresence';
 
+export * from './useKeepMounted';
+
 export * from './useToastProvider';
 
 export * from './useToastViewport';

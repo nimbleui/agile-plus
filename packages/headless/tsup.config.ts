@@ -15,6 +15,7 @@ export default defineConfig({
     'useCheckboxGroup/index': 'src/useCheckboxGroup/index.ts',
     'useScrollArea/index': 'src/useScrollArea/index.ts',
     'usePresence/index': 'src/usePresence/index.ts',
+    'useKeepMounted/index': 'src/useKeepMounted/index.ts',
     'useToastProvider/index': 'src/useToastProvider/index.ts',
     'useToastViewport/index': 'src/useToastViewport/index.ts',
     'useToast/index': 'src/useToast/index.ts',

@@ -93,6 +93,12 @@
       "import": "./dist/usePresence/index.js",
       "require": "./dist/usePresence/index.cjs"
     },
+    "./useKeepMounted": {
+      "source": "./src/useKeepMounted/index.ts",
+      "types": "./dist/useKeepMounted/index.d.ts",
+      "import": "./dist/useKeepMounted/index.js",
+      "require": "./dist/useKeepMounted/index.cjs"
+    },
     "./useToastProvider": {
       "source": "./src/useToastProvider/index.ts",
       "types": "./dist/useToastProvider/index.d.ts",
