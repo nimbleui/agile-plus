@@ -298,12 +298,14 @@ $select-content-vars: (
 // 列表容器
 // ---------------------------------------------------------------------------
 //
-// 位置由无头层写成内联 transform，本层不碰 left/top，也不给 transform 加过渡或动画：
-// 那会覆盖逐帧定位，让列表从视口原点飞进来。进出场的位移改用独立的 translate 属性，
-// 它与 transform 是两条互不覆盖的通道，合成后才是「定位 + 入场偏移」。
+// 位置由无头层写成内联 transform，本层不碰 left/top，也不给 transform 加任何过渡或
+// 动画：那会覆盖逐帧定位，让列表从视口原点飞进来。进场只做淡入，不再叠加上下位移——
+// 4px 的滑入在下拉这种小面板上会被感知成「打开时抖一下」，定位本身是稳定的，抖动完全
+// 来自这段位移。要方向感靠淡入的节奏即可，不必移动几何位置。
 //
 // 常驻挂载、关闭时靠 closed 状态隐藏，因此进出场必须写成 @keyframes：Presence 只认
-// animationend，用 transition 会被判成「没有动画」而当帧隐藏。
+// animationend，用 transition 会被判成「没有动画」而当帧隐藏；所以即便只淡入淡出，
+// 也必须保留完整的关键帧而不是改用 transition。
 
 @include b('select-content') {
   box-sizing: border-box;
@@ -348,19 +350,11 @@ $select-content-vars: (
     animation: #{$block}-hide var(--y-motion-duration-fast) var(--y-motion-ease-in) forwards;
   }
 
-  // 向上展开时从下边收起，方向跟着实际所在边走，翻转后才不违和。
-  &[data-side='top'][data-state='open'] {
-    animation-name: #{$block}-show-up;
-  }
-
-  &[data-side='top'][data-state='closed'] {
-    animation-name: #{$block}-hide-up;
-  }
-
+  // 淡入淡出不区分展开方向：位移去掉后 top / bottom 的动画内容完全相同，
+  // 保留 data-side 的分支只会多出两份等价关键帧，没有行为差异。
   @keyframes #{$block}-show {
     from {
       opacity: 0;
-      translate: 0 -4px;
     }
   }
 
@@ -372,26 +366,6 @@ $select-content-vars: (
 
     to {
       opacity: 0;
-      translate: 0 -4px;
-    }
-  }
-
-  @keyframes #{$block}-show-up {
-    from {
-      opacity: 0;
-      translate: 0 4px;
-    }
-  }
-
-  @keyframes #{$block}-hide-up {
-    from {
-      visibility: visible;
-      opacity: 1;
-    }
-
-    to {
-      opacity: 0;
-      translate: 0 4px;
     }
   }
 }
