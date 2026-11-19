@@ -519,4 +519,56 @@ export const materials = [
       },
     ],
   }),
+  defineMaterial({
+    name: 'agile-plus.dropdown-menu',
+    title: '下拉菜单',
+    category: '浮层',
+    icon: 'square',
+    props: {
+      placement: {
+        type: 'string',
+        title: '位置',
+        enum: ['bottom-start', 'bottom', 'top-start', 'top'],
+        default: 'bottom-start',
+      },
+      defaultOpen: { type: 'boolean', title: '默认打开', default: false },
+    },
+    size: { width: 180, height: 40 },
+    container: true,
+    // 菜单项由 atoms 层的 ui 部件拖入默认插槽；触发元素单独一格。
+    slots: [
+      {
+        name: 'trigger',
+        title: '触发元素',
+        maxChildren: 1,
+        region: { x: 0, y: 0, width: 1, height: 0.5 },
+      },
+      { name: 'default', title: '菜单项', region: { x: 0, y: 0.5, width: 1, height: 0.5 } },
+    ],
+    events: [
+      {
+        name: 'update:open',
+        title: '开合变化',
+        parameters: [{ name: 'value', type: 'boolean', description: '变化后的打开状态' }],
+      },
+      {
+        name: 'item-select',
+        title: '项激活',
+        parameters: [{ name: 'value', type: 'string', description: '被激活项的值' }],
+      },
+    ],
+  }),
+  defineMaterial({
+    name: 'agile-plus.dropdown-menu-item',
+    title: '下拉菜单项',
+    category: '浮层',
+    icon: 'square',
+    parent: 'agile-plus.dropdown-menu',
+    props: {
+      value: { type: 'string', title: '项 value', description: '菜单内唯一，item-select 返回它' },
+      disabled: { type: 'boolean', title: '禁用', default: false },
+    },
+    initial: { value: 'item-1' },
+    container: true,
+  }),
 ];

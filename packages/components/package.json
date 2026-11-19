@@ -106,6 +106,12 @@
       "import": "./dist/popover/index.js",
       "require": "./dist/popover/index.cjs"
     },
+    "./dropdown-menu": {
+      "source": "./src/dropdown-menu/index.ts",
+      "types": "./dist/dropdown-menu/index.d.ts",
+      "import": "./dist/dropdown-menu/index.js",
+      "require": "./dist/dropdown-menu/index.cjs"
+    },
     "./style.css": "./dist/components.css"
   },
   "files": [

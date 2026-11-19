@@ -158,6 +158,12 @@
       "types": "./dist/usePopover/index.d.ts",
       "import": "./dist/usePopover/index.js",
       "require": "./dist/usePopover/index.cjs"
+    },
+    "./useDropdownMenu": {
+      "source": "./src/useDropdownMenu/index.ts",
+      "types": "./dist/useDropdownMenu/index.d.ts",
+      "import": "./dist/useDropdownMenu/index.js",
+      "require": "./dist/useDropdownMenu/index.cjs"
     }
   },
   "files": [

@@ -3,6 +3,7 @@ import type { Component } from 'vue';
 import { Checkbox, CheckboxGroup } from '@agile-plus/components/checkbox';
 import { Collapsible } from '@agile-plus/components/collapsible';
 import { Dialog } from '@agile-plus/components/dialog';
+import { DropdownMenu, DropdownMenuItem } from '@agile-plus/components/dropdown-menu';
 import { Flex, FlexItem } from '@agile-plus/components/flex';
 import { Popover } from '@agile-plus/components/popover';
 import { Progress } from '@agile-plus/components/progress';
@@ -49,4 +50,6 @@ export const components: Record<string, Component> = {
   'agile-plus.flex-item': FlexItem,
   'agile-plus.tooltip': Tooltip,
   'agile-plus.popover': Popover,
+  'agile-plus.dropdown-menu': DropdownMenu,
+  'agile-plus.dropdown-menu-item': DropdownMenuItem,
 };

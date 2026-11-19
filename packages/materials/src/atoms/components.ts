@@ -17,6 +17,12 @@ import {
 } from '@agile-plus/ui/dialog';
 import { FlexItem, FlexRoot } from '@agile-plus/ui/flex';
 import {
+  DropdownMenuCheckboxItem,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+} from '@agile-plus/ui/dropdown-menu';
+import {
   FormField,
   FormFieldControl,
   FormFieldLabel,
@@ -111,4 +117,8 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.scroll-area-corner': ScrollAreaCorner,
   'agile-plus.ui.flex': FlexRoot,
   'agile-plus.ui.flex-item': FlexItem,
+  'agile-plus.ui.dropdown-menu-item': DropdownMenuItem,
+  'agile-plus.ui.dropdown-menu-checkbox-item': DropdownMenuCheckboxItem,
+  'agile-plus.ui.dropdown-menu-label': DropdownMenuLabel,
+  'agile-plus.ui.dropdown-menu-separator': DropdownMenuSeparator,
 };

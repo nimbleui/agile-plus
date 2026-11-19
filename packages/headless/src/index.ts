@@ -43,3 +43,5 @@ export * from './useFloating';
 export * from './useTooltip';
 
 export * from './usePopover';
+
+export * from './useDropdownMenu';

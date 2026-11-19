@@ -4,6 +4,7 @@ import type {
   UseCheckboxGroupReturn,
   UseCheckboxReturn,
   UseDialogReturn,
+  UseDropdownMenuReturn,
   UsePopoverReturn,
   UseRadioGroupReturn,
   UseScrollAreaReturn,
@@ -108,6 +109,12 @@ interface ComponentContexts {
    * 只有一层——Popover 没有 Provider，开合与定位实例都挂在 Root 上。
    */
   popover: UsePopoverReturn;
+  /**
+   * DropdownMenu 的上下文：Root 下发给 Trigger / Content / Item / CheckboxItem / Label / Separator。
+   *
+   * 只有一层——菜单没有 Provider，开合、项登记与 roving focus 都挂在 Root 上。
+   */
+  dropdownMenu: UseDropdownMenuReturn;
 }
 
 /**

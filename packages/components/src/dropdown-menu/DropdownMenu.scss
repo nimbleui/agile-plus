@@ -1,0 +1,166 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('dropdown-menu') {
+  @include set-component-css-var(
+    'dropdown-menu',
+    (
+      'bg': var(--y-color-bg-elevated),
+      'color': var(--y-color-text),
+      'border': var(--y-color-border-secondary),
+      'radius': var(--y-border-radius-lg),
+      'shadow': var(--y-shadow),
+      'padding': var(--y-padding-xs),
+      'min-width': 160px,
+      'item-height': 32px,
+      'item-padding-x': var(--y-padding-sm),
+      'item-radius': var(--y-border-radius),
+      'item-bg-highlighted': var(--y-color-fill-tertiary),
+      'item-color-disabled': var(--y-color-text-disabled),
+      'label-color': var(--y-color-text-tertiary),
+      'separator': var(--y-color-border-secondary),
+      'duration': var(--y-motion-duration-mid),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 菜单面板（首次打开才挂载，之后常驻；关闭不卸载，靠 closed 状态隐藏）
+// ---------------------------------------------------------------------------
+
+@include b('dropdown-menu') {
+  box-sizing: border-box;
+  min-width: getCssVar('dropdown-menu', 'min-width');
+  padding: getCssVar('dropdown-menu', 'padding');
+  font-family: var(--y-font-family);
+  font-size: var(--y-font-size);
+  color: getCssVar('dropdown-menu', 'color');
+  background: getCssVar('dropdown-menu', 'bg');
+  border: 1px solid getCssVar('dropdown-menu', 'border');
+  border-radius: getCssVar('dropdown-menu', 'radius');
+  box-shadow: getCssVar('dropdown-menu', 'shadow');
+  z-index: var(--y-z-index-dropdown);
+  outline: none;
+
+  &[data-state='open'] {
+    animation: #{$block}-show getCssVar('dropdown-menu', 'duration') var(--y-motion-ease-out);
+  }
+
+  // 常驻（keepMounted）之后关闭不卸载，隐藏必须由状态自己兜住：opacity / visibility 直接
+  // 落在 closed 上，动画只负责过渡，所以 hide 的 from 显式声明 visibility: visible，退场
+  // 才仍然看得见。visibility 把面板移出无障碍树，pointer-events: none 让它不再拦截点击，
+  // 项本身又是 tabindex=-1，所以关掉之后既读不到也 Tab 不进去（Radix / Reka 的 forceMount
+  // 同样靠样式做这件事；程序化 focus() 在 Chrome 下仍然能落到隐藏项，靠的是开合状态先把
+  // visibility 恢复成 visible，重开时焦点落回首项就是这条路径）。
+  &[data-state='closed'] {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    animation: #{$block}-hide var(--y-motion-duration-fast) var(--y-motion-ease-in);
+  }
+
+  &[data-side='top'][data-state='open'] {
+    animation-name: #{$block}-show-up;
+  }
+
+  &[data-side='top'][data-state='closed'] {
+    animation-name: #{$block}-hide-up;
+  }
+
+  @keyframes #{$block}-show {
+    from {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-hide {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      visibility: hidden;
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-show-up {
+    from {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+
+  @keyframes #{$block}-hide-up {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      visibility: hidden;
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 项 / 标题 / 分隔线
+  // ---------------------------------------------------------------------------
+
+  @include e('item') {
+    display: flex;
+    box-sizing: border-box;
+    gap: var(--y-padding-sm);
+    align-items: center;
+    min-height: getCssVar('dropdown-menu', 'item-height');
+    padding: 0 getCssVar('dropdown-menu', 'item-padding-x');
+    cursor: pointer;
+    border-radius: getCssVar('dropdown-menu', 'item-radius');
+    -webkit-user-select: none;
+    user-select: none;
+
+    transition: background-color var(--y-motion-duration-fast);
+
+    &[data-highlighted] {
+      background: getCssVar('dropdown-menu', 'item-bg-highlighted');
+    }
+
+    &[data-disabled] {
+      color: getCssVar('dropdown-menu', 'item-color-disabled');
+      cursor: not-allowed;
+      background: transparent;
+    }
+  }
+
+  @include e('label') {
+    padding: var(--y-padding-xs) getCssVar('dropdown-menu', 'item-padding-x');
+    font-size: var(--y-font-size-sm);
+    color: getCssVar('dropdown-menu', 'label-color');
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  @include e('separator') {
+    height: 1px;
+    margin: getCssVar('dropdown-menu', 'padding') 0;
+    background: getCssVar('dropdown-menu', 'separator');
+  }
+
+  @include reduced-motion {
+    &[data-state='open'],
+    &[data-state='closed'] {
+      animation-duration: 1ms;
+    }
+
+    @include e('item') {
+      transition: none;
+    }
+  }
+}
