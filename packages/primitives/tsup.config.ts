@@ -21,6 +21,7 @@ export default defineConfig({
     'floating/index': 'src/floating/index.ts',
     'tooltip/index': 'src/tooltip/index.ts',
     'select/index': 'src/select/index.ts',
+    'ellipsis/index': 'src/ellipsis/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

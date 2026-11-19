@@ -23,6 +23,7 @@ export default defineConfig({
         'popover/index': 'src/popover/index.ts',
         'dropdown-menu/index': 'src/dropdown-menu/index.ts',
         'select/index': 'src/select/index.ts',
+        'ellipsis/index': 'src/ellipsis/index.ts',
         'popover/index': 'src/popover/index.ts',
         'dropdown-menu/index': 'src/dropdown-menu/index.ts',
       },

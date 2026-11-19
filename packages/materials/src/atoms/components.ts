@@ -16,6 +16,7 @@ import {
   DialogTrigger,
 } from '@agile-plus/ui/dialog';
 import { FlexItem, FlexRoot } from '@agile-plus/ui/flex';
+import { Ellipsis } from '@agile-plus/ui/ellipsis';
 import {
   DropdownMenuCheckboxItem,
   DropdownMenuItem,
@@ -117,6 +118,7 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.scroll-area-corner': ScrollAreaCorner,
   'agile-plus.ui.flex': FlexRoot,
   'agile-plus.ui.flex-item': FlexItem,
+  'agile-plus.ui.ellipsis': Ellipsis,
   'agile-plus.ui.dropdown-menu-item': DropdownMenuItem,
   'agile-plus.ui.dropdown-menu-checkbox-item': DropdownMenuCheckboxItem,
   'agile-plus.ui.dropdown-menu-label': DropdownMenuLabel,

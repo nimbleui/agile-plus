@@ -47,3 +47,5 @@ export * from './usePopover';
 export * from './useDropdownMenu';
 
 export * from './useSelect';
+
+export * from './useEllipsis';

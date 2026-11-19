@@ -28,6 +28,7 @@ export default defineConfig({
     'usePopover/index': 'src/usePopover/index.ts',
     'useDropdownMenu/index': 'src/useDropdownMenu/index.ts',
     'useSelect/index': 'src/useSelect/index.ts',
+    'useEllipsis/index': 'src/useEllipsis/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

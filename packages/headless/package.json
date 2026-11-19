@@ -170,6 +170,12 @@
       "types": "./dist/useSelect/index.d.ts",
       "import": "./dist/useSelect/index.js",
       "require": "./dist/useSelect/index.cjs"
+    },
+    "./useEllipsis": {
+      "source": "./src/useEllipsis/index.ts",
+      "types": "./dist/useEllipsis/index.d.ts",
+      "import": "./dist/useEllipsis/index.js",
+      "require": "./dist/useEllipsis/index.cjs"
     }
   },
   "files": [

@@ -129,6 +129,12 @@
       "types": "./dist/select/index.d.ts",
       "import": "./dist/select/index.js",
       "require": "./dist/select/index.cjs"
+    },
+    "./ellipsis": {
+      "source": "./src/ellipsis/index.ts",
+      "types": "./dist/ellipsis/index.d.ts",
+      "import": "./dist/ellipsis/index.js",
+      "require": "./dist/ellipsis/index.cjs"
     }
   },
   "files": [

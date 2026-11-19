@@ -1,0 +1,63 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('ellipsis') {
+  @include set-component-css-var(
+    'ellipsis',
+    (
+      'font-size': var(--y-font-size),
+      'tail-color': var(--y-color-text-secondary),
+      'expand-color': var(--y-color-primary),
+      'expand-hover-color': var(--y-color-primary-hover),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 外壳：排版上下文
+// ---------------------------------------------------------------------------
+//
+// 截断 / flex / 不可选中由无头层内联产出（行为），本层只给字号与装饰。inline-block
+// 让外壳可以被消费者限宽，max-width 保证不撑破父容器。
+
+@include b('ellipsis') {
+  display: inline-block;
+  max-width: 100%;
+  font-size: getCssVar('ellipsis', 'font-size');
+  color: inherit;
+  vertical-align: bottom;
+
+  @include m('small') {
+    --y-ellipsis-font-size: var(--y-font-size-sm);
+  }
+
+  @include m('large') {
+    --y-ellipsis-font-size: var(--y-font-size-lg);
+  }
+
+  // 中间省略的尾部是重复副本，用次要色与 head 区分，读屏已 aria-hidden。
+  [data-part='tail'] {
+    color: getCssVar('ellipsis', 'tail-color');
+  }
+
+  // 展开 / 收起是链接外观的行内按钮，不是实心按钮：它不该抢正文的视觉重量。
+  [data-part='expand'] {
+    margin-left: var(--y-padding-xs);
+    padding: 0;
+    font: inherit;
+    color: getCssVar('ellipsis', 'expand-color');
+    cursor: pointer;
+    background: none;
+    border: none;
+
+    &:hover {
+      color: getCssVar('ellipsis', 'expand-hover-color');
+      text-decoration: underline;
+    }
+
+    @include focus-ring(getCssVar('ellipsis', 'expand-color'));
+  }
+}

@@ -35,3 +35,5 @@ export * from './popover';
 export * from './dropdown-menu';
 
 export * from './select';
+
+export * from './ellipsis';

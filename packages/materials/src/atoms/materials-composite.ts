@@ -545,6 +545,38 @@ export const materials = [
     container: true,
   }),
   defineMaterial({
+    name: 'agile-plus.ui.ellipsis',
+    title: '文本省略·原子',
+    category: '原子件·展示',
+    icon: 'type',
+    props: {
+      mode: {
+        type: 'string',
+        title: '省略模式',
+        enum: ['single', 'multi', 'middle'],
+        default: 'single',
+      },
+      lines: { type: 'number', title: '多行行数', description: '仅 multi 模式生效', default: 2 },
+      tailChars: {
+        type: 'number',
+        title: '中间省略保留尾部字符',
+        description: '仅 middle 模式生效',
+        default: 4,
+      },
+      expandable: { type: 'boolean', title: '可展开', default: false },
+      tooltip: { type: 'boolean', title: '溢出时 Tooltip 全文', default: true },
+    },
+    size: { width: 240, height: 24 },
+    container: true,
+    events: [
+      {
+        name: 'update:expanded',
+        title: '展开态变化',
+        parameters: [{ name: 'value', type: 'boolean', description: '变化后的展开状态' }],
+      },
+    ],
+  }),
+  defineMaterial({
     name: 'agile-plus.ui.dropdown-menu-item',
     title: '菜单项',
     category: '原子件·浮层',

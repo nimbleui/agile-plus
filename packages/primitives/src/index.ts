@@ -33,3 +33,5 @@ export * from './floating';
 export * from './tooltip';
 
 export * from './select';
+
+export * from './ellipsis';

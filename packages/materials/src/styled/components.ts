@@ -4,6 +4,7 @@ import { Checkbox, CheckboxGroup } from '@agile-plus/components/checkbox';
 import { Collapsible } from '@agile-plus/components/collapsible';
 import { Dialog } from '@agile-plus/components/dialog';
 import { DropdownMenu, DropdownMenuItem } from '@agile-plus/components/dropdown-menu';
+import { Ellipsis } from '@agile-plus/components/ellipsis';
 import { Flex, FlexItem } from '@agile-plus/components/flex';
 import { Popover } from '@agile-plus/components/popover';
 import { Progress } from '@agile-plus/components/progress';
@@ -53,5 +54,6 @@ export const components: Record<string, Component> = {
   'agile-plus.popover': Popover,
   'agile-plus.dropdown-menu': DropdownMenu,
   'agile-plus.select': Select,
+  'agile-plus.ellipsis': Ellipsis,
   'agile-plus.dropdown-menu-item': DropdownMenuItem,
 };

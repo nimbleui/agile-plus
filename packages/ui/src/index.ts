@@ -97,6 +97,8 @@ export type {
   SelectViewportProps,
 } from './select/types';
 
+export type { EllipsisEmits, EllipsisProps } from './ellipsis/types';
+
 export * from './dialog';
 
 export * from './tabs';
@@ -130,5 +132,7 @@ export * from './dropdown-menu';
 export * from './collapsible';
 
 export * from './select';
+
+export * from './ellipsis';
 
 export * from './slot';
