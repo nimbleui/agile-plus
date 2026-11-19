@@ -4,6 +4,7 @@ import type {
   UseCheckboxGroupReturn,
   UseCheckboxReturn,
   UseDatePickerReturn,
+  UseDateRangePickerReturn,
   UseDialogReturn,
   UseDropdownMenuReturn,
   UsePopoverReturn,
@@ -135,6 +136,13 @@ interface ComponentContexts {
    * 格子状态由 getCellProps / getCellState 统一派生，不需要项级上下文。
    */
   datePicker: UseDatePickerReturn;
+  /**
+   * DateRangePicker 的上下文：Root 下发给 Input / Content / Grid / Cell。
+   *
+   * 与 datePicker 分键登记：两端值、活跃端与悬停预览的返回形状不同，
+   * 共用一个键会让两套部件互相注入到错误的实例。
+   */
+  dateRangePicker: UseDateRangePickerReturn;
 }
 
 /**

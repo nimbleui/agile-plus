@@ -24,6 +24,7 @@ export default defineConfig({
         'dropdown-menu/index': 'src/dropdown-menu/index.ts',
         'select/index': 'src/select/index.ts',
         'date-picker/index': 'src/date-picker/index.ts',
+        'date-range-picker/index': 'src/date-range-picker/index.ts',
         'ellipsis/index': 'src/ellipsis/index.ts',
         'input/index': 'src/input/index.ts',
         'textarea/index': 'src/textarea/index.ts',

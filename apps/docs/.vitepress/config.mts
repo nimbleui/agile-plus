@@ -54,6 +54,7 @@ export default defineConfig({
             { text: 'RadioGroup 单选组', link: '/components/radio-group' },
             { text: 'Select 下拉选择', link: '/components/select' },
             { text: 'DatePicker 日期选择', link: '/components/date-picker' },
+            { text: 'DateRangePicker 期间选择', link: '/components/date-range-picker' },
             { text: 'Ellipsis 文本省略', link: '/components/ellipsis' },
             { text: 'Slider 滑块', link: '/components/slider' },
             { text: 'Checkbox 复选框', link: '/components/checkbox' },

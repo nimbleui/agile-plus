@@ -124,6 +124,12 @@
       "import": "./dist/date-picker/index.js",
       "require": "./dist/date-picker/index.cjs"
     },
+    "./date-range-picker": {
+      "source": "./src/date-range-picker/index.ts",
+      "types": "./dist/date-range-picker/index.d.ts",
+      "import": "./dist/date-range-picker/index.js",
+      "require": "./dist/date-range-picker/index.cjs"
+    },
     "./ellipsis": {
       "source": "./src/ellipsis/index.ts",
       "types": "./dist/ellipsis/index.d.ts",

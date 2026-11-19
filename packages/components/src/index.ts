@@ -38,6 +38,8 @@ export * from './select';
 
 export * from './date-picker';
 
+export * from './date-range-picker';
+
 export * from './ellipsis';
 
 export * from './input';

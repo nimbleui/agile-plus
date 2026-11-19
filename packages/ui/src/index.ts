@@ -107,6 +107,15 @@ export type {
   DatePickerRootProps,
 } from './date-picker/types';
 
+export type {
+  DateRangePickerCellProps,
+  DateRangePickerContentProps,
+  DateRangePickerGridProps,
+  DateRangePickerInputProps,
+  DateRangePickerRootEmits,
+  DateRangePickerRootProps,
+} from './date-range-picker/types';
+
 export * from './dialog';
 
 export * from './tabs';
@@ -142,6 +151,8 @@ export * from './collapsible';
 export * from './select';
 
 export * from './date-picker';
+
+export * from './date-range-picker';
 
 export * from './ellipsis';
 

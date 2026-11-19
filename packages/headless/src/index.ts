@@ -50,6 +50,8 @@ export * from './useSelect';
 
 export * from './useDatePicker';
 
+export * from './useDateRangePicker';
+
 export * from './useEllipsis';
 
 export * from './useInput';

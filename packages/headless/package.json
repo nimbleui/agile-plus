@@ -177,6 +177,12 @@
       "import": "./dist/useDatePicker/index.js",
       "require": "./dist/useDatePicker/index.cjs"
     },
+    "./useDateRangePicker": {
+      "source": "./src/useDateRangePicker/index.ts",
+      "types": "./dist/useDateRangePicker/index.d.ts",
+      "import": "./dist/useDateRangePicker/index.js",
+      "require": "./dist/useDateRangePicker/index.cjs"
+    },
     "./useEllipsis": {
       "source": "./src/useEllipsis/index.ts",
       "types": "./dist/useEllipsis/index.d.ts",
