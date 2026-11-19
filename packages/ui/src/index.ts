@@ -78,6 +78,25 @@ export type {
   CollapsibleTriggerProps,
 } from './collapsible/types';
 
+export type {
+  SelectContentProps,
+  SelectGroupContext,
+  SelectGroupProps,
+  SelectIconProps,
+  SelectItemContext,
+  SelectItemIndicatorProps,
+  SelectItemProps,
+  SelectItemTextProps,
+  SelectLabelProps,
+  SelectOptionItem,
+  SelectRootEmits,
+  SelectRootProps,
+  SelectSeparatorProps,
+  SelectTriggerProps,
+  SelectValueProps,
+  SelectViewportProps,
+} from './select/types';
+
 export * from './dialog';
 
 export * from './tabs';
@@ -109,5 +128,7 @@ export * from './popover';
 export * from './dropdown-menu';
 
 export * from './collapsible';
+
+export * from './select';
 
 export * from './slot';

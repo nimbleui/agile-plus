@@ -45,3 +45,5 @@ export * from './useTooltip';
 export * from './usePopover';
 
 export * from './useDropdownMenu';
+
+export * from './useSelect';

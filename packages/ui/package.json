@@ -117,6 +117,12 @@
       "types": "./dist/dropdown-menu/index.d.ts",
       "import": "./dist/dropdown-menu/index.js",
       "require": "./dist/dropdown-menu/index.cjs"
+    },
+    "./select": {
+      "source": "./src/select/index.ts",
+      "types": "./dist/select/index.d.ts",
+      "import": "./dist/select/index.js",
+      "require": "./dist/select/index.cjs"
     }
   },
   "files": [

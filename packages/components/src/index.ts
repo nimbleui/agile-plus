@@ -33,3 +33,5 @@ export * from './tooltip';
 export * from './popover';
 
 export * from './dropdown-menu';
+
+export * from './select';

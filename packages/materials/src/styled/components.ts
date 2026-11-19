@@ -9,6 +9,7 @@ import { Popover } from '@agile-plus/components/popover';
 import { Progress } from '@agile-plus/components/progress';
 import { RadioGroup, RadioGroupItem } from '@agile-plus/components/radio-group';
 import { ScrollArea } from '@agile-plus/components/scroll-area';
+import { Select } from '@agile-plus/components/select';
 import { Slider } from '@agile-plus/components/slider';
 import { Switch } from '@agile-plus/components/switch';
 import { Tabs } from '@agile-plus/components/tabs';
@@ -51,5 +52,6 @@ export const components: Record<string, Component> = {
   'agile-plus.tooltip': Tooltip,
   'agile-plus.popover': Popover,
   'agile-plus.dropdown-menu': DropdownMenu,
+  'agile-plus.select': Select,
   'agile-plus.dropdown-menu-item': DropdownMenuItem,
 };

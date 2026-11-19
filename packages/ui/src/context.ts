@@ -8,6 +8,7 @@ import type {
   UsePopoverReturn,
   UseRadioGroupReturn,
   UseScrollAreaReturn,
+  UseSelectReturn,
   UseSliderReturn,
   UseTabsReturn,
   UseToastProviderReturn,
@@ -22,6 +23,8 @@ import type { ComputedRef } from 'vue';
 import type { ScrollAreaOrientation } from '@agile-plus/primitives/scroll-area';
 
 import type { RadioGroupItemContext } from './radio-group/types';
+
+import type { SelectGroupContext, SelectItemContext } from './select/types';
 
 import type { ProgressContext } from './progress/types';
 
@@ -115,6 +118,15 @@ interface ComponentContexts {
    * 只有一层——菜单没有 Provider，开合、项登记与 roving focus 都挂在 Root 上。
    */
   dropdownMenu: UseDropdownMenuReturn;
+  /**
+   * Select 的三层上下文：列表级实例、项级选中态、分组标题 id。
+   *
+   * 项级与分组级分开登记，理由与 radioGroupItem 相同——ItemText / Indicator 只关心
+   * 自己所属的那一个选项，Group 只关心自己的标题 id，都不该从列表级实例里再解析一遍。
+   */
+  select: UseSelectReturn;
+  selectItem: SelectItemContext;
+  selectGroup: SelectGroupContext;
 }
 
 /**

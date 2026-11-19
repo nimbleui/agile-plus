@@ -52,6 +52,7 @@ export default defineConfig({
             { text: 'DropdownMenu 下拉菜单', link: '/components/dropdown-menu' },
             { text: 'Tabs 标签页', link: '/components/tabs' },
             { text: 'RadioGroup 单选组', link: '/components/radio-group' },
+            { text: 'Select 下拉选择', link: '/components/select' },
             { text: 'Slider 滑块', link: '/components/slider' },
             { text: 'Checkbox 复选框', link: '/components/checkbox' },
             { text: 'ScrollArea 滚动区域', link: '/components/scroll-area' },

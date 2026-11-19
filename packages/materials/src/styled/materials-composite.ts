@@ -485,6 +485,76 @@ export const materials = [
     ],
   }),
   defineMaterial({
+    name: 'agile-plus.select',
+    title: '下拉选择器',
+    category: '表单',
+    icon: 'chevronDown',
+    // `options` 是数组型属性，面板会退化成文本框并写回字符串，因此不登记：
+    // 设计态靠默认插槽往里拖选项部件，运行态由代码喂 options。
+    props: {
+      defaultValue: { type: 'string', title: '默认选中值', default: '' },
+      placeholder: { type: 'string', title: '占位文案', default: '请选择' },
+      size: {
+        type: 'string',
+        title: '尺寸',
+        enum: ['small', 'middle', 'large'],
+        default: 'middle',
+      },
+      variant: {
+        type: 'string',
+        title: '外观',
+        enum: ['outlined', 'filled', 'borderless'],
+        default: 'outlined',
+      },
+      disabled: { type: 'boolean', title: '禁用', default: false },
+      required: { type: 'boolean', title: '必选', default: false },
+      clearable: { type: 'boolean', title: '可清除', default: false },
+      loading: { type: 'boolean', title: '加载中', default: false },
+      block: { type: 'boolean', title: '占满一行', default: false },
+      loop: { type: 'boolean', title: '方向键循环', default: true },
+    },
+    size: { width: 220, height: 32 },
+    container: true,
+    // 列表是 portal 出去的浮层，设计态只画触发器；四格按「窄条在前、兜底在后」排，
+    // 这是平台落点判定的要求。item 是逐项渲染的 scoped 插槽，拖进去的内容会出现在
+    // 每个选项里；empty 只在没有选项时渲染。
+    slots: [
+      {
+        name: 'value',
+        title: '选中值回显',
+        maxChildren: 1,
+        region: { x: 0, y: 0, width: 0.6, height: 1 },
+      },
+      {
+        name: 'item',
+        title: '选项内容',
+        description: '逐项渲染，会出现在每个选项里',
+        maxChildren: 1,
+        region: { x: 0.6, y: 0, width: 0.2, height: 1 },
+      },
+      {
+        name: 'empty',
+        title: '空态文案',
+        maxChildren: 1,
+        region: { x: 0.8, y: 0, width: 0.2, height: 0.5 },
+      },
+      { name: 'default', title: '选项列表', region: { x: 0, y: 0.5, width: 1, height: 0.5 } },
+    ],
+    events: [
+      {
+        name: 'update:modelValue',
+        title: '选中值变化',
+        parameters: [{ name: 'value', type: 'string', description: '选中项的 value' }],
+      },
+      {
+        name: 'update:open',
+        title: '开合变化',
+        parameters: [{ name: 'value', type: 'boolean', description: '变化后的打开状态' }],
+      },
+      { name: 'clear', title: '清除选择', description: '点击清除按钮后触发' },
+    ],
+  }),
+  defineMaterial({
     name: 'agile-plus.popover',
     title: '气泡卡片',
     category: '浮层',

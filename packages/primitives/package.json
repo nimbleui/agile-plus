@@ -123,6 +123,12 @@
       "types": "./dist/tooltip/index.d.ts",
       "import": "./dist/tooltip/index.js",
       "require": "./dist/tooltip/index.cjs"
+    },
+    "./select": {
+      "source": "./src/select/index.ts",
+      "types": "./dist/select/index.d.ts",
+      "import": "./dist/select/index.js",
+      "require": "./dist/select/index.cjs"
     }
   },
   "files": [

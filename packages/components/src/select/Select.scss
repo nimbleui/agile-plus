@@ -1,0 +1,584 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 变量表同时声明在 .y-select 与 .y-select-content 上：自定义属性只向下继承，而列表
+// 被 portal 到 body，是 .y-select 的**兄弟**而不是后代，只挂在前者上时列表读到的
+// 全是未定义值，整条声明按 invalid at computed-value time 处理——表现是「下拉没有
+// 背景 / 没有圆角 / 高度不受限」这类难查的视觉错误。与 Toast / ToastViewport 同一条约束。
+//
+// 两个测量变量由无头层内联写在列表元素上，这里只消费不声明：
+//   --y-select-trigger-width            触发元素实测宽度，列表至少与它同宽
+//   --y-select-content-available-height 实际所在边到视口边缘的可用高度
+// 声明它们的是无头层，因此这里给回退值，未测量时（SSR 首帧）也不至于塌成 0。
+
+$select-vars: (
+  'height': var(--y-control-height),
+  'padding-x': var(--y-padding),
+  'radius': var(--y-border-radius),
+  'bg': var(--y-color-bg-container),
+  'bg-filled': var(--y-color-fill-tertiary),
+  'bg-disabled': var(--y-color-fill-quaternary),
+  'color': var(--y-color-text),
+  'color-placeholder': var(--y-color-text-tertiary),
+  'color-disabled': var(--y-color-text-disabled),
+  'border': var(--y-color-border),
+  'border-hover': var(--y-color-primary-hover),
+  'border-open': var(--y-color-primary),
+  'icon-color': var(--y-color-text-tertiary),
+  'clear-color': var(--y-color-text-tertiary),
+  'clear-hover-bg': var(--y-color-fill-secondary),
+  'font-size': var(--y-font-size),
+  'duration': var(--y-motion-duration-mid),
+);
+
+$select-content-vars: (
+  'bg': var(--y-color-bg-elevated),
+  'color': var(--y-color-text),
+  'border': var(--y-color-border-secondary),
+  'radius': var(--y-border-radius-lg),
+  'shadow': var(--y-shadow),
+  'padding': var(--y-padding-xs),
+  'max-height': 320px,
+  'item-height': 32px,
+  'item-padding-x': var(--y-padding-sm),
+  'item-radius': var(--y-border-radius),
+  'item-color': var(--y-color-text),
+  'item-color-disabled': var(--y-color-text-disabled),
+  'item-bg-highlighted': var(--y-color-fill-tertiary),
+  'item-bg-selected': var(--y-color-primary-bg),
+  'item-color-selected': var(--y-color-primary-active),
+  'indicator-color': var(--y-color-primary),
+  'label-color': var(--y-color-text-tertiary),
+  'separator': var(--y-color-border-secondary),
+  'empty-color': var(--y-color-text-tertiary),
+  'font-size': var(--y-font-size),
+  'scrollbar-thumb': var(--y-color-fill),
+  'duration': var(--y-motion-duration-mid),
+);
+
+@include b('select') {
+  @include set-component-css-var('select', $select-vars);
+}
+
+@include b('select-content') {
+  @include set-component-css-var('select-content', $select-content-vars);
+}
+
+// ---------------------------------------------------------------------------
+// 触发元素：外层容器
+// ---------------------------------------------------------------------------
+//
+// 容器只负责定位上下文与宽度。隐藏原生 select 与清除按钮都是触发按钮的兄弟节点
+// （<button> 内不允许再放交互元素），靠绝对定位覆盖在按钮上，必须有这个共同父级。
+
+@include b('select') {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+
+  @include when('block') {
+    display: flex;
+    width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 触发元素：按钮本体
+// ---------------------------------------------------------------------------
+
+@include b('select') {
+  @include e('trigger') {
+    display: inline-flex;
+    box-sizing: border-box;
+    gap: var(--y-padding-sm);
+    align-items: center;
+    width: 100%;
+    height: getCssVar('select', 'height');
+    margin: 0;
+    padding: 0 getCssVar('select', 'padding-x');
+    font-family: var(--y-font-family);
+    font-size: getCssVar('select', 'font-size');
+    line-height: 1;
+    color: getCssVar('select', 'color');
+    text-align: left;
+    cursor: pointer;
+    background: getCssVar('select', 'bg');
+    border: 1px solid getCssVar('select', 'border');
+    border-radius: getCssVar('select', 'radius');
+    -webkit-user-select: none;
+    user-select: none;
+
+    transition:
+      border-color getCssVar('select', 'duration'),
+      background-color getCssVar('select', 'duration'),
+      box-shadow getCssVar('select', 'duration');
+
+    @include focus-ring(getCssVar('select', 'border-open'));
+
+    &:hover:not([data-disabled]) {
+      border-color: getCssVar('select', 'border-hover');
+    }
+
+    &[data-state='open'] {
+      border-color: getCssVar('select', 'border-open');
+      box-shadow: 0 0 0 2px var(--y-color-primary-bg);
+    }
+
+    &[data-disabled] {
+      color: getCssVar('select', 'color-disabled');
+      cursor: not-allowed;
+      background: getCssVar('select', 'bg-disabled');
+      border-color: getCssVar('select', 'border');
+      box-shadow: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 尺寸变体
+// ---------------------------------------------------------------------------
+
+@include b('select') {
+  @include m('small') {
+    --y-select-height: var(--y-control-height-sm);
+    --y-select-padding-x: var(--y-padding-sm);
+    --y-select-font-size: var(--y-font-size-sm);
+  }
+
+  @include m('large') {
+    --y-select-height: var(--y-control-height-lg);
+    --y-select-padding-x: var(--y-padding-md);
+    --y-select-font-size: var(--y-font-size-lg);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 外观变体
+// ---------------------------------------------------------------------------
+//
+// 三种外观只差底色与边框，因此只覆盖这两个属性，不复制按钮基础样式。
+// filled 的 hover 用底色加深而不是描边——它本来就没有边框可提示。
+
+@include b('select') {
+  @include m('filled') {
+    @include e('trigger') {
+      background: getCssVar('select', 'bg-filled');
+      border-color: transparent;
+
+      &:hover:not([data-disabled]) {
+        background: var(--y-color-fill-secondary);
+        border-color: transparent;
+      }
+
+      &[data-state='open'] {
+        background: getCssVar('select', 'bg');
+        border-color: getCssVar('select', 'border-open');
+      }
+    }
+  }
+
+  @include m('borderless') {
+    @include e('trigger') {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+
+      &:hover:not([data-disabled]) {
+        background: getCssVar('select', 'bg-filled');
+        border-color: transparent;
+      }
+
+      &[data-state='open'] {
+        background: getCssVar('select', 'bg-filled');
+        border-color: transparent;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 触发元素子部件
+// ---------------------------------------------------------------------------
+
+@include b('select') {
+  @include e('value') {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+
+    &[data-placeholder] {
+      color: getCssVar('select', 'color-placeholder');
+    }
+  }
+
+  @include e('icon') {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    color: getCssVar('select', 'icon-color');
+
+    transition: transform getCssVar('select', 'duration') var(--y-motion-ease-in-out);
+  }
+
+  // 箭头朝向由父级 data-state 决定：逻辑层不产出旋转角度，那是视觉形状。
+  @include e('trigger') {
+    &[data-state='open'] {
+      .#{$block}__icon {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  @include e('spinner') {
+    box-sizing: border-box;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentcolor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: #{$block}-spin 0.8s linear infinite;
+  }
+
+  @keyframes #{$block}-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  // 清除按钮覆盖在按钮右侧，是兄弟节点而不是子节点。留出右侧内边距避免文字被压住。
+  @include e('clear') {
+    position: absolute;
+    top: 50%;
+    right: getCssVar('select', 'padding-x');
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    color: getCssVar('select', 'clear-color');
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    transform: translateY(-50%);
+
+    transition:
+      color var(--y-motion-duration-fast),
+      background-color var(--y-motion-duration-fast);
+
+    &:hover {
+      color: getCssVar('select', 'color');
+      background: getCssVar('select', 'clear-hover-bg');
+    }
+
+    @include focus-ring(getCssVar('select', 'border-open'));
+  }
+
+  // 有清除按钮时箭头让位，两者不叠在同一格。
+  &:has(.#{$block}__clear) {
+    .#{$block}__icon {
+      visibility: hidden;
+    }
+
+    .#{$block}__trigger {
+      padding-right: calc(getCssVar('select', 'padding-x') + 20px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 列表容器
+// ---------------------------------------------------------------------------
+//
+// 位置由无头层写成内联 transform，本层不碰 left/top，也不给 transform 加过渡或动画：
+// 那会覆盖逐帧定位，让列表从视口原点飞进来。进出场的位移改用独立的 translate 属性，
+// 它与 transform 是两条互不覆盖的通道，合成后才是「定位 + 入场偏移」。
+//
+// 常驻挂载、关闭时靠 closed 状态隐藏，因此进出场必须写成 @keyframes：Presence 只认
+// animationend，用 transition 会被判成「没有动画」而当帧隐藏。
+
+@include b('select-content') {
+  box-sizing: border-box;
+  // 宽度**确定地**等于触发器宽度（而不是 min-width）：min-width 会让面板宽度在
+  // 「自然宽度 / 触发器宽度 / 滚动条出现」之间 settles，每次宽度变化都会让
+  // center/end 对齐或 shift 钳制重新解算 x，表现为打开后横向跳一下。宽度锁定后
+  // x 只依赖触发器与视口，打开后不再横向移动；超长选项由 item-text 省略号承担。
+  width: var(--y-select-trigger-width, 120px);
+  padding: getCssVar('select-content', 'padding');
+  font-family: var(--y-font-family);
+  font-size: getCssVar('select-content', 'font-size');
+  color: getCssVar('select-content', 'color');
+  background: getCssVar('select-content', 'bg');
+  border: 1px solid getCssVar('select-content', 'border');
+  border-radius: getCssVar('select-content', 'radius');
+  box-shadow: getCssVar('select-content', 'shadow');
+  z-index: var(--y-z-index-dropdown);
+
+  // hidden 是 UA 样式，优先级低于本层的 display 声明，必须显式覆盖回来，
+  // 否则关闭态的列表会一直挂在页面上吃掉点击。
+  &[hidden] {
+    display: none;
+  }
+
+  // 退场动画期间（以及后台标签页里 animationend 迟迟不触发时）列表仍然挂载且
+  // opacity 为 0：一块看不见的 fixed 面板带着 dropdown 层级，不关掉 pointer-events
+  // 就会盖在页面上吃掉点击。与 Tooltip 的 closed 态同一条约束。
+  // visibility 把 closed 的 listbox 移出无障碍树：常驻（keepMounted）之后关闭不卸载，
+  // 只透明的话读屏仍会播报整份选项列表。hide 的 from 显式声明 visibility: visible，
+  // 退场动画才仍然看得见。
+  &[data-state='closed'] {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &[data-state='open'] {
+    animation: #{$block}-show getCssVar('select-content', 'duration') var(--y-motion-ease-out);
+  }
+
+  &[data-state='closed'] {
+    animation: #{$block}-hide var(--y-motion-duration-fast) var(--y-motion-ease-in) forwards;
+  }
+
+  // 向上展开时从下边收起，方向跟着实际所在边走，翻转后才不违和。
+  &[data-side='top'][data-state='open'] {
+    animation-name: #{$block}-show-up;
+  }
+
+  &[data-side='top'][data-state='closed'] {
+    animation-name: #{$block}-hide-up;
+  }
+
+  @keyframes #{$block}-show {
+    from {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-hide {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-show-up {
+    from {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+
+  @keyframes #{$block}-hide-up {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 滚动视口
+// ---------------------------------------------------------------------------
+//
+// 最大高度取「设计上限」与「实测可用高度」的较小值：列表因此永远不会超出视口，
+// 也不需要再放上下滚动按钮。滚动条按本组件的配色绘制，不用浏览器默认样式。
+
+@include b('select-content') {
+  @include e('viewport') {
+    max-height: min(
+      getCssVar('select-content', 'max-height'),
+      var(--y-select-content-available-height, 320px)
+    );
+    overflow-y: auto;
+    // 预留滚动条槽：滚动条出现/消失不再改变视口宽度，避免由此引发的二次定位横向跳动。
+    scrollbar-gutter: stable;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+    scrollbar-color: getCssVar('select-content', 'scrollbar-thumb') transparent;
+
+    &::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: getCssVar('select-content', 'scrollbar-thumb');
+      border-radius: var(--y-border-radius-round);
+
+      &:hover {
+        background: var(--y-color-text-tertiary);
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 选项
+// ---------------------------------------------------------------------------
+//
+// 高亮（键盘/指针所在项）与选中（当前值）是两个独立状态，必须能同时表达：
+// 高亮走底色，选中走文字色 + 勾选标记。只用一个底色会让「正在看哪一项」和
+// 「已经选了哪一项」分不开。
+
+@include b('select-content') {
+  @include e('item') {
+    position: relative;
+    display: flex;
+    box-sizing: border-box;
+    gap: var(--y-padding-sm);
+    align-items: center;
+    min-height: getCssVar('select-content', 'item-height');
+    padding: 0 getCssVar('select-content', 'item-padding-x');
+    padding-left: calc(getCssVar('select-content', 'item-padding-x') + 20px);
+    color: getCssVar('select-content', 'item-color');
+    cursor: pointer;
+    border-radius: getCssVar('select-content', 'item-radius');
+    -webkit-user-select: none;
+    user-select: none;
+
+    transition: background-color var(--y-motion-duration-fast);
+
+    &[data-highlighted] {
+      background: getCssVar('select-content', 'item-bg-highlighted');
+    }
+
+    &[data-state='checked'] {
+      font-weight: 600;
+      color: getCssVar('select-content', 'item-color-selected');
+      background: getCssVar('select-content', 'item-bg-selected');
+    }
+
+    &[data-disabled] {
+      color: getCssVar('select-content', 'item-color-disabled');
+      cursor: not-allowed;
+      background: transparent;
+    }
+  }
+
+  @include e('item-text') {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  // 勾选标记常驻在左侧预留格里，选中时才挂载：未选中项的文字因此不会左右跳动。
+  @include e('indicator') {
+    position: absolute;
+    left: getCssVar('select-content', 'item-padding-x');
+    display: inline-flex;
+    align-items: center;
+    color: getCssVar('select-content', 'indicator-color');
+    animation: #{$block}-check var(--y-motion-duration-fast) var(--y-motion-ease-out);
+  }
+
+  @keyframes #{$block}-check {
+    from {
+      opacity: 0;
+      transform: scale(0.6);
+    }
+  }
+
+  @include e('label') {
+    padding: var(--y-padding-xs) getCssVar('select-content', 'item-padding-x');
+    font-size: var(--y-font-size-sm);
+    color: getCssVar('select-content', 'label-color');
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  @include e('separator') {
+    height: 1px;
+    margin: getCssVar('select-content', 'padding') 0;
+    background: getCssVar('select-content', 'separator');
+  }
+
+  @include e('empty') {
+    margin: 0;
+    padding: var(--y-padding-md) getCssVar('select-content', 'item-padding-x');
+    font-size: var(--y-font-size-sm);
+    color: getCssVar('select-content', 'empty-color');
+    text-align: center;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 列表尺寸变体
+// ---------------------------------------------------------------------------
+
+@include b('select-content') {
+  @include m('small') {
+    --y-select-content-item-height: 26px;
+    --y-select-content-font-size: var(--y-font-size-sm);
+  }
+
+  @include m('large') {
+    --y-select-content-item-height: 38px;
+    --y-select-content-font-size: var(--y-font-size-lg);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+//
+// 进出场只压缩时长，不能写 animation: none —— Presence 靠 animationend 决定隐藏
+// 时机，关掉动画会让列表在关闭那一帧直接消失（功能仍对，但失去了「它收起来了」
+// 这条反馈）。spinner 同理：停转会让加载态看起来像卡死，改成慢速旋转。
+
+@include b('select') {
+  @include reduced-motion {
+    @include e('trigger') {
+      transition: none;
+    }
+
+    @include e('icon') {
+      transition: none;
+    }
+
+    @include e('spinner') {
+      animation-duration: 2.4s;
+    }
+  }
+}
+
+@include b('select-content') {
+  @include reduced-motion {
+    &[data-state='open'],
+    &[data-state='closed'] {
+      animation-duration: 1ms;
+    }
+
+    @include e('item') {
+      transition: none;
+    }
+
+    @include e('indicator') {
+      animation-duration: 1ms;
+    }
+  }
+}

@@ -20,6 +20,7 @@ export default defineConfig({
     'collapsible/index': 'src/collapsible/index.ts',
     'floating/index': 'src/floating/index.ts',
     'tooltip/index': 'src/tooltip/index.ts',
+    'select/index': 'src/select/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

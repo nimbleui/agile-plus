@@ -31,3 +31,5 @@ export * from './collapsible';
 export * from './floating';
 
 export * from './tooltip';
+
+export * from './select';
