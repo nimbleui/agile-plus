@@ -11,6 +11,7 @@
     "build": "pnpm --filter \"./packages/*\" run build",
     "publish": "pnpm -r --filter \"@agile-plus/*\" --filter \"!@agile-plus/monorepo\" publish",
     "publish:dry": "pnpm -r --filter \"@agile-plus/*\" --filter \"!@agile-plus/monorepo\" publish --dry-run",
+    "release": "node scripts/release.mts",
     "docs:dev": "pnpm --filter @agile-plus/docs run dev",
     "docs:build": "pnpm --filter @agile-plus/docs run build",
     "docs:preview": "pnpm --filter @agile-plus/docs run preview",
@@ -19,7 +20,7 @@
     "test:watch": "vitest",
     "lint": "eslint --max-warnings 0 \"packages/*/src/**/*.{ts,vue}\" \"apps/docs/**/*.{ts,vue,mts}\" \"scripts/**/*.mts\" \"*.config.{ts,mjs}\"",
     "format": "prettier --write \"packages/**/*.{ts,vue,json,scss}\" \"apps/**/*.{ts,vue,json,scss,md}\"",
-    "typecheck": "pnpm -r run typecheck",
+    "typecheck": "pnpm -r run typecheck && tsc -p tsconfig.scripts.json",
     "verify": "pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm docs:build",
     "clean": "pnpm -r exec rm -rf dist node_modules/.cache"
   },
