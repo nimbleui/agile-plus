@@ -776,4 +776,39 @@ export const materials = [
       { name: 'default', title: '展开内容', region: { x: 0, y: 0.18, width: 1, height: 0.82 } },
     ],
   }),
+  defineMaterial({
+    name: 'agile-plus.avatar',
+    title: '头像',
+    category: '展示',
+    icon: 'circle',
+    props: {
+      src: { type: 'string', title: '图片地址' },
+      alt: { type: 'string', title: '替代文本' },
+      name: { type: 'string', title: '名字', description: '无图片时按名字生成文字缩写' },
+      size: {
+        type: 'string',
+        title: '尺寸',
+        enum: ['small', 'middle', 'large'],
+        default: 'middle',
+      },
+      shape: { type: 'string', title: '形状', enum: ['circle', 'square'], default: 'circle' },
+      delayMs: {
+        type: 'number',
+        title: '补位延迟毫秒',
+        description: '大于 0 时避免缓存图片瞬间命中导致补位闪一下',
+        default: 0,
+      },
+    },
+    size: { width: 40, height: 40 },
+    container: true,
+    events: [
+      {
+        name: 'loading-status-change',
+        title: '加载状态变化',
+        parameters: [
+          { name: 'status', type: 'string', description: 'idle / loading / loaded / error' },
+        ],
+      },
+    ],
+  }),
 ];

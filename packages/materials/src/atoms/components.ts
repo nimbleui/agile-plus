@@ -6,6 +6,7 @@ import {
   AccordionRoot,
   AccordionTrigger,
 } from '@agile-plus/ui/accordion';
+import { AvatarFallback, AvatarImage, AvatarRoot } from '@agile-plus/ui/avatar';
 import { Button } from '@agile-plus/ui/button';
 import { CheckboxGroupRoot, CheckboxIndicator, CheckboxRoot } from '@agile-plus/ui/checkbox';
 import {
@@ -155,4 +156,7 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.accordion-item': AccordionItem,
   'agile-plus.ui.accordion-trigger': AccordionTrigger,
   'agile-plus.ui.accordion-content': AccordionContent,
+  'agile-plus.ui.avatar': AvatarRoot,
+  'agile-plus.ui.avatar-image': AvatarImage,
+  'agile-plus.ui.avatar-fallback': AvatarFallback,
 };

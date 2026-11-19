@@ -218,6 +218,12 @@
       "types": "./dist/useAccordion/index.d.ts",
       "import": "./dist/useAccordion/index.js",
       "require": "./dist/useAccordion/index.cjs"
+    },
+    "./useAvatar": {
+      "source": "./src/useAvatar/index.ts",
+      "types": "./dist/useAvatar/index.d.ts",
+      "import": "./dist/useAvatar/index.js",
+      "require": "./dist/useAvatar/index.cjs"
     }
   },
   "files": [

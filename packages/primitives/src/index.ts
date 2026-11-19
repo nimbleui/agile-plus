@@ -47,3 +47,5 @@ export * from './pagination';
 export * from './table';
 
 export * from './accordion';
+
+export * from './avatar';

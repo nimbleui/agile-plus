@@ -53,3 +53,5 @@ export * from './button';
 export * from './table';
 
 export * from './accordion';
+
+export * from './avatar';

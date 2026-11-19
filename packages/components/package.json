@@ -172,6 +172,12 @@
       "import": "./dist/accordion/index.js",
       "require": "./dist/accordion/index.cjs"
     },
+    "./avatar": {
+      "source": "./src/avatar/index.ts",
+      "types": "./dist/avatar/index.d.ts",
+      "import": "./dist/avatar/index.js",
+      "require": "./dist/avatar/index.cjs"
+    },
     "./style.css": "./dist/components.css"
   },
   "files": [

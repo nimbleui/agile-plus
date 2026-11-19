@@ -135,6 +135,13 @@ export type {
   AccordionTriggerProps,
 } from './accordion/types';
 
+export type {
+  AvatarFallbackProps,
+  AvatarImageProps,
+  AvatarRootEmits,
+  AvatarRootProps,
+} from './avatar/types';
+
 export * from './dialog';
 
 export * from './tabs';
@@ -188,3 +195,5 @@ export * from './slot';
 export * from './table';
 
 export * from './accordion';
+
+export * from './avatar';

@@ -1,6 +1,7 @@
 import type { Component } from 'vue';
 
 import { Accordion, AccordionItem } from '@agile-plus/components/accordion';
+import { Avatar } from '@agile-plus/components/avatar';
 import { Button } from '@agile-plus/components/button';
 import { Checkbox, CheckboxGroup } from '@agile-plus/components/checkbox';
 import { Collapsible } from '@agile-plus/components/collapsible';
@@ -67,4 +68,5 @@ export const components: Record<string, Component> = {
   'agile-plus.button': Button,
   'agile-plus.accordion': Accordion,
   'agile-plus.accordion-item': AccordionItem,
+  'agile-plus.avatar': Avatar,
 };

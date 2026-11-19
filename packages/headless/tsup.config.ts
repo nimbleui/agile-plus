@@ -36,6 +36,7 @@ export default defineConfig({
     'usePagination/index': 'src/usePagination/index.ts',
     'useTable/index': 'src/useTable/index.ts',
     'useAccordion/index': 'src/useAccordion/index.ts',
+    'useAvatar/index': 'src/useAvatar/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

@@ -2,6 +2,7 @@ import { inject } from 'vue';
 
 import type {
   UseAccordionReturn,
+  UseAvatarReturn,
   UseCheckboxGroupReturn,
   UseCheckboxReturn,
   UseDatePickerReturn,
@@ -181,6 +182,12 @@ interface ComponentContexts {
    */
   accordion: UseAccordionReturn;
   accordionItem: AccordionItemContext;
+  /**
+   * Avatar 的上下文：Root 下发给 Image / Fallback。
+   *
+   * 只有一层——图片加载状态是唯一真源，Image 上报、Fallback 读取，都挂在 Root 上。
+   */
+  avatar: UseAvatarReturn;
 }
 
 /**

@@ -1,0 +1,95 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('avatar') {
+  @include set-component-css-var(
+    'avatar',
+    (
+      'bg': var(--y-color-fill-secondary),
+      'color': var(--y-color-text-secondary),
+      'radius': var(--y-border-radius),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('avatar') {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  font-weight: 500;
+  color: getCssVar('avatar', 'color');
+  vertical-align: middle;
+  background: getCssVar('avatar', 'bg');
+}
+
+// ---------------------------------------------------------------------------
+// 尺寸变体
+// ---------------------------------------------------------------------------
+
+@include b('avatar') {
+  @include m('small') {
+    width: var(--y-control-height-sm);
+    height: var(--y-control-height-sm);
+    font-size: var(--y-font-size-sm);
+  }
+
+  @include m('middle') {
+    width: var(--y-control-height);
+    height: var(--y-control-height);
+    font-size: var(--y-font-size);
+  }
+
+  @include m('large') {
+    width: var(--y-control-height-lg);
+    height: var(--y-control-height-lg);
+    font-size: var(--y-font-size-lg);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 形状变体
+// ---------------------------------------------------------------------------
+
+@include b('avatar') {
+  @include m('circle') {
+    border-radius: 50%;
+  }
+
+  @include m('square') {
+    border-radius: getCssVar('avatar', 'radius');
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 子元素
+// ---------------------------------------------------------------------------
+
+@include b('avatar') {
+  @include e('image') {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  @include e('fallback') {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    line-height: 1;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+}

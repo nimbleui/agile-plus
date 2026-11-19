@@ -63,3 +63,5 @@ export * from './usePagination';
 export * from './useTable';
 
 export * from './useAccordion';
+
+export * from './useAvatar';

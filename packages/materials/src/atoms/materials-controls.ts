@@ -543,4 +543,44 @@ export const materials = [
       },
     },
   }),
+  defineMaterial({
+    name: 'agile-plus.ui.avatar',
+    title: '头像·根',
+    category: '原子件·控件',
+    icon: 'circle',
+    accepts: ['agile-plus.ui.avatar-image', 'agile-plus.ui.avatar-fallback'],
+    size: { width: 40, height: 40 },
+    container: true,
+    events: [
+      {
+        name: 'loading-status-change',
+        title: '加载状态变化',
+        parameters: [
+          { name: 'status', type: 'string', description: 'idle / loading / loaded / error' },
+        ],
+      },
+    ],
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.avatar-image',
+    title: '头像·图片',
+    category: '原子件·部件',
+    icon: 'outline',
+    parent: 'agile-plus.ui.avatar',
+    props: {
+      src: { type: 'string', title: '图片地址' },
+      alt: { type: 'string', title: '替代文本' },
+    },
+    size: { width: 40, height: 40 },
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.avatar-fallback',
+    title: '头像·补位',
+    category: '原子件·部件',
+    icon: 'type',
+    parent: 'agile-plus.ui.avatar',
+    size: { width: 40, height: 40 },
+    container: true,
+    props: { delayMs: { type: 'number', title: '补位延迟毫秒', default: 0 } },
+  }),
 ];
