@@ -1,0 +1,113 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('input') {
+  @include set-component-css-var(
+    'input',
+    (
+      'height': var(--y-control-height),
+      'padding-x': var(--y-padding-sm),
+      'font-size': var(--y-font-size),
+      'radius': var(--y-border-radius),
+      'bg': var(--y-color-bg-container),
+      'border': var(--y-color-border),
+      'border-hover': var(--y-color-primary-hover),
+      'border-focus': var(--y-color-primary),
+      'border-invalid': var(--y-color-danger),
+      'text': var(--y-color-text),
+      'placeholder': var(--y-color-text-tertiary),
+      'bg-disabled': var(--y-color-fill-tertiary),
+      'text-disabled': var(--y-color-text-disabled),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('input') {
+  box-sizing: border-box;
+  width: 100%;
+  height: getCssVar('input', 'height');
+  margin: 0;
+  padding: 0 getCssVar('input', 'padding-x');
+  font-family: var(--y-font-family);
+  font-size: getCssVar('input', 'font-size');
+  line-height: var(--y-line-height);
+  color: getCssVar('input', 'text');
+  background: getCssVar('input', 'bg');
+  border: 1px solid getCssVar('input', 'border');
+  border-radius: getCssVar('input', 'radius');
+
+  transition:
+    border-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out),
+    background-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+
+  @include focus-ring(getCssVar('input', 'border-focus'));
+
+  &::placeholder {
+    color: getCssVar('input', 'placeholder');
+  }
+
+  // ---------------------------------------------------------------------------
+  // 尺寸变体
+  // ---------------------------------------------------------------------------
+
+  @include m('small') {
+    height: var(--y-control-height-sm);
+    padding: 0 var(--y-padding-xs);
+    font-size: var(--y-font-size-sm);
+  }
+
+  @include m('large') {
+    height: var(--y-control-height-lg);
+    padding: 0 getCssVar('input', 'padding-x');
+    font-size: var(--y-font-size-lg);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 交互状态
+  // ---------------------------------------------------------------------------
+
+  &:hover:not(:disabled):not([data-readonly]) {
+    border-color: getCssVar('input', 'border-hover');
+  }
+
+  &:focus-visible {
+    border-color: getCssVar('input', 'border-focus');
+  }
+
+  // 校验态来自 Form 落在控件上的 data-invalid，本层不维护第二套无效状态。
+  &[data-invalid] {
+    border-color: getCssVar('input', 'border-invalid');
+
+    &:focus-visible {
+      border-color: getCssVar('input', 'border-invalid');
+      outline-color: getCssVar('input', 'border-invalid');
+    }
+  }
+
+  &:disabled,
+  &[data-disabled] {
+    color: getCssVar('input', 'text-disabled');
+    background: getCssVar('input', 'bg-disabled');
+    cursor: not-allowed;
+  }
+
+  // 只读保留正常配色（值仍可选中复制），只去掉可编辑的暗示。
+  &[data-readonly] {
+    cursor: default;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reduced Motion
+  // ---------------------------------------------------------------------------
+
+  @include reduced-motion {
+    transition: none;
+  }
+}

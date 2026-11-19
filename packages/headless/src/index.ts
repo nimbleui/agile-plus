@@ -49,3 +49,5 @@ export * from './useDropdownMenu';
 export * from './useSelect';
 
 export * from './useEllipsis';
+
+export * from './useInput';

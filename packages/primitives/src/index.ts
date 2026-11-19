@@ -35,3 +35,5 @@ export * from './tooltip';
 export * from './select';
 
 export * from './ellipsis';
+
+export * from './input';

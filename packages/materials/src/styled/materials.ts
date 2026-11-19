@@ -162,4 +162,58 @@ export const materials: MaterialContribution[] = [
       props: { value: 60, max: 100 },
     },
   },
+  {
+    name: 'agile-plus.input',
+    title: '输入框',
+    category: '表单',
+    icon: 'type',
+    // `modelValue` 是受控通道，刻意不登记：面板写死受控值后输入框会钉死在该值，
+    // 与开关同一条判据。设计态初值走 defaultValue，运行态联动由
+    // `update:modelValue` → 动作链 → 页面状态完成。
+    props: {
+      type: 'object',
+      properties: {
+        defaultValue: { type: 'string', title: '默认值', default: '' },
+        placeholder: { type: 'string', title: '占位提示' },
+        type: {
+          type: 'string',
+          title: '输入类型',
+          description: '原生 type，如 text / password / email，校验规则随之变化',
+          default: 'text',
+        },
+        size: {
+          type: 'string',
+          title: '尺寸',
+          enum: ['small', 'middle', 'large'],
+          default: 'middle',
+        },
+        name: { type: 'string', title: '字段名', description: '参与原生表单提交' },
+        disabled: { type: 'boolean', title: '禁用', default: false },
+        readOnly: { type: 'boolean', title: '只读', default: false },
+        required: { type: 'boolean', title: '必填', default: false },
+      },
+    },
+    module: './dist/index.js',
+    snippet: {
+      id: 'agile-plus-input-1',
+      componentName: 'agile-plus.input',
+      name: '输入框',
+      layout: { mode: 'absolute', rect: { x: 0, y: 0, width: 240, height: 32 } },
+      props: { placeholder: '请输入' },
+    },
+    events: [
+      {
+        name: 'update:modelValue',
+        title: '值变化',
+        description: '用户输入后触发；中文输入法组合期间不触发，组合结束后一次性上报',
+        parameters: [{ name: 'value', type: 'string', description: '输入框当前值' }],
+      },
+      {
+        name: 'change',
+        title: '确认输入',
+        description: '失焦或回车确认时触发，适合接校验类动作',
+        parameters: [{ name: 'event', type: 'Event', description: '原生 change 事件' }],
+      },
+    ],
+  },
 ];

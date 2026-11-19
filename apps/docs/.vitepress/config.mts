@@ -61,6 +61,7 @@ export default defineConfig({
             { text: 'Toggle 开关按钮', link: '/components/toggle' },
             { text: 'Switch 开关', link: '/components/switch' },
             { text: 'Collapsible 折叠区', link: '/components/collapsible' },
+            { text: 'Input 输入框', link: '/components/input' },
           ],
         },
         {

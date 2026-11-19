@@ -6,6 +6,7 @@ import { Dialog } from '@agile-plus/components/dialog';
 import { DropdownMenu, DropdownMenuItem } from '@agile-plus/components/dropdown-menu';
 import { Ellipsis } from '@agile-plus/components/ellipsis';
 import { Flex, FlexItem } from '@agile-plus/components/flex';
+import { Input } from '@agile-plus/components/input';
 import { Popover } from '@agile-plus/components/popover';
 import { Progress } from '@agile-plus/components/progress';
 import { RadioGroup, RadioGroupItem } from '@agile-plus/components/radio-group';
@@ -56,4 +57,5 @@ export const components: Record<string, Component> = {
   'agile-plus.select': Select,
   'agile-plus.ellipsis': Ellipsis,
   'agile-plus.dropdown-menu-item': DropdownMenuItem,
+  'agile-plus.input': Input,
 };

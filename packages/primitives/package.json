@@ -135,6 +135,12 @@
       "types": "./dist/ellipsis/index.d.ts",
       "import": "./dist/ellipsis/index.js",
       "require": "./dist/ellipsis/index.cjs"
+    },
+    "./input": {
+      "source": "./src/input/index.ts",
+      "types": "./dist/input/index.d.ts",
+      "import": "./dist/input/index.js",
+      "require": "./dist/input/index.cjs"
     }
   },
   "files": [

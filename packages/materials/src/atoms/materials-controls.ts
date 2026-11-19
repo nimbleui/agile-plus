@@ -385,4 +385,39 @@ export const materials = [
       },
     },
   }),
+  defineMaterial({
+    name: 'agile-plus.ui.input',
+    title: '输入框·原子',
+    category: '原子件·控件',
+    icon: 'type',
+    // 受控通道 modelValue 不登记，判据与成品层一致；默认插槽只服务代码侧 asChild，
+    // 画布上输入框是叶子，不标容器。
+    props: {
+      defaultValue: { type: 'string', title: '默认值', default: '' },
+      placeholder: { type: 'string', title: '占位提示' },
+      type: {
+        type: 'string',
+        title: '输入类型',
+        description: '原生 type，如 text / password / email',
+        default: 'text',
+      },
+      disabled: { type: 'boolean', title: '禁用', default: false },
+      readOnly: { type: 'boolean', title: '只读', default: false },
+      required: { type: 'boolean', title: '必填', default: false },
+    },
+    size: { width: 240, height: 32 },
+    events: [
+      {
+        name: 'update:modelValue',
+        title: '值变化',
+        description: 'IME 组合期间不触发，组合结束后一次性上报',
+        parameters: [{ name: 'value', type: 'string', description: '输入框当前值' }],
+      },
+      {
+        name: 'change',
+        title: '确认输入',
+        parameters: [{ name: 'event', type: 'Event', description: '原生 change 事件' }],
+      },
+    ],
+  }),
 ];

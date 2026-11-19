@@ -31,6 +31,7 @@ import {
   FormRoot,
   FormSubmit,
 } from '@agile-plus/ui/form';
+import { Input } from '@agile-plus/ui/input';
 import { ProgressIndicator, ProgressRoot } from '@agile-plus/ui/progress';
 import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from '@agile-plus/ui/radio-group';
 import {
@@ -123,4 +124,5 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.dropdown-menu-checkbox-item': DropdownMenuCheckboxItem,
   'agile-plus.ui.dropdown-menu-label': DropdownMenuLabel,
   'agile-plus.ui.dropdown-menu-separator': DropdownMenuSeparator,
+  'agile-plus.ui.input': Input,
 };
