@@ -192,6 +192,29 @@ describe('尺寸测量', () => {
     scope.stop();
   });
 
+  it('初始展开的项收起时立刻还原内联 animation-name，退场才不会被判成无动画', async () => {
+    const { api, content, scope } = setup({ defaultOpen: true });
+
+    content.style.animationName = 'spin';
+
+    api.measureContent();
+    // 首帧挡板立着：归零值保留，内联停在 none。
+    expect(content.style.animationName).toBe('none');
+
+    await nextFrame();
+    // rAF 只放挡板、不还原样式，内联仍是 none。
+    expect(content.style.animationName).toBe('none');
+
+    api.close();
+    await nextTick();
+
+    // 收起的当下（sync watch）就还原成消费者写的值，Presence 随后读到的才是退场动画名，
+    // 而不是残留的 none——否则退场被判成「无动画」瞬间卸载，收起没有过渡。
+    expect(content.style.animationName).toBe('spin');
+
+    scope.stop();
+  });
+
   it('元素未绑定时测量是空操作', () => {
     const scope = effectScope();
     const api = scope.run(() => useCollapsible())!;

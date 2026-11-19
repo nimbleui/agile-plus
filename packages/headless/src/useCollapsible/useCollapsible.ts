@@ -1,4 +1,4 @@
-import { computed, onScopeDispose, ref, shallowRef, toValue, useId } from 'vue';
+import { computed, onScopeDispose, ref, shallowRef, toValue, useId, watch } from 'vue';
 
 import {
   getCollapsibleContentAttrs,
@@ -64,6 +64,27 @@ export function useCollapsible(options: UseCollapsibleOptions = {}): UseCollapsi
   onScopeDispose(() => {
     if (isBrowser) cancelAnimationFrame(frame);
   });
+
+  /**
+   * 收起时立刻还原首帧测量归零的内联样式，必须赶在 Presence 的 post 判定之前。
+   *
+   * 初始展开的项首帧测量会把 animation-name 归零且（挡板立着）不还原，rAF 只放挡板不还原
+   * 样式，于是内联 animation-name 一直停在 'none'。收起时 Presence 在 post 阶段读计算样式，
+   * 若读到这个残留的 'none' 就判成「无退场动画」瞬间卸载——收起没有过渡。这里用 sync watch
+   * 在 isOpen 变 false 的当下还原，Presence 随后读到的才是 CSS 里真正的退场动画名。
+   */
+  watch(
+    isOpen,
+    (open) => {
+      const node = contentElement.value;
+
+      if (open || !node || !originalStyles || !isBrowser) return;
+
+      node.style.transitionDuration = originalStyles.transitionDuration;
+      node.style.animationName = originalStyles.animationName;
+    },
+    { flush: 'sync' }
+  );
 
   /**
    * 程序化开合不检查禁用。
