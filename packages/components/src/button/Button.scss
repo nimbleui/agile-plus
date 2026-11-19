@@ -1,0 +1,207 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('button') {
+  @include set-component-css-var(
+    'button',
+    (
+      'color': var(--y-color-primary),
+      'hover-color': var(--y-color-primary-hover),
+      'active-color': var(--y-color-primary-active),
+      'primary-text': var(--y-color-bg-container),
+      'radius': var(--y-border-radius),
+      'border': var(--y-color-border),
+      'text': var(--y-color-text),
+      'hover-bg': var(--y-color-fill-tertiary),
+      'active-bg': var(--y-color-fill-secondary),
+      'disabled-bg': var(--y-color-fill-tertiary),
+      'disabled-text': var(--y-color-text-disabled),
+      'disabled-border': var(--y-color-border),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('button') {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--y-padding-xs);
+  box-sizing: border-box;
+  margin: 0;
+  font-family: var(--y-font-family);
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
+  border: 1px solid transparent;
+  border-radius: getCssVar('button', 'radius');
+
+  transition:
+    background-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out),
+    border-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out),
+    color var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+
+  @include focus-ring(getCssVar('button', 'color'));
+
+  // ---------------------------------------------------------------------------
+  // 尺寸变体
+  // ---------------------------------------------------------------------------
+
+  @include m('small') {
+    height: var(--y-control-height-sm);
+    padding: 0 var(--y-padding-sm);
+    font-size: var(--y-font-size-sm);
+  }
+
+  @include m('middle') {
+    height: var(--y-control-height);
+    padding: 0 var(--y-padding);
+    font-size: var(--y-font-size);
+  }
+
+  @include m('large') {
+    height: var(--y-control-height-lg);
+    padding: 0 var(--y-padding-md);
+    font-size: var(--y-font-size-lg);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 外观变体
+  // ---------------------------------------------------------------------------
+
+  @include m('primary') {
+    color: getCssVar('button', 'primary-text');
+    background: getCssVar('button', 'color');
+    border-color: getCssVar('button', 'color');
+
+    @include solid-interactions(
+      getCssVar('button', 'hover-color'),
+      getCssVar('button', 'active-color')
+    );
+  }
+
+  @include m('default') {
+    color: getCssVar('button', 'text');
+    background: getCssVar('button', 'primary-text');
+    border-color: getCssVar('button', 'border');
+
+    @include light-interactions(getCssVar('button', 'hover-bg'), getCssVar('button', 'active-bg'));
+
+    &:hover:not(:disabled):not(.is-disabled) {
+      color: getCssVar('button', 'hover-color');
+      border-color: getCssVar('button', 'hover-color');
+    }
+
+    &:active:not(:disabled):not(.is-disabled) {
+      color: getCssVar('button', 'active-color');
+      border-color: getCssVar('button', 'active-color');
+    }
+  }
+
+  @include m('dashed') {
+    color: getCssVar('button', 'text');
+    background: getCssVar('button', 'primary-text');
+    border-color: getCssVar('button', 'border');
+    border-style: dashed;
+
+    @include light-interactions(getCssVar('button', 'hover-bg'), getCssVar('button', 'active-bg'));
+
+    &:hover:not(:disabled):not(.is-disabled) {
+      color: getCssVar('button', 'hover-color');
+      border-color: getCssVar('button', 'hover-color');
+    }
+  }
+
+  @include m('text') {
+    color: getCssVar('button', 'text');
+    background: transparent;
+
+    @include light-interactions(getCssVar('button', 'hover-bg'), getCssVar('button', 'active-bg'));
+  }
+
+  @include m('link') {
+    color: getCssVar('button', 'color');
+    background: transparent;
+
+    &:hover:not(:disabled):not(.is-disabled) {
+      color: getCssVar('button', 'hover-color');
+    }
+
+    &:active:not(:disabled):not(.is-disabled) {
+      color: getCssVar('button', 'active-color');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 状态
+  // ---------------------------------------------------------------------------
+  //
+  // 禁用既可能来自原生 disabled（loading 也合并进它），也可能来自 asChild 替换目标
+  // 自带的 data-disabled，两条选择器都要覆盖。
+
+  &:disabled,
+  &[data-disabled] {
+    color: getCssVar('button', 'disabled-text');
+    background: getCssVar('button', 'disabled-bg');
+    border-color: getCssVar('button', 'disabled-border');
+    cursor: not-allowed;
+  }
+
+  @include m('text') {
+    &:disabled,
+    &[data-disabled] {
+      background: transparent;
+    }
+  }
+
+  @include m('link') {
+    &:disabled,
+    &[data-disabled] {
+      background: transparent;
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 子元素：loading spinner
+  // ---------------------------------------------------------------------------
+
+  @include e('spinner') {
+    box-sizing: border-box;
+    flex: none;
+    width: 1em;
+    height: 1em;
+    border: 2px solid currentcolor;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: #{$block}-spin 0.8s linear infinite;
+  }
+
+  @keyframes #{$block}-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reduced Motion
+  // ---------------------------------------------------------------------------
+  //
+  // 降低转速而不是停转：spinner 停住会失去「仍在加载」的反馈。
+
+  @include reduced-motion {
+    transition: none;
+
+    &__spinner {
+      animation-duration: 2.4s;
+    }
+  }
+}

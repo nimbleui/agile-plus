@@ -679,4 +679,41 @@ export const materials = [
     initial: { value: 'item-1' },
     container: true,
   }),
+  defineMaterial({
+    name: 'agile-plus.button',
+    title: '按钮',
+    category: '交互',
+    icon: 'square',
+    props: {
+      variant: {
+        type: 'string',
+        title: '外观变体',
+        enum: ['primary', 'default', 'dashed', 'text', 'link'],
+        default: 'default',
+      },
+      size: {
+        type: 'string',
+        title: '尺寸',
+        enum: ['small', 'middle', 'large'],
+        default: 'middle',
+      },
+      type: {
+        type: 'string',
+        title: '原生类型',
+        description: '放进表单时 submit / reset 参与原生提交与重置',
+        enum: ['button', 'submit', 'reset'],
+        default: 'button',
+      },
+      disabled: { type: 'boolean', title: '禁用', default: false },
+      loading: {
+        type: 'boolean',
+        title: '加载中',
+        description: '加载期间合并进禁用态，避免重复提交',
+        default: false,
+      },
+    },
+    size: { width: 96, height: 32 },
+    container: true,
+    // 不声明事件：Button 不 emit 自定义事件，照抄原生 click 会违反「只声明真的 emit」的判据。
+  }),
 ];

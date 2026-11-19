@@ -1,5 +1,6 @@
 import type { Component } from 'vue';
 
+import { Button } from '@agile-plus/ui/button';
 import { CheckboxGroupRoot, CheckboxIndicator, CheckboxRoot } from '@agile-plus/ui/checkbox';
 import {
   CollapsibleContent,
@@ -127,4 +128,5 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.dropdown-menu-separator': DropdownMenuSeparator,
   'agile-plus.ui.input': Input,
   'agile-plus.ui.textarea': Textarea,
+  'agile-plus.ui.button': Button,
 };

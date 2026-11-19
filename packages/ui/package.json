@@ -141,6 +141,12 @@
       "types": "./dist/textarea/index.d.ts",
       "import": "./dist/textarea/index.js",
       "require": "./dist/textarea/index.cjs"
+    },
+    "./button": {
+      "source": "./src/button/index.ts",
+      "types": "./dist/button/index.d.ts",
+      "import": "./dist/button/index.js",
+      "require": "./dist/button/index.cjs"
     }
   },
   "files": [

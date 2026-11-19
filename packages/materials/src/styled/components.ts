@@ -1,5 +1,6 @@
 import type { Component } from 'vue';
 
+import { Button } from '@agile-plus/components/button';
 import { Checkbox, CheckboxGroup } from '@agile-plus/components/checkbox';
 import { Collapsible } from '@agile-plus/components/collapsible';
 import { Dialog } from '@agile-plus/components/dialog';
@@ -60,4 +61,5 @@ export const components: Record<string, Component> = {
   'agile-plus.dropdown-menu-item': DropdownMenuItem,
   'agile-plus.input': Input,
   'agile-plus.textarea': Textarea,
+  'agile-plus.button': Button,
 };

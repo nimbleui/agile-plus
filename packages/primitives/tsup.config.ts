@@ -23,6 +23,7 @@ export default defineConfig({
     'select/index': 'src/select/index.ts',
     'ellipsis/index': 'src/ellipsis/index.ts',
     'input/index': 'src/input/index.ts',
+    'button/index': 'src/button/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

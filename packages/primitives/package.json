@@ -141,6 +141,12 @@
       "types": "./dist/input/index.d.ts",
       "import": "./dist/input/index.js",
       "require": "./dist/input/index.cjs"
+    },
+    "./button": {
+      "source": "./src/button/index.ts",
+      "types": "./dist/button/index.d.ts",
+      "import": "./dist/button/index.js",
+      "require": "./dist/button/index.cjs"
     }
   },
   "files": [

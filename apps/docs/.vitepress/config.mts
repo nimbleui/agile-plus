@@ -63,6 +63,7 @@ export default defineConfig({
             { text: 'Collapsible 折叠区', link: '/components/collapsible' },
             { text: 'Input 输入框', link: '/components/input' },
             { text: 'Textarea 多行输入', link: '/components/textarea' },
+            { text: 'Button 按钮', link: '/components/button' },
           ],
         },
         {

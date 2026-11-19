@@ -448,4 +448,28 @@ export const materials = [
       },
     ],
   }),
+  defineMaterial({
+    name: 'agile-plus.ui.button',
+    title: '按钮·原子',
+    category: '原子件·控件',
+    icon: 'square',
+    props: {
+      type: {
+        type: 'string',
+        title: '原生类型',
+        enum: ['button', 'submit', 'reset'],
+        default: 'button',
+      },
+      disabled: { type: 'boolean', title: '禁用', default: false },
+      loading: {
+        type: 'boolean',
+        title: '加载中',
+        description: '加载期间合并进禁用态',
+        default: false,
+      },
+    },
+    size: { width: 96, height: 32 },
+    container: true,
+    // 不声明事件：ui Button 不 emit 自定义事件。
+  }),
 ];
