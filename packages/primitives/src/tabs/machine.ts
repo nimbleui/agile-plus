@@ -103,6 +103,11 @@ export function createTabsMachine(options: TabsMachineOptions = {}): TabsMachine
       }
 
       case 'NAVIGATE_NEXT': {
+        // 空列表必须与 FIRST/LAST 一样直接返回：tabValues[0] 是 undefined，写进 state 会让
+        // activeValue: string 与 focusedValue: string | null 两个契约同时失真，
+        // 下游所有 `focusedValue === null` 的判断都会漏掉这一态。
+        if (state.tabValues.length === 0) return;
+
         const idx = state.focusedValue !== null ? state.tabValues.indexOf(state.focusedValue) : -1;
         const nextIdx = idx < state.tabValues.length - 1 ? idx + 1 : 0;
         const nextFocused = state.tabValues[nextIdx];
@@ -117,6 +122,8 @@ export function createTabsMachine(options: TabsMachineOptions = {}): TabsMachine
       }
 
       case 'NAVIGATE_PREV': {
+        if (state.tabValues.length === 0) return;
+
         const idx = state.focusedValue !== null ? state.tabValues.indexOf(state.focusedValue) : 0;
         const prevIdx = idx > 0 ? idx - 1 : state.tabValues.length - 1;
         const prevFocused = state.tabValues[prevIdx];
