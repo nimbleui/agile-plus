@@ -20,6 +20,8 @@ export default defineConfig({
         'progress/index': 'src/progress/index.ts',
         'collapsible/index': 'src/collapsible/index.ts',
         'tooltip/index': 'src/tooltip/index.ts',
+        'popover/index': 'src/popover/index.ts',
+        'popover/index': 'src/popover/index.ts',
       },
       formats: ['es', 'cjs'],
     },

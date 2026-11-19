@@ -104,6 +104,8 @@ export * from './form';
 
 export * from './tooltip';
 
+export * from './popover';
+
 export * from './collapsible';
 
 export * from './slot';

@@ -4,6 +4,7 @@ import type {
   UseCheckboxGroupReturn,
   UseCheckboxReturn,
   UseDialogReturn,
+  UsePopoverReturn,
   UseRadioGroupReturn,
   UseScrollAreaReturn,
   UseSliderReturn,
@@ -101,6 +102,12 @@ interface ComponentContexts {
    * Arrow 也从这里读实际 placement，才能知道箭头该贴哪条边。
    */
   tooltip: UseTooltipReturn;
+  /**
+   * Popover 的上下文：Root 下发给 Trigger / Content / Arrow / Close。
+   *
+   * 只有一层——Popover 没有 Provider，开合与定位实例都挂在 Root 上。
+   */
+  popover: UsePopoverReturn;
 }
 
 /**

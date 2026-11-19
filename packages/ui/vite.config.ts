@@ -21,6 +21,8 @@ export default defineConfig({
         'form/index': 'src/form/index.ts',
         'collapsible/index': 'src/collapsible/index.ts',
         'tooltip/index': 'src/tooltip/index.ts',
+        'popover/index': 'src/popover/index.ts',
+        'popover/index': 'src/popover/index.ts',
       },
       formats: ['es', 'cjs'],
     },

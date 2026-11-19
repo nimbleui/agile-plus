@@ -25,6 +25,7 @@ export default defineConfig({
     'useSlider/index': 'src/useSlider/index.ts',
     'useFloating/index': 'src/useFloating/index.ts',
     'useTooltip/index': 'src/useTooltip/index.ts',
+    'usePopover/index': 'src/usePopover/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

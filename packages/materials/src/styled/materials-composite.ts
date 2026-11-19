@@ -484,4 +484,39 @@ export const materials = [
       },
     ],
   }),
+  defineMaterial({
+    name: 'agile-plus.popover',
+    title: '气泡卡片',
+    category: '浮层',
+    icon: 'square',
+    props: {
+      placement: {
+        type: 'string',
+        title: '位置',
+        enum: ['top', 'right', 'bottom', 'left'],
+        default: 'bottom',
+      },
+      defaultOpen: { type: 'boolean', title: '默认打开', default: false },
+    },
+    size: { width: 280, height: 180 },
+    container: true,
+    // 设计态只渲染触发元素，正文是 portal 出去的浮层；两格各占一半，
+    // 让设计师能分别往触发元素与正文里拖内容。窄条在前、兜底在后是落点判定的要求。
+    slots: [
+      {
+        name: 'trigger',
+        title: '触发元素',
+        maxChildren: 1,
+        region: { x: 0, y: 0, width: 1, height: 0.5 },
+      },
+      { name: 'default', title: '卡片正文', region: { x: 0, y: 0.5, width: 1, height: 0.5 } },
+    ],
+    events: [
+      {
+        name: 'update:open',
+        title: '开合变化',
+        parameters: [{ name: 'value', type: 'boolean', description: '变化后的打开状态' }],
+      },
+    ],
+  }),
 ];

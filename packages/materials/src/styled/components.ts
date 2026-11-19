@@ -4,6 +4,7 @@ import { Checkbox, CheckboxGroup } from '@agile-plus/components/checkbox';
 import { Collapsible } from '@agile-plus/components/collapsible';
 import { Dialog } from '@agile-plus/components/dialog';
 import { Flex, FlexItem } from '@agile-plus/components/flex';
+import { Popover } from '@agile-plus/components/popover';
 import { Progress } from '@agile-plus/components/progress';
 import { RadioGroup, RadioGroupItem } from '@agile-plus/components/radio-group';
 import { ScrollArea } from '@agile-plus/components/scroll-area';
@@ -47,4 +48,5 @@ export const components: Record<string, Component> = {
   'agile-plus.flex': Flex,
   'agile-plus.flex-item': FlexItem,
   'agile-plus.tooltip': Tooltip,
+  'agile-plus.popover': Popover,
 };

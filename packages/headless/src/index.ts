@@ -41,3 +41,5 @@ export * from './useSlider';
 export * from './useFloating';
 
 export * from './useTooltip';
+
+export * from './usePopover';

@@ -29,3 +29,5 @@ export * from './progress';
 export * from './collapsible';
 
 export * from './tooltip';
+
+export * from './popover';

@@ -152,6 +152,12 @@
       "types": "./dist/useTooltip/index.d.ts",
       "import": "./dist/useTooltip/index.js",
       "require": "./dist/useTooltip/index.cjs"
+    },
+    "./usePopover": {
+      "source": "./src/usePopover/index.ts",
+      "types": "./dist/usePopover/index.d.ts",
+      "import": "./dist/usePopover/index.js",
+      "require": "./dist/usePopover/index.cjs"
     }
   },
   "files": [

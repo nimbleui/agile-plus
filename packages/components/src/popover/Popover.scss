@@ -1,0 +1,116 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+
+@include b('popover') {
+  @include set-component-css-var(
+    'popover',
+    (
+      'bg': var(--y-color-bg-elevated),
+      'color': var(--y-color-text),
+      'border': var(--y-color-border-secondary),
+      'radius': var(--y-border-radius-lg),
+      'shadow': var(--y-shadow),
+      'padding': var(--y-padding-md),
+      'max-width': 320px,
+      'duration': var(--y-motion-duration-mid),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 浮层面板
+// ---------------------------------------------------------------------------
+//
+// 位置由无头层内联 transform 给出，本层不碰 left/top，也不给 transform 加过渡或动画
+// （会覆盖逐帧定位）；进出场位移用独立 translate 属性，与 transform 互不覆盖。
+// 首次打开才挂载，之后常驻（keepMounted 缺省为真）；进出场必须 @keyframes
+// （Presence 只认 animationend）。
+
+@include b('popover') {
+  box-sizing: border-box;
+  max-width: getCssVar('popover', 'max-width');
+  padding: getCssVar('popover', 'padding');
+  font-family: var(--y-font-family);
+  font-size: var(--y-font-size);
+  line-height: var(--y-line-height);
+  color: getCssVar('popover', 'color');
+  background: getCssVar('popover', 'bg');
+  border: 1px solid getCssVar('popover', 'border');
+  border-radius: getCssVar('popover', 'radius');
+  box-shadow: getCssVar('popover', 'shadow');
+  z-index: var(--y-z-index-popover);
+  outline: none;
+
+  @include focus-ring(getCssVar('color-primary'));
+
+  &[data-state='open'] {
+    animation: #{$block}-show getCssVar('popover', 'duration') var(--y-motion-ease-out);
+  }
+
+  // 常驻之后关闭不卸载，隐藏必须由状态自己兜住：opacity / visibility 直接落在
+  // closed 上，动画只负责过渡，所以 hide 的 from 显式声明 visibility: visible，退场
+  // 才仍然看得见。visibility 把面板移出无障碍树——正文里可以有按钮、输入框等可聚焦
+  // 元素，只透明的话它们关掉后仍在 Tab 序列里；pointer-events: none 让它不再拦截点击。
+  &[data-state='closed'] {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+    animation: #{$block}-hide var(--y-motion-duration-fast) var(--y-motion-ease-in) forwards;
+  }
+
+  &[data-side='top'][data-state='open'] {
+    animation-name: #{$block}-show-up;
+  }
+
+  &[data-side='top'][data-state='closed'] {
+    animation-name: #{$block}-hide-up;
+  }
+
+  @keyframes #{$block}-show {
+    from {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-hide {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-show-up {
+    from {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+
+  @keyframes #{$block}-hide-up {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+
+  @include reduced-motion {
+    &[data-state='open'],
+    &[data-state='closed'] {
+      animation-duration: 1ms;
+    }
+  }
+}

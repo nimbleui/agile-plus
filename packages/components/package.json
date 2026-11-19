@@ -100,6 +100,12 @@
       "import": "./dist/tooltip/index.js",
       "require": "./dist/tooltip/index.cjs"
     },
+    "./popover": {
+      "source": "./src/popover/index.ts",
+      "types": "./dist/popover/index.d.ts",
+      "import": "./dist/popover/index.js",
+      "require": "./dist/popover/index.cjs"
+    },
     "./style.css": "./dist/components.css"
   },
   "files": [
