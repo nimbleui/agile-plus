@@ -12,6 +12,11 @@ export default defineConfig({
   title: '无头组件库',
   description: '分层解耦、无障碍优先、样式完全可替换的 Vue 3 组件体系',
 
+  // GitHub Pages 项目页挂在 https://<owner>.github.io/<repo>/ 下，资源与路由都要带仓库名
+  // 前缀，留 '/' 会全部 404。前缀由发布环境注入而不是写死：本地 dev / preview 仍在根路径，
+  // 不因为线上托管方式改变日常开发入口。
+  base: process.env.DOCS_BASE ?? '/',
+
   // workspace 包按 exports.source 解析到 src，文档站修改组件实现即时生效，无需先构建 dist。
   // VitePress 1.6 内置 Vite 5，不支持 resolve.conditions，因此 alias 由导出生成而非手写。
   vite: {

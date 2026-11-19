@@ -1,0 +1,58 @@
+name: Docs
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# 与 CI 分开排队：部署中途取消会留下半发布的站点，所以只排队、不打断正在进行的发布。
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      # 版本取自 root package.json 的 packageManager 字段，与 CI 同源，避免与本地 pnpm 漂移。
+      - uses: pnpm/action-setup@v4
+
+      # Node 版本取自 .nvmrc，与本地 nvm use 用的是同一个来源。
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      # 文档站按 exports.source 直接吃包源码，不需要先构建各包 dist。
+      # base 必须带仓库名：Pages 项目页挂在 https://<owner>.github.io/<repo>/ 下，
+      # 留 '/' 会让资源与路由全部 404。
+      - run: pnpm docs:build
+        env:
+          DOCS_BASE: /agile-plus/
+
+      - uses: actions/configure-pages@v5
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/docs/.vitepress/dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
