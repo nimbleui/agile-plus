@@ -32,14 +32,15 @@ export default defineConfig({
         // 真正的逻辑在同目录的 timer/swipe/announce/group 里，仍然计入。
         '**/types.ts',
       ],
-      // 2026-11-12 实测基线向下取整，按包分别设限：这是棘轮，只许上调不许下调。
-      // components 层当前没有任何测试，阈值只能贴地，等该层补测试时同步抬高。
+      // 2026-11-19 实测基线向下取整，按包分别设限：这是棘轮，只许上调不许下调。
+      // components 层已有 14 个测试文件、实测 statements 58.14 / branches 59.93 /
+      // functions 59.77 / lines 56.96；阈值留出一档余量，但不再允许跌回 1% 的失效状态。
       thresholds: {
         'packages/primitives/src/**': { statements: 75, branches: 75, functions: 89, lines: 74 },
         'packages/headless/src/**': { statements: 73, branches: 63, functions: 75, lines: 76 },
         'packages/ui/src/**': { statements: 70, branches: 64, functions: 73, lines: 71 },
         'packages/materials/src/**': { statements: 86, branches: 90, functions: 100, lines: 86 },
-        'packages/components/src/**': { statements: 1, branches: 0, functions: 0, lines: 1 },
+        'packages/components/src/**': { statements: 55, branches: 45, functions: 45, lines: 52 },
       },
     },
   },
