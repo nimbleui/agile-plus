@@ -21,10 +21,10 @@ pnpm add @agile-plus/materials
 
 ## 两个入口
 
-| 入口 | 内容 | 为什么分开 |
-| --- | --- | --- |
-| `@agile-plus/materials/manifest` | `manifest: PluginManifest`：纯数据清单，零组件依赖 | 物料面板要在组件代码加载之前就能渲染 |
-| `@agile-plus/materials` | `components: Record<string, Component>` 名字表；同时提供 `default` 导出 | 组件代码按需异步加载，不阻塞设计器 |
+| 入口                             | 内容                                                                    | 为什么分开                           |
+| -------------------------------- | ----------------------------------------------------------------------- | ------------------------------------ |
+| `@agile-plus/materials/manifest` | `manifest: PluginManifest`：纯数据清单，零组件依赖                      | 物料面板要在组件代码加载之前就能渲染 |
+| `@agile-plus/materials`          | `components: Record<string, Component>` 名字表；同时提供 `default` 导出 | 组件代码按需异步加载，不阻塞设计器   |
 
 清单刻意不从根入口导出：两个入口共享同一份数据时，构建会把它抽成带哈希名的公共块，
 `./manifest` 退化成二次跳转，而远程物料包正是按固定 URL 取清单的。

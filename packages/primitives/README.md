@@ -22,7 +22,7 @@ pnpm add @agile-plus/primitives
 
 ## 入口
 
-根入口一次性引入全部原语；15 个子路径各自独立，按需引入便于 tree-shaking：
+根入口一次性引入全部原语；26 个子路径各自独立，按需引入便于 tree-shaking：
 
 ```ts
 import { getSwitchAttrs } from '@agile-plus/primitives';
@@ -30,37 +30,46 @@ import { getSwitchAttrs } from '@agile-plus/primitives/switch';
 ```
 
 `dialog` `flex` `tabs` `radio-group` `checkbox` `scroll-area` `toast` `presence` `toggle`
-`switch` `slider` `dom` `form` `collapsible` `progress`
+`switch` `slider` `dom` `form` `collapsible` `progress` `floating` `tooltip` `select` `date` `ellipsis` `input` `button` `pagination` `table` `accordion` `avatar`
 
 ## 三类 API
 
 这层只有三种形状，看清这一点就能预测任何新控件的 API：
 
-| 形状 | 例子 | 为什么这样分 |
-| --- | --- | --- |
-| 状态机 | `createDialogMachine` `createTabsMachine` | 有迁移、有订阅、需要一份跨组件共享的单一状态源 |
-| 属性映射 | `getSwitchAttrs` `getCheckboxAttrs` `getCollapsibleRootAttrs` | 状态已知，只剩「该输出哪些属性」的纯查表 |
-| 几何/规则计算 | `getThumbMetrics` `snapSliderValue` `getSliderNextValues` | 只有算式，没有状态，也不产出属性 |
+| 形状          | 例子                                                                                | 为什么这样分                                   |
+| ------------- | ----------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 状态机        | `createDialogMachine` `createTabsMachine`                                           | 有迁移、有订阅、需要一份跨组件共享的单一状态源 |
+| 属性映射      | `getSwitchAttrs` `getCheckboxAttrs` `getCollapsibleRootAttrs`                       | 状态已知，只剩「该输出哪些属性」的纯查表       |
+| 几何/规则计算 | `getThumbMetrics` `snapSliderValue` `getSliderNextValues` `computeFloatingPosition` | 只有算式，没有状态，也不产出属性               |
 
 ## 模块清单
 
-| 模块 | 主要导出 |
-| --- | --- |
-| `dialog` | `createDialogMachine` `handleDialogKeydown` |
-| `tabs` | `createTabsMachine` `handleTabsKeydown` |
-| `radio-group` | `handleRadioGroupKeydown`（值本身由调用方持有，这层只提供 roving focus 的按键规则） |
-| `checkbox` | `getCheckboxAttrs` `resolveNextChecked` `resolveIndeterminate` `toggleGroupValue` `isGroupValueChecked` `isCheckboxIndicatorPresent` |
-| `switch` | `getSwitchAttrs` `getSwitchDataState` |
-| `toggle` | `getToggleDataState` `resolveNextTogglePressed` `resolveGroupValueAfterToggle` `normalizeToggleGroupValue` `serializeToggleGroupValue` `resolveRovingFocusIntent` `resolveRovingFocusTargetIndex` `resolveDirectionAwareKey` `ROVING_FOCUS_KEY_MAP` |
-| `collapsible` | `getCollapsibleState` `getCollapsibleRootAttrs` `getCollapsibleTriggerAttrs` `getCollapsibleContentAttrs` `getCollapsibleContentVars` `COLLAPSIBLE_HEIGHT_VAR` `COLLAPSIBLE_WIDTH_VAR` |
-| `progress` | `getProgressRootAttrs` `getProgressIndicatorAttrs` `getProgressDataAttrs` `getProgressRatio` `getProgressState` `getProgressVars` `resolveProgressMax` `toProgressNumber` `defaultGetValueLabel` `PROGRESS_VALUE_VAR` `PROGRESS_DEFAULT_MAX` |
-| `slider` | `clampSliderValue` `snapSliderValue` `getSliderNextValues` `getSliderNextStepValue` `getSliderValueFromPointer` `getSliderValuePercent` `getSliderVisualPercent` `getSliderKeyboardIntent` `getSliderRangeStyle` `getSliderThumbInBoundsOffset` `getSliderThumbLabel` `getSliderClosestValueIndex` `normalizeSliderValues` |
-| `scroll-area` | `getThumbMetrics` `clampThumbOffset` `getScrollOffsetFromThumb` `resolveScrollbarVisibility` `DEFAULT_MIN_THUMB_SIZE` |
-| `toast` | `createToastTimerSnapshot` `pauseToastTimer` `resumeToastTimer` `isToastTimerDisabled` `resolveSwipeMove` `getSwipeEndPhase` `isDeltaInDirection` `clampSwipeDelta` `getToastAnnounceTextContent` `isToastHotkeyPressed` `formatToastHotkey` `resolveToastViewportLabel` `VISUALLY_HIDDEN_STYLE` `TOAST_*` 常量 |
-| `presence` | `sendPresenceEvent` `isPresencePresent`（`mounted` / `unmountSuspended` / `unmounted` 三态迁移） |
-| `form` | `getHiddenInputAttrs` `getHiddenInputStyle` `writeNativeChecked` `readValiditySnapshot` `hasBuiltInError` `getFieldStateAttrs` `concatAriaDescribedby` `getFirstInvalidControl` `getMessageMatch` `isSyncCustomMatcher` `isAsyncCustomMatcher` `VALIDITY_MATCHERS` `VALIDITY_FLAGS` `BUILT_IN_VALIDITY_MESSAGES` |
-| `flex` | `getFlexAttrs` `getFlexStyles` `getFlexItemAttrs` `getFlexItemStyles` `isFlexGapScale` `FLEX_GAP_SCALES` |
-| `dom` | `getTabbableCandidates` `focusFirst` |
+| 模块          | 主要导出                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `dialog`      | `createDialogMachine` `handleDialogKeydown`                                                                                                                                                                                                                                                                                                                                                           |
+| `tabs`        | `createTabsMachine` `handleTabsKeydown`                                                                                                                                                                                                                                                                                                                                                               |
+| `radio-group` | `handleRadioGroupKeydown`（值本身由调用方持有，这层只提供 roving focus 的按键规则）                                                                                                                                                                                                                                                                                                                   |
+| `checkbox`    | `getCheckboxAttrs` `resolveNextChecked` `resolveIndeterminate` `toggleGroupValue` `isGroupValueChecked` `isCheckboxIndicatorPresent`                                                                                                                                                                                                                                                                  |
+| `switch`      | `getSwitchAttrs` `getSwitchDataState`                                                                                                                                                                                                                                                                                                                                                                 |
+| `toggle`      | `getToggleDataState` `resolveNextTogglePressed` `resolveGroupValueAfterToggle` `normalizeToggleGroupValue` `serializeToggleGroupValue` `resolveRovingFocusIntent` `resolveRovingFocusTargetIndex` `resolveDirectionAwareKey` `ROVING_FOCUS_KEY_MAP`                                                                                                                                                   |
+| `collapsible` | `getCollapsibleState` `getCollapsibleRootAttrs` `getCollapsibleTriggerAttrs` `getCollapsibleContentAttrs` `getCollapsibleContentVars` `COLLAPSIBLE_HEIGHT_VAR` `COLLAPSIBLE_WIDTH_VAR`                                                                                                                                                                                                                |
+| `progress`    | `getProgressRootAttrs` `getProgressIndicatorAttrs` `getProgressDataAttrs` `getProgressRatio` `getProgressState` `getProgressVars` `resolveProgressMax` `toProgressNumber` `defaultGetValueLabel` `PROGRESS_VALUE_VAR` `PROGRESS_DEFAULT_MAX`                                                                                                                                                          |
+| `slider`      | `clampSliderValue` `snapSliderValue` `getSliderNextValues` `getSliderNextStepValue` `getSliderValueFromPointer` `getSliderValuePercent` `getSliderVisualPercent` `getSliderKeyboardIntent` `getSliderRangeStyle` `getSliderThumbInBoundsOffset` `getSliderThumbLabel` `getSliderClosestValueIndex` `normalizeSliderValues`                                                                            |
+| `scroll-area` | `getThumbMetrics` `clampThumbOffset` `getScrollOffsetFromThumb` `resolveScrollbarVisibility` `DEFAULT_MIN_THUMB_SIZE`                                                                                                                                                                                                                                                                                 |
+| `toast`       | `createToastTimerSnapshot` `pauseToastTimer` `resumeToastTimer` `isToastTimerDisabled` `resolveSwipeMove` `getSwipeEndPhase` `isDeltaInDirection` `clampSwipeDelta` `getToastAnnounceTextContent` `isToastHotkeyPressed` `formatToastHotkey` `resolveToastViewportLabel` `VISUALLY_HIDDEN_STYLE` `TOAST_*` 常量                                                                                       |
+| `presence`    | `sendPresenceEvent` `isPresencePresent`（`mounted` / `unmountSuspended` / `unmounted` 三态迁移）                                                                                                                                                                                                                                                                                                      |
+| `form`        | `getHiddenInputAttrs` `getHiddenInputStyle` `getHiddenSelectStyle` `writeNativeChecked` `writeNativeSelectValue` `readValiditySnapshot` `hasBuiltInError` `getFieldStateAttrs` `concatAriaDescribedby` `getFirstInvalidControl` `getMessageMatch` `isSyncCustomMatcher` `isAsyncCustomMatcher` `VALIDITY_MATCHERS` `VALIDITY_FLAGS` `BUILT_IN_VALIDITY_MESSAGES`                                      |
+| `flex`        | `getFlexAttrs` `getFlexStyles` `getFlexItemAttrs` `getFlexItemStyles` `isFlexGapScale` `FLEX_GAP_SCALES`                                                                                                                                                                                                                                                                                              |
+| `dom`         | `getTabbableCandidates` `focusFirst`                                                                                                                                                                                                                                                                                                                                                                  |
+| `floating`    | `computeFloatingPosition` `computeAvailableSpace` `resolvePlacement` `shiftCoords` `computeArrowPosition` `computeBaseCoords` `parsePlacement` `formatPlacement` `getOverflow` `getBoundaryRect` `normalizeOffset` `DEFAULT_PLACEMENT`                                                                                                                                                                |
+| `tooltip`     | `resolveOpenDelay` `getTooltipDataState` `isPointerInGraceArea` `getGraceAreaPolygon` `isPointInPolygon` `isPointInRect` `DEFAULT_TOOLTIP_DELAY` `DEFAULT_TOOLTIP_SKIP_DELAY`                                                                                                                                                                                                                         |
+| `ellipsis`    | `resolveEllipsisLines` `splitMiddleEllipsis` `resolveEllipsisOverflow` `getEllipsisDataState` `getEllipsisClampStyle` `getEllipsisWrapperStyle` `getEllipsisTailStyle` `DEFAULT_ELLIPSIS_LINES` `DEFAULT_ELLIPSIS_TAIL`（尺寸读数由调用方量好传入，这层只做纯判定与功能性样式）                                                                                                                       |
+| `select`      | `resolveSelectKeyIntent` `resolveSelectHighlight` `resolveOpenHighlight` `appendTypeaheadSearch` `findTypeaheadMatch` `resolveScrollTop` `DEFAULT_TYPEAHEAD_TIMEOUT`（值与开合由调用方持有，这层只提供按键规则、typeahead 与滚动换算）                                                                                                                                                                |
+| `date`        | `getCalendarGrid` `getMonthGrid` `getYearGrid` `getDecadeLabel` `getWeekdayLabels` `startOfDay` `isSameDay` `isSameMonth` `addDays` `addMonths` `addYears` `formatDate` `parseDate` `resolveDatePickerKeyIntent` `resolveDateMove` `resolveRangePick` `getRangeHighlight` `isDateInRange` `emptyRangeDraft`（值与开合由调用方持有，这层只提供日历网格、格式化 / 解析、按键规则与范围点选 / 高亮判定） |
+| `input`       | `getInputAttrs`（input / textarea 共用的状态钩子：`data-disabled` / `data-readonly` / `aria-required`）                                                                                                                                                                                                                                                                                               |
+| `button`      | `getButtonAttrs`（`data-disabled` / `data-loading` / `aria-busy`；loading 合并进禁用由调用方判定）                                                                                                                                                                                                                                                                                                    |
+| `accordion`   | `normalizeAccordionValue` `serializeAccordionValue` `isAccordionItemOpen` `resolveAccordionValue` `getAccordionRootAttrs` `getAccordionItemAttrs`（single / multiple 集合值转移，含 `collapsible` 闸门；键盘导航复用 `tabs` 的 `handleTabsKeydown`）                                                                                                                                                     |
+| `avatar`      | `getAvatarInitials` `getAvatarRootAttrs` `getAvatarImageAttrs` `resolveAvatarFallback`（文字缩写生成、加载状态属性、补位可见性纯判定）                                                                                                                                                                                                                                                                  |
 
 ## 状态机
 
@@ -100,15 +109,15 @@ getSwitchAttrs({ checked: true, disabled: false, required: false });
 
 `data-state` 取值按控件固定，样式层靠它写选择器：
 
-| 控件 | `data-state` |
-| --- | --- |
-| checkbox | `checked` / `unchecked` / `indeterminate`（`aria-checked` 对应 `true` / `false` / `mixed`） |
-| switch | `checked` / `unchecked` |
-| toggle | `on` / `off` |
-| collapsible / dialog / toast | `open` / `closed` |
-| tabs trigger 与 content | `active` / `inactive` |
-| progress | `loading` / `complete` / `indeterminate` |
-| scroll-area 滚动条与 corner | `visible` / `hidden` |
+| 控件                         | `data-state`                                                                                |
+| ---------------------------- | ------------------------------------------------------------------------------------------- |
+| checkbox                     | `checked` / `unchecked` / `indeterminate`（`aria-checked` 对应 `true` / `false` / `mixed`） |
+| switch                       | `checked` / `unchecked`                                                                     |
+| toggle                       | `on` / `off`                                                                                |
+| collapsible / dialog / toast | `open` / `closed`                                                                           |
+| tabs trigger 与 content      | `active` / `inactive`                                                                       |
+| progress                     | `loading` / `complete` / `indeterminate`                                                    |
+| scroll-area 滚动条与 corner  | `visible` / `hidden`                                                                        |
 
 `data-disabled` 一律是空串（存在即禁用），不写 `="false"`。
 

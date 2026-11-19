@@ -22,7 +22,7 @@ pnpm add @agile-plus/headless
 
 ## 入口
 
-根入口导出全部 19 个 composable；子路径按单个 composable 切分，便于只打包用到的控件：
+根入口导出全部 composable；34 个子路径按控件切分，便于只打包用到的控件：
 
 ```ts
 import { useSwitch } from '@agile-plus/headless';
@@ -31,18 +31,22 @@ import { useSwitch } from '@agile-plus/headless/useSwitch';
 
 `./useDialog` `./useTabs` `./useRadioGroup` `./useCheckbox` `./useCheckboxGroup`
 `./useForm` `./useFormField` `./useFormControl` `./useFormMessage` `./useCollapsible`
-`./useScrollArea` `./usePresence` `./useToastProvider` `./useToastViewport` `./useToast`
-`./useToggle` `./useToggleGroup` `./useSwitch` `./useSlider`
+`./useScrollArea` `./usePresence` `./useKeepMounted` `./useToastProvider` `./useToastViewport`
+`./useToast` `./useToggle` `./useToggleGroup` `./useSwitch` `./useSlider` `./useFloating`
+`./useTooltip` `./usePopover` `./useDropdownMenu` `./useSelect` `./useDatePicker` `./useDateRangePicker` `./useEllipsis` `./useInput` `./useTextarea` `./usePagination` `./useTable` `./useAccordion` `./useAvatar`
+
+`./useAvatar` 一个子路径导出三个配套 composable：`useAvatar`（根，持有加载状态）、
+`useAvatarImage`（图片加载生命周期）、`useAvatarFallback`（补位延迟）。
 
 ## 统一形态
 
 每个 `useXxx(options)` 返回的都是同一类四件套：
 
-| 组成 | 例 | 用法 |
-| --- | --- | --- |
-| 响应式状态 | `checked` `isOpen` `values` `activeValue` | 模板里读 |
-| 变更方法 | `setChecked` `open` `close` `toggle` `setActive` | 你自己写交互时调 |
-| props 生成函数 | `getRootProps()` `getThumbProps()` `getInputProps()` | `v-bind` 到对应元素 |
+| 组成             | 例                                                                               | 用法                   |
+| ---------------- | -------------------------------------------------------------------------------- | ---------------------- |
+| 响应式状态       | `checked` `isOpen` `values` `activeValue`                                        | 模板里读               |
+| 变更方法         | `setChecked` `open` `close` `toggle` `setActive`                                 | 你自己写交互时调       |
+| props 生成函数   | `getRootProps()` `getThumbProps()` `getInputProps()`                             | `v-bind` 到对应元素    |
 | 元素入口与处理器 | `setControl` `setInputElement` `onRootClick` `onThumbKeydown` `onContentKeydown` | `:ref` / `@click` 绑定 |
 
 props 生成函数返回的是普通对象（含 `role` / `aria-*` / `data-*`），所以可以直接 `v-bind`，
@@ -54,7 +58,7 @@ props 生成函数返回的是普通对象（含 `role` / `aria-*` / `data-*`）
 
 ```ts
 const state = useControllable<boolean>({
-  value: () => toValue(options.checked),   // 传了 → 受控
+  value: () => toValue(options.checked), // 传了 → 受控
   defaultValue: options.defaultChecked ?? false,
   onChange: (v) => options.onCheckedChange?.(v),
 });
@@ -74,13 +78,15 @@ const state = useControllable<boolean>({
 
 入参名沿用被桥接控件的语义，因此不统一；下表是按源码逐个抄的，选用时以 `types.ts` 为准：
 
-| composable | 受控入参 | 缺省值 | 回调 |
-| --- | --- | --- | --- |
-| `useDialog` `useCollapsible` `useToast` | `open` | `defaultOpen` | `onOpenChange` |
-| `useCheckbox` `useSwitch` | `checked` | `defaultChecked` | `onCheckedChange` |
-| `useToggle` | `pressed` | `defaultPressed` | `onPressedChange` |
-| `useTabs` `useRadioGroup` `useCheckboxGroup` | `modelValue` | `defaultValue` | `onValueChange` |
-| `useToggleGroup` `useSlider` | `value` | `defaultValue` | `onValueChange`（Slider 另有 `onValueCommit`） |
+| composable                                                                                            | 受控入参     | 缺省值            | 回调                                           |
+| ----------------------------------------------------------------------------------------------------- | ------------ | ----------------- | ---------------------------------------------- |
+| `useDialog` `useCollapsible` `useToast` `useTooltip` `useSelect` `useDatePicker` `useDateRangePicker` | `open`       | `defaultOpen`     | `onOpenChange`                                 |
+| `useCheckbox` `useSwitch`                                                                             | `checked`    | `defaultChecked`  | `onCheckedChange`                              |
+| `useToggle`                                                                                           | `pressed`    | `defaultPressed`  | `onPressedChange`                              |
+| `useEllipsis`                                                                                         | `expanded`   | `defaultExpanded` | `onExpandedChange`                             |
+| `useTabs` `useRadioGroup` `useCheckboxGroup` `useSelect` `useDatePicker` `useDateRangePicker`         | `modelValue` | `defaultValue`    | `onValueChange`                                |
+| `useToggleGroup` `useSlider` `useAccordion`                                                         | `value`      | `defaultValue`    | `onValueChange`（Slider 另有 `onValueCommit`） |
+| `useInput` `useTextarea`                                                                              | `modelValue` | `defaultValue`    | `onModelValueChange`                           |
 
 另两处不对称也照实说：`useCollapsible` 的 props 生成函数叫 `getRootAttrs` / `getTriggerAttrs` /
 `getContentAttrs`（其余控件都是 `get*Props`）；元素入口的命名也不统一，按源码逐个抄为：
@@ -148,4 +154,4 @@ const sw = useSwitch({ checked, onCheckedChange: (v) => (checked.value = v) });
 ## 版本与许可
 
 许可 MIT。`sideEffects: false`。发布产物含 `dist` 与 `src`，`src` 供源码级排查对照，
-不构成公共 API。`__tests__` 下 8 个测试文件。
+不构成公共 API。`__tests__` 下 20 个测试文件。
