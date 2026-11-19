@@ -106,6 +106,12 @@
       "import": "./dist/pagination/index.js",
       "require": "./dist/pagination/index.cjs"
     },
+    "./table": {
+      "source": "./src/table/index.ts",
+      "types": "./dist/table/index.d.ts",
+      "import": "./dist/table/index.js",
+      "require": "./dist/table/index.cjs"
+    },
     "./tooltip": {
       "source": "./src/tooltip/index.ts",
       "types": "./dist/tooltip/index.d.ts",

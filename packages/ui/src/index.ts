@@ -175,3 +175,5 @@ export * from './textarea';
 export * from './button';
 
 export * from './slot';
+
+export * from './table';

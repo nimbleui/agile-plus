@@ -30,6 +30,7 @@ export default defineConfig({
         'input/index': 'src/input/index.ts',
         'textarea/index': 'src/textarea/index.ts',
         'button/index': 'src/button/index.ts',
+        'table/index': 'src/table/index.ts',
         'popover/index': 'src/popover/index.ts',
         'dropdown-menu/index': 'src/dropdown-menu/index.ts',
       },

@@ -26,6 +26,7 @@ export default defineConfig({
     'input/index': 'src/input/index.ts',
     'button/index': 'src/button/index.ts',
     'pagination/index': 'src/pagination/index.ts',
+    'table/index': 'src/table/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

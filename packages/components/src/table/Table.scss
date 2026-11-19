@@ -1,0 +1,493 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// Table
+// ---------------------------------------------------------------------------
+//
+// 内部 DOM 只有 ui 层的 data-part 契约可依（与 Pagination / DatePicker 同一约定），
+// 因此部件样式挂 [data-part] 而不是再传一层 class。状态（选中 / 展开 / 排序 / 固定）
+// 全部来自 primitives 属性表输出的 data-*，样式层与自动化测试读同一份状态。
+// 尺寸通过根节点上的 --y-table-cell-padding 下传，单元格只读这一个变量。
+
+@include b('table') {
+  @include set-component-css-var(
+    'table',
+    (
+      'text': var(--y-color-text),
+      'text-secondary': var(--y-color-text-secondary),
+      'text-heading': var(--y-color-text-heading),
+      'empty-text': var(--y-color-text-tertiary),
+      'disabled-text': var(--y-color-text-disabled),
+      'bg': var(--y-color-bg-container),
+      // 表头 / 斑马 / 悬停 / 展开底色必须不透明：sticky 表头与固定列要靠它们遮住
+      // 滚过的内容。全局 fill-* 是半透明叠色，直接用会透底，这里先给不透明兜底，
+      // 再用 color-mix 把不透明中性色叠出层次（见下方覆盖）。
+      'header-bg': var(--y-color-bg-elevated),
+      'header-text': var(--y-color-text-heading),
+      'border': var(--y-color-border-secondary),
+      'outer-border': var(--y-color-border),
+      'row-hover-bg': var(--y-color-bg-elevated),
+      'stripe-bg': var(--y-color-bg-layout),
+      'selected-bg': var(--y-color-primary-bg),
+      'expanded-bg': var(--y-color-bg-layout),
+      'accent': var(--y-color-primary),
+      'fixed-shadow': var(--y-color-fill),
+      'mask-bg': var(--y-color-bg-container),
+      'radius': var(--y-border-radius-lg),
+      'selection-col-width': 48px,
+      'expand-col-width': 44px,
+      'z-fixed': 1,
+      'z-header': 2,
+      'z-corner': 3,
+      'z-mask': 4,
+    )
+  );
+
+  // 不透明层次色：用两个不透明中性色（border-secondary / bg-container）按比例混合，
+  // 结果恒不透明且随暗色主题自动翻转；不支持 color-mix 的环境回退上面的实色兜底。
+  --y-table-header-bg: color-mix(in srgb, var(--y-color-border-secondary) 55%, var(--y-color-bg-container));
+  --y-table-stripe-bg: color-mix(in srgb, var(--y-color-border-secondary) 30%, var(--y-color-bg-container));
+  --y-table-row-hover-bg: color-mix(in srgb, var(--y-color-border-secondary) 70%, var(--y-color-bg-container));
+  --y-table-expanded-bg: color-mix(in srgb, var(--y-color-border-secondary) 30%, var(--y-color-bg-container));
+
+  position: relative;
+  box-sizing: border-box;
+  font-family: var(--y-font-family);
+  font-size: var(--y-font-size);
+  line-height: var(--y-line-height);
+  color: getCssVar('table', 'text');
+  background: getCssVar('table', 'bg');
+  border-radius: getCssVar('table', 'radius');
+
+  // ---------------------------------------------------------------------------
+  // 尺寸变体
+  // ---------------------------------------------------------------------------
+
+  @include m('small') {
+    --y-table-cell-padding: var(--y-padding-xs) var(--y-padding-sm);
+
+    font-size: var(--y-font-size-sm);
+  }
+
+  @include m('middle') {
+    --y-table-cell-padding: var(--y-padding-sm) var(--y-padding);
+  }
+
+  @include m('large') {
+    --y-table-cell-padding: var(--y-padding) var(--y-padding-md);
+
+    font-size: var(--y-font-size-lg);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 滚动容器：固定表头要求 table 落在可滚动的盒子里
+  // ---------------------------------------------------------------------------
+
+  [data-part='root'] {
+    overflow: auto;
+    height: var(--y-table-height, auto);
+    max-height: var(--y-table-max-height, none);
+    border-radius: inherit;
+
+    // 滚动条沿用组件色板，而不是浏览器默认灰
+    scrollbar-width: thin;
+    scrollbar-color: getCssVar('table', 'fixed-shadow') transparent;
+
+    &::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: getCssVar('table', 'fixed-shadow');
+      border-radius: var(--y-border-radius-round);
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: getCssVar('table', 'disabled-text');
+    }
+  }
+
+  [data-part='table'] {
+    // 显式声明 display 与 overflow：文档站 / 全局响应式重置常有 `table { display: block;
+    // overflow-x: auto }`，会把表格变成块级滚动容器，sticky 表头与固定列随之失效。
+    // 本选择器特异性高于这类重置，确保表格始终是真表格、滚动只发生在 root 容器。
+    display: table;
+    overflow: visible;
+    // 文档站 / 全局重置常给 table 加外边距（如 `.vp-doc table { margin: 20px 0 }`），
+    // 会在滚动容器顶部留出空带、让吸顶表头不贴顶；这里归零保证表格充满容器。
+    margin: 0;
+    width: 100%;
+    min-width: var(--y-table-min-width, 100%);
+    table-layout: var(--y-table-layout, auto);
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  [data-part='caption'] {
+    padding: var(--y-padding-sm) var(--y-padding);
+    color: getCssVar('table', 'text-secondary');
+    text-align: left;
+    caption-side: top;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 单元格底座：表头与数据格共用 padding / 对齐 / 底边框
+  // ---------------------------------------------------------------------------
+
+  [data-part='head'],
+  [data-part='cell'] {
+    box-sizing: border-box;
+    padding: var(--y-table-cell-padding, var(--y-padding-sm) var(--y-padding));
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid getCssVar('table', 'border');
+    overflow-wrap: break-word;
+  }
+
+  [data-align='center'] {
+    text-align: center;
+  }
+
+  [data-align='right'] {
+    text-align: right;
+  }
+
+  // 表头吸顶：没有滚动高度时 sticky 不产生位移，给出高度后自然生效。
+  // 选择器带 thead th 抬高特异性：文档站 / 全局重置常有 `.vp-doc th { background }`
+  // 之类规则，特异性不足会把表头底色抢走导致 sticky 透底。
+  thead th[data-part='head'] {
+    position: sticky;
+    top: 0;
+    z-index: getCssVar('table', 'z-header');
+    font-weight: 500;
+    color: getCssVar('table', 'header-text');
+    background: getCssVar('table', 'header-bg');
+  }
+
+  // ---------------------------------------------------------------------------
+  // 排序触发与三态箭头
+  // ---------------------------------------------------------------------------
+
+  [data-part='sort'] {
+    display: inline-flex;
+    gap: var(--y-padding-xs);
+    align-items: center;
+    padding: 0;
+    font: inherit;
+    color: inherit;
+    background: none;
+    border: 0;
+    cursor: pointer;
+
+    @include focus-ring(getCssVar('table', 'accent'));
+
+    &:hover {
+      color: getCssVar('table', 'accent');
+    }
+  }
+
+  // 上下两个三角表示升降序，命中态点亮为主色，未命中保持浅灰
+  [data-part='sort-indicator'] {
+    display: inline-flex;
+    flex-direction: column;
+    gap: 2px;
+    align-items: center;
+
+    &::before,
+    &::after {
+      content: '';
+      width: 0;
+      height: 0;
+      border-right: 4px solid transparent;
+      border-left: 4px solid transparent;
+    }
+
+    &::before {
+      border-bottom: 5px solid getCssVar('table', 'disabled-text');
+    }
+
+    &::after {
+      border-top: 5px solid getCssVar('table', 'disabled-text');
+    }
+  }
+
+  [data-part='sort'][data-order='asc'] [data-part='sort-indicator']::before {
+    border-bottom-color: getCssVar('table', 'accent');
+  }
+
+  [data-part='sort'][data-order='desc'] [data-part='sort-indicator']::after {
+    border-top-color: getCssVar('table', 'accent');
+  }
+
+  // ---------------------------------------------------------------------------
+  // 列宽拖拽手柄：贴表头右缘，按下后全局接管光标
+  // ---------------------------------------------------------------------------
+
+  [data-part='resize-handle'] {
+    position: absolute;
+    top: 0;
+    right: -3px;
+    bottom: 0;
+    z-index: getCssVar('table', 'z-corner');
+    width: 7px;
+    cursor: col-resize;
+    user-select: none;
+    touch-action: none;
+
+    // 命中区比可见线宽，细线只在 hover / 拖拽时显现，平时不干扰表头阅读
+    &::after {
+      content: '';
+      position: absolute;
+      top: 25%;
+      right: 3px;
+      bottom: 25%;
+      width: 2px;
+      background: transparent;
+      border-radius: var(--y-border-radius-round);
+      transition: background-color var(--y-motion-duration-fast) var(--y-motion-ease-in-out);
+    }
+
+    &:hover::after {
+      background: getCssVar('table', 'accent');
+    }
+  }
+
+  // 拖拽进行中：整表光标锁定为 col-resize 并禁选，指针移出表头也不打断手感
+  [data-part='root'][data-resizing] {
+    cursor: col-resize;
+    user-select: none;
+
+    [data-part='resize-handle']::after {
+      background: getCssVar('table', 'accent');
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 表体行状态：斑马纹 → 悬停 → 选中，后者覆盖前者
+  // ---------------------------------------------------------------------------
+
+  // 数据行有不透明底色，固定列才能靠 background: inherit 遮住滚过的内容。
+  // 行状态选择器经 [data-part='body'] 抬高特异性，压过文档站 `.vp-doc tr` /
+  // `.vp-doc tr:nth-child(2n)` 这类背景重置，否则斑马 / 悬停 / 选中会被抢走。
+  [data-part='body'] tr[data-part='row'] {
+    background: getCssVar('table', 'bg');
+    transition: background-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+  }
+
+  // 斑马纹按数据行下标判定（data-striped 由成品层下发）：展开行会打断 nth-child
+  // 的奇偶交替，纯 CSS 选择数不出「第几个数据行」，因此这里依赖运行时下标。
+  [data-part='body'] tr[data-striped] {
+    background: getCssVar('table', 'stripe-bg');
+  }
+
+  [data-part='body'] tr[data-part='row']:hover {
+    background: getCssVar('table', 'row-hover-bg');
+  }
+
+  [data-part='body'] tr[data-part='row'][data-selected],
+  [data-part='body'] tr[data-part='row'][data-selected]:hover {
+    background: getCssVar('table', 'selected-bg');
+  }
+
+  [data-part='body'] tr[data-part='row'][data-disabled] {
+    color: getCssVar('table', 'disabled-text');
+  }
+
+  // ---------------------------------------------------------------------------
+  // 固定列：sticky 贴边，偏移来自 headless 下发的 CSS Variable
+  // ---------------------------------------------------------------------------
+
+  [data-fixed] {
+    position: sticky;
+    z-index: getCssVar('table', 'z-fixed');
+    background: inherit;
+  }
+
+  [data-fixed='left'] {
+    left: var(--y-table-fixed-offset, 0);
+  }
+
+  [data-fixed='right'] {
+    right: var(--y-table-fixed-offset, 0);
+  }
+
+  // 表头固定列是「吸顶 + 贴边」的交角，层级最高，底色用表头色而非继承行色
+  th[data-fixed] {
+    z-index: getCssVar('table', 'z-corner');
+    background: getCssVar('table', 'header-bg');
+  }
+
+  // 滚动阴影只画在固定区与滚动区的交界列上
+  [data-fixed-edge='left'] {
+    box-shadow: 6px 0 6px -6px getCssVar('table', 'fixed-shadow');
+  }
+
+  [data-fixed-edge='right'] {
+    box-shadow: -6px 0 6px -6px getCssVar('table', 'fixed-shadow');
+  }
+
+  // ---------------------------------------------------------------------------
+  // 选择列与展开列
+  // ---------------------------------------------------------------------------
+
+  col[data-part='col-selection'] {
+    width: getCssVar('table', 'selection-col-width');
+  }
+
+  col[data-part='col-expand'] {
+    width: getCssVar('table', 'expand-col-width');
+  }
+
+  [data-selection] {
+    text-align: center;
+  }
+
+  [data-part='expand-trigger'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    color: getCssVar('table', 'text-secondary');
+    background: none;
+    border: 0;
+    border-radius: getCssVar('table', 'radius');
+    cursor: pointer;
+
+    @include focus-ring(getCssVar('table', 'accent'));
+
+    &:hover {
+      color: getCssVar('table', 'accent');
+      background: getCssVar('table', 'row-hover-bg');
+    }
+  }
+
+  // 箭头用边框折角绘制，展开时旋转 90°，只动 transform 不触发布局
+  [data-part='expand-icon'] {
+    width: 7px;
+    height: 7px;
+    border-right: 1.5px solid currentcolor;
+    border-bottom: 1.5px solid currentcolor;
+    transform: rotate(-45deg);
+    transition: transform var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+  }
+
+  [data-part='expand-trigger'][data-state='expanded'] [data-part='expand-icon'] {
+    transform: rotate(45deg);
+  }
+
+  [data-part='expanded-cell'] {
+    padding: var(--y-padding-md) var(--y-padding);
+    background: getCssVar('table', 'expanded-bg');
+    border-bottom: 1px solid getCssVar('table', 'border');
+  }
+
+  // ---------------------------------------------------------------------------
+  // 空态与表尾
+  // ---------------------------------------------------------------------------
+
+  [data-part='empty-cell'] {
+    padding: var(--y-padding-xl) var(--y-padding);
+    color: getCssVar('table', 'empty-text');
+    text-align: center;
+  }
+
+  [data-part='footer'] [data-part='cell'] {
+    font-weight: 500;
+    color: getCssVar('table', 'header-text');
+    background: getCssVar('table', 'header-bg');
+    border-top: 1px solid getCssVar('table', 'border');
+    border-bottom: 0;
+  }
+
+  // 单行省略：依赖 fixed 布局的确定列宽才能收缩生效
+  [data-part='cell'][data-ellipsis] {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 全边框变体
+  // ---------------------------------------------------------------------------
+
+  @include m('border') {
+    border: 1px solid getCssVar('table', 'outer-border');
+
+    [data-part='head'],
+    [data-part='cell'] {
+      border-right: 1px solid getCssVar('table', 'border');
+
+      &:last-child {
+        border-right: 0;
+      }
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // 加载遮罩与旋转指示
+  // ---------------------------------------------------------------------------
+
+  &[data-loading] [data-part='root'] {
+    pointer-events: none;
+    user-select: none;
+  }
+
+  [data-part='loading-mask'] {
+    position: absolute;
+    inset: 0;
+    z-index: getCssVar('table', 'z-mask');
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: inherit;
+
+    // 半透明底用伪元素叠 opacity，避免把 spinner 一起淡化
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: getCssVar('table', 'mask-bg');
+      opacity: 0.7;
+    }
+  }
+
+  [data-part='spinner'] {
+    position: relative;
+    box-sizing: border-box;
+    width: 24px;
+    height: 24px;
+    border: 2px solid getCssVar('table', 'accent');
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: #{$block}-spin 0.8s linear infinite;
+  }
+
+  @keyframes #{$block}-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reduced Motion
+  // ---------------------------------------------------------------------------
+
+  @include reduced-motion {
+    [data-part='body'] tr[data-part='row'],
+    [data-part='expand-icon'] {
+      transition: none;
+    }
+
+    // 保留旋转但放慢，加载反馈仍可识别
+    [data-part='spinner'] {
+      animation-duration: 2.4s;
+    }
+  }
+}

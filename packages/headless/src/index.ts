@@ -59,3 +59,5 @@ export * from './useInput';
 export * from './useTextarea';
 
 export * from './usePagination';
+
+export * from './useTable';

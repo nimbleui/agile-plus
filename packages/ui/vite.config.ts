@@ -19,6 +19,7 @@ export default defineConfig({
         'slider/index': 'src/slider/index.ts',
         'progress/index': 'src/progress/index.ts',
         'pagination/index': 'src/pagination/index.ts',
+        'table/index': 'src/table/index.ts',
         'form/index': 'src/form/index.ts',
         'collapsible/index': 'src/collapsible/index.ts',
         'tooltip/index': 'src/tooltip/index.ts',

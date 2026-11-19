@@ -206,6 +206,12 @@
       "types": "./dist/usePagination/index.d.ts",
       "import": "./dist/usePagination/index.js",
       "require": "./dist/usePagination/index.cjs"
+    },
+    "./useTable": {
+      "source": "./src/useTable/index.ts",
+      "types": "./dist/useTable/index.d.ts",
+      "import": "./dist/useTable/index.js",
+      "require": "./dist/useTable/index.cjs"
     }
   },
   "files": [

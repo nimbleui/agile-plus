@@ -18,6 +18,7 @@ import type {
   UseToastReturn,
   UseToggleGroupReturn,
   UseSwitchReturn,
+  UseTableReturn,
   UseTooltipReturn,
 } from '@agile-plus/headless';
 
@@ -28,6 +29,8 @@ import type { ScrollAreaOrientation } from '@agile-plus/primitives/scroll-area';
 import type { RadioGroupItemContext } from './radio-group/types';
 
 import type { SelectGroupContext, SelectItemContext } from './select/types';
+
+import type { TableRowContext } from './table/types';
 
 import type { ProgressContext } from './progress/types';
 
@@ -152,6 +155,21 @@ interface ComponentContexts {
    * ul 自带 list 语义，没有属性要绑。
    */
   pagination: UsePaginationReturn;
+  /**
+   * Table 的上下文：Root 下发给 Header / Body / Row / Head / Cell / Empty /
+   * SelectionHead / SelectionCell / ExpandTrigger / ExpandedRow。
+   *
+   * 组级一层——排序、选择、展开三条状态通道与派生行序列都挂在 Root 的 useTable
+   * 实例上，行级状态由 getRowProps / isRowSelected 按行键派生。
+   */
+  table: UseTableReturn;
+  /**
+   * Table 的行级上下文：TableRow 下发给内部 TableCell。
+   *
+   * 与 selectItem 同理——单元格自动合并跨度时要知道自己所属的行，
+   * 表头行无 item，注入值为 undefined。
+   */
+  tableRow: TableRowContext;
 }
 
 /**
