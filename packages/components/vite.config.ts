@@ -23,6 +23,7 @@ export default defineConfig({
         'popover/index': 'src/popover/index.ts',
         'dropdown-menu/index': 'src/dropdown-menu/index.ts',
         'select/index': 'src/select/index.ts',
+        'date-picker/index': 'src/date-picker/index.ts',
         'ellipsis/index': 'src/ellipsis/index.ts',
         'input/index': 'src/input/index.ts',
         'textarea/index': 'src/textarea/index.ts',

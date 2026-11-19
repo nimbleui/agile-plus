@@ -118,6 +118,12 @@
       "import": "./dist/select/index.js",
       "require": "./dist/select/index.cjs"
     },
+    "./date-picker": {
+      "source": "./src/date-picker/index.ts",
+      "types": "./dist/date-picker/index.d.ts",
+      "import": "./dist/date-picker/index.js",
+      "require": "./dist/date-picker/index.cjs"
+    },
     "./ellipsis": {
       "source": "./src/ellipsis/index.ts",
       "types": "./dist/ellipsis/index.d.ts",

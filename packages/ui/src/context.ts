@@ -3,6 +3,7 @@ import { inject } from 'vue';
 import type {
   UseCheckboxGroupReturn,
   UseCheckboxReturn,
+  UseDatePickerReturn,
   UseDialogReturn,
   UseDropdownMenuReturn,
   UsePopoverReturn,
@@ -127,6 +128,13 @@ interface ComponentContexts {
   select: UseSelectReturn;
   selectItem: SelectItemContext;
   selectGroup: SelectGroupContext;
+  /**
+   * DatePicker 的上下文：Root 下发给 Input / Content / Grid / Cell。
+   *
+   * 只有一层——选中值、开合、面板与焦点日期都挂在 Root 的 useDatePicker 实例上，
+   * 格子状态由 getCellProps / getCellState 统一派生，不需要项级上下文。
+   */
+  datePicker: UseDatePickerReturn;
 }
 
 /**

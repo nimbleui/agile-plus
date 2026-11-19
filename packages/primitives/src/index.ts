@@ -34,6 +34,8 @@ export * from './tooltip';
 
 export * from './select';
 
+export * from './date';
+
 export * from './ellipsis';
 
 export * from './input';

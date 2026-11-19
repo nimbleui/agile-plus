@@ -36,6 +36,8 @@ export * from './dropdown-menu';
 
 export * from './select';
 
+export * from './date-picker';
+
 export * from './ellipsis';
 
 export * from './input';

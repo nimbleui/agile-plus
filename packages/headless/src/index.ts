@@ -48,6 +48,8 @@ export * from './useDropdownMenu';
 
 export * from './useSelect';
 
+export * from './useDatePicker';
+
 export * from './useEllipsis';
 
 export * from './useInput';

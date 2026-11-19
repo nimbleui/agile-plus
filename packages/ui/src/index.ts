@@ -99,6 +99,14 @@ export type {
 
 export type { EllipsisEmits, EllipsisProps } from './ellipsis/types';
 
+export type {
+  DatePickerCellProps,
+  DatePickerContentProps,
+  DatePickerGridProps,
+  DatePickerRootEmits,
+  DatePickerRootProps,
+} from './date-picker/types';
+
 export * from './dialog';
 
 export * from './tabs';
@@ -132,6 +140,8 @@ export * from './dropdown-menu';
 export * from './collapsible';
 
 export * from './select';
+
+export * from './date-picker';
 
 export * from './ellipsis';
 

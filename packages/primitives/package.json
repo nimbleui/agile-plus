@@ -130,6 +130,12 @@
       "import": "./dist/select/index.js",
       "require": "./dist/select/index.cjs"
     },
+    "./date": {
+      "source": "./src/date/index.ts",
+      "types": "./dist/date/index.d.ts",
+      "import": "./dist/date/index.js",
+      "require": "./dist/date/index.cjs"
+    },
     "./ellipsis": {
       "source": "./src/ellipsis/index.ts",
       "types": "./dist/ellipsis/index.d.ts",

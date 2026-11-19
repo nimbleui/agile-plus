@@ -28,6 +28,7 @@ export default defineConfig({
     'usePopover/index': 'src/usePopover/index.ts',
     'useDropdownMenu/index': 'src/useDropdownMenu/index.ts',
     'useSelect/index': 'src/useSelect/index.ts',
+    'useDatePicker/index': 'src/useDatePicker/index.ts',
     'useEllipsis/index': 'src/useEllipsis/index.ts',
     'useInput/index': 'src/useInput/index.ts',
     'useTextarea/index': 'src/useTextarea/index.ts',

@@ -1,0 +1,763 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 变量表同时声明在 .y-date-picker 与 .y-date-picker-content 上：自定义属性只向下
+// 继承，而面板被 portal 到 body，是 .y-date-picker 的**兄弟**而不是后代，只挂在
+// 前者上时面板读到的全是未定义值。与 Select / Toast 同一条约束。
+
+$date-picker-vars: (
+  'height': var(--y-control-height),
+  'padding-x': var(--y-padding),
+  'radius': var(--y-border-radius),
+  'bg': var(--y-color-bg-container),
+  'bg-filled': var(--y-color-fill-tertiary),
+  'bg-disabled': var(--y-color-fill-quaternary),
+  'color': var(--y-color-text),
+  'color-placeholder': var(--y-color-text-tertiary),
+  'color-disabled': var(--y-color-text-disabled),
+  'border': var(--y-color-border),
+  'border-hover': var(--y-color-primary-hover),
+  'border-open': var(--y-color-primary),
+  'icon-color': var(--y-color-text-tertiary),
+  'clear-color': var(--y-color-text-tertiary),
+  'clear-hover-bg': var(--y-color-fill-secondary),
+  'font-size': var(--y-font-size),
+  'duration': var(--y-motion-duration-mid),
+);
+
+$date-picker-content-vars: (
+  'bg': var(--y-color-bg-elevated),
+  'color': var(--y-color-text),
+  'border': var(--y-color-border-secondary),
+  'radius': var(--y-border-radius-lg),
+  'shadow': var(--y-shadow),
+  'padding': var(--y-padding),
+  'width': 280px,
+  'cell-height': 32px,
+  'sub-cell-height': 48px,
+  'time-width': 176px,
+  'time-height': 224px,
+  'time-option-height': 28px,
+  'cell-radius': var(--y-border-radius),
+  'cell-color-outside': var(--y-color-text-tertiary),
+  'cell-color-disabled': var(--y-color-text-disabled),
+  'cell-bg-hover': var(--y-color-fill-tertiary),
+  'cell-bg-focused': var(--y-color-fill-secondary),
+  'cell-bg-selected': var(--y-color-primary),
+  // 选中格是实心主色底，明暗主题下其上的文本都必须是白色；全局中性色 Token
+  // 会随主题翻转，不能表达「主色上的文本」这条恒定关系，因此在组件层钉住。
+  'cell-color-selected': #fff,
+  'cell-color-today': var(--y-color-primary),
+  'header-color': var(--y-color-text-secondary),
+  'weekday-color': var(--y-color-text-tertiary),
+  'today-color': var(--y-color-primary),
+  'today-color-hover': var(--y-color-primary-hover),
+  'focus-ring': var(--y-color-primary),
+  'divider': var(--y-color-border-secondary),
+  'font-size': var(--y-font-size),
+  'duration': var(--y-motion-duration-mid),
+);
+
+@include b('date-picker') {
+  @include set-component-css-var('date-picker', $date-picker-vars);
+}
+
+@include b('date-picker-content') {
+  @include set-component-css-var('date-picker-content', $date-picker-content-vars);
+}
+
+// ---------------------------------------------------------------------------
+// 触发元素：外层容器
+// ---------------------------------------------------------------------------
+//
+// 容器只负责定位上下文与宽度。日历图标与清除按钮都是输入框的兄弟节点，靠绝对
+// 定位覆盖在输入框上，必须有这个共同父级。
+
+@include b('date-picker') {
+  position: relative;
+  display: inline-flex;
+  vertical-align: middle;
+
+  @include when('block') {
+    display: flex;
+    width: 100%;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 触发元素：输入框本体
+// ---------------------------------------------------------------------------
+
+@include b('date-picker') {
+  @include e('input') {
+    box-sizing: border-box;
+    width: 100%;
+    height: getCssVar('date-picker', 'height');
+    margin: 0;
+    // 右侧留出图标格，文本不会压到日历图标下面。
+    padding: 0 calc(getCssVar('date-picker', 'padding-x') + 20px) 0
+      getCssVar('date-picker', 'padding-x');
+    font-family: var(--y-font-family);
+    font-size: getCssVar('date-picker', 'font-size');
+    line-height: 1;
+    color: getCssVar('date-picker', 'color');
+    background: getCssVar('date-picker', 'bg');
+    border: 1px solid getCssVar('date-picker', 'border');
+    border-radius: getCssVar('date-picker', 'radius');
+
+    transition:
+      border-color getCssVar('date-picker', 'duration'),
+      background-color getCssVar('date-picker', 'duration'),
+      box-shadow getCssVar('date-picker', 'duration');
+
+    @include focus-ring(getCssVar('date-picker', 'border-open'));
+
+    &::placeholder {
+      color: getCssVar('date-picker', 'color-placeholder');
+    }
+
+    &:hover:not([data-disabled]) {
+      border-color: getCssVar('date-picker', 'border-hover');
+    }
+
+    &[data-state='open'] {
+      border-color: getCssVar('date-picker', 'border-open');
+      box-shadow: 0 0 0 2px var(--y-color-primary-bg);
+    }
+
+    &[data-disabled] {
+      color: getCssVar('date-picker', 'color-disabled');
+      cursor: not-allowed;
+      background: getCssVar('date-picker', 'bg-disabled');
+      border-color: getCssVar('date-picker', 'border');
+      box-shadow: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 尺寸变体
+// ---------------------------------------------------------------------------
+
+@include b('date-picker') {
+  @include m('small') {
+    --y-date-picker-height: var(--y-control-height-sm);
+    --y-date-picker-padding-x: var(--y-padding-sm);
+    --y-date-picker-font-size: var(--y-font-size-sm);
+  }
+
+  @include m('large') {
+    --y-date-picker-height: var(--y-control-height-lg);
+    --y-date-picker-padding-x: var(--y-padding-md);
+    --y-date-picker-font-size: var(--y-font-size-lg);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 外观变体
+// ---------------------------------------------------------------------------
+//
+// 三种外观只差底色与边框，因此只覆盖这两个属性，不复制输入框基础样式。
+// filled 的 hover 用底色加深而不是描边——它本来就没有边框可提示。
+//
+// 变体内部用 .#{$block}__input 而不是 e('input')：e() 生成 &__input，嵌在 m()
+// 里会拼出 .y-date-picker--filled__input 这种不存在的类名。
+
+@include b('date-picker') {
+  @include m('filled') {
+    .#{$block}__input {
+      background: getCssVar('date-picker', 'bg-filled');
+      border-color: transparent;
+
+      &:hover:not([data-disabled]) {
+        background: var(--y-color-fill-secondary);
+        border-color: transparent;
+      }
+
+      &[data-state='open'] {
+        background: getCssVar('date-picker', 'bg');
+        border-color: getCssVar('date-picker', 'border-open');
+      }
+    }
+  }
+
+  @include m('borderless') {
+    .#{$block}__input {
+      background: transparent;
+      border-color: transparent;
+      box-shadow: none;
+
+      &:hover:not([data-disabled]) {
+        background: getCssVar('date-picker', 'bg-filled');
+        border-color: transparent;
+      }
+
+      &[data-state='open'] {
+        background: getCssVar('date-picker', 'bg-filled');
+        border-color: transparent;
+        box-shadow: none;
+      }
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 触发元素子部件
+// ---------------------------------------------------------------------------
+
+@include b('date-picker') {
+  @include e('icon') {
+    position: absolute;
+    top: 50%;
+    right: getCssVar('date-picker', 'padding-x');
+    display: inline-flex;
+    align-items: center;
+    color: getCssVar('date-picker', 'icon-color');
+    pointer-events: none;
+    transform: translateY(-50%);
+  }
+
+  // 清除按钮覆盖在输入框右侧，是兄弟节点而不是子节点。
+  @include e('clear') {
+    position: absolute;
+    top: 50%;
+    right: getCssVar('date-picker', 'padding-x');
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    padding: 0;
+    color: getCssVar('date-picker', 'clear-color');
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: 50%;
+    transform: translateY(-50%);
+
+    transition:
+      color var(--y-motion-duration-fast),
+      background-color var(--y-motion-duration-fast);
+
+    &:hover {
+      color: getCssVar('date-picker', 'color');
+      background: getCssVar('date-picker', 'clear-hover-bg');
+    }
+
+    @include focus-ring(getCssVar('date-picker', 'border-open'));
+  }
+
+  // 有清除按钮时日历图标让位，两者不叠在同一格。
+  &:has(.#{$block}__clear) {
+    .#{$block}__icon {
+      visibility: hidden;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 面板容器
+// ---------------------------------------------------------------------------
+//
+// 位置由无头层写成内联 transform，本层不碰 left/top，也不给 transform 加过渡或
+// 动画：那会覆盖逐帧定位，让面板从视口原点飞进来。进出场的位移改用独立的
+// translate 属性，它与 transform 是两条互不覆盖的通道。
+//
+// 常驻挂载、关闭时靠 closed 状态隐藏，因此进出场必须写成 @keyframes：Presence
+// 只认 animationend，用 transition 会被判成「没有动画」而当帧隐藏。
+
+@include b('date-picker-content') {
+  box-sizing: border-box;
+  width: getCssVar('date-picker-content', 'width');
+  padding: getCssVar('date-picker-content', 'padding');
+  font-family: var(--y-font-family);
+  font-size: getCssVar('date-picker-content', 'font-size');
+  color: getCssVar('date-picker-content', 'color');
+  background: getCssVar('date-picker-content', 'bg');
+  border: 1px solid getCssVar('date-picker-content', 'border');
+  border-radius: getCssVar('date-picker-content', 'radius');
+  box-shadow: getCssVar('date-picker-content', 'shadow');
+  z-index: var(--y-z-index-dropdown);
+
+  // hidden 是 UA 样式，优先级低于本层的 display 声明，必须显式覆盖回来。
+  &[hidden] {
+    display: none;
+  }
+
+  // 退场动画期间面板仍然挂载且 opacity 为 0：不关掉 pointer-events 就会盖在
+  // 页面上吃掉点击。visibility 把 closed 的面板移出无障碍树，与 Select 同理。
+  &[data-state='closed'] {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &[data-state='open'] {
+    animation: #{$block}-show getCssVar('date-picker-content', 'duration') var(--y-motion-ease-out);
+  }
+
+  &[data-state='closed'] {
+    animation: #{$block}-hide var(--y-motion-duration-fast) var(--y-motion-ease-in) forwards;
+  }
+
+  // 向上展开时从下边收起，方向跟着实际所在边走，翻转后才不违和。
+  &[data-side='top'][data-state='open'] {
+    animation-name: #{$block}-show-up;
+  }
+
+  &[data-side='top'][data-state='closed'] {
+    animation-name: #{$block}-hide-up;
+  }
+
+  @keyframes #{$block}-show {
+    from {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-hide {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      translate: 0 -4px;
+    }
+  }
+
+  @keyframes #{$block}-show-up {
+    from {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+
+  @keyframes #{$block}-hide-up {
+    from {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    to {
+      opacity: 0;
+      translate: 0 4px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 面板头部
+// ---------------------------------------------------------------------------
+
+@include b('date-picker-content') {
+  @include e('header') {
+    display: flex;
+    gap: var(--y-padding-xs);
+    align-items: center;
+    padding-bottom: var(--y-padding-sm);
+    border-bottom: 1px solid getCssVar('date-picker-content', 'divider');
+  }
+
+  @include e('nav-btn') {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    color: getCssVar('date-picker-content', 'header-color');
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: getCssVar('date-picker-content', 'cell-radius');
+
+    transition:
+      color var(--y-motion-duration-fast),
+      background-color var(--y-motion-duration-fast);
+
+    &:hover {
+      color: getCssVar('date-picker-content', 'color');
+      background: getCssVar('date-picker-content', 'cell-bg-hover');
+    }
+
+    @include focus-ring(getCssVar('date-picker-content', 'focus-ring'));
+  }
+
+  @include e('header-label') {
+    display: flex;
+    flex: 1;
+    gap: var(--y-padding-xs);
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+  }
+
+  @include e('label-btn') {
+    padding: var(--y-padding-xs);
+    font: inherit;
+    font-weight: 600;
+    color: inherit;
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: getCssVar('date-picker-content', 'cell-radius');
+
+    transition: color var(--y-motion-duration-fast);
+
+    &:hover {
+      color: getCssVar('date-picker-content', 'today-color');
+    }
+
+    @include focus-ring(getCssVar('date-picker-content', 'focus-ring'));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 网格：星期表头与行
+// ---------------------------------------------------------------------------
+//
+// 行结构由 ui 层 DatePickerGrid 生成（data-part 是它的稳定契约），列数跟着
+// 面板走：日期 7 列，月份 / 年代 3 列。面板容器的 data-panel 由无头层输出。
+
+@include b('date-picker-content') {
+  [data-part='weekdays'] {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    padding: var(--y-padding-xs) 0;
+  }
+
+  [data-part='weekday'] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: getCssVar('date-picker-content', 'cell-height');
+    font-size: var(--y-font-size-sm);
+    color: getCssVar('date-picker-content', 'weekday-color');
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  [data-part='row'] {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+  }
+
+  &[data-panel='month'],
+  &[data-panel='year'] {
+    [data-part='row'] {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 格子
+// ---------------------------------------------------------------------------
+//
+// 今天 / 焦点 / 选中是三个独立状态，必须能叠加表达：今天走描边与文字色，
+// 键盘焦点走底色，选中走实心主色底。禁用与月外格只改文字色，不抢背景。
+
+@include b('date-picker-content') {
+  [data-part='cell'] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    height: getCssVar('date-picker-content', 'cell-height');
+    margin: 1px 0;
+    cursor: pointer;
+    border-radius: getCssVar('date-picker-content', 'cell-radius');
+    -webkit-user-select: none;
+    user-select: none;
+
+    transition:
+      background-color var(--y-motion-duration-fast),
+      color var(--y-motion-duration-fast);
+
+    &:hover:not([data-disabled]):not([data-selected]) {
+      background: getCssVar('date-picker-content', 'cell-bg-hover');
+    }
+
+    &[data-outside] {
+      color: getCssVar('date-picker-content', 'cell-color-outside');
+    }
+
+    &[data-today]:not([data-selected]) {
+      font-weight: 600;
+      color: getCssVar('date-picker-content', 'cell-color-today');
+      box-shadow: inset 0 0 0 1px getCssVar('date-picker-content', 'cell-color-today');
+    }
+
+    &[data-focused]:not([data-selected]) {
+      background: getCssVar('date-picker-content', 'cell-bg-focused');
+    }
+
+    &[data-selected] {
+      font-weight: 600;
+      color: getCssVar('date-picker-content', 'cell-color-selected');
+      background: getCssVar('date-picker-content', 'cell-bg-selected');
+    }
+
+    &[data-disabled] {
+      color: getCssVar('date-picker-content', 'cell-color-disabled');
+      cursor: not-allowed;
+      background: transparent;
+      box-shadow: none;
+    }
+  }
+
+  // 月份 / 年代格子更高，文本自足（「1月」/ 年份），不需要完整日期播报。
+  &[data-panel='month'],
+  &[data-panel='year'] {
+    [data-part='cell'] {
+      height: getCssVar('date-picker-content', 'sub-cell-height');
+      margin: var(--y-padding-xs) 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 页脚
+// ---------------------------------------------------------------------------
+
+@include b('date-picker-content') {
+  @include e('footer') {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--y-padding-sm);
+    align-items: center;
+    justify-content: center;
+    padding-top: var(--y-padding-sm);
+    margin-top: var(--y-padding-xs);
+    border-top: 1px solid getCssVar('date-picker-content', 'divider');
+
+    // 日期时间模式：此刻居左、确定居右，与日期模式的居中「今天」区分。
+    @include m('time') {
+      justify-content: space-between;
+    }
+  }
+
+  // 「今天」与「此刻」是同一种链接式按钮，只文案与语义不同，共用一套视觉。
+  .#{$block}__today,
+  .#{$block}__now {
+    padding: var(--y-padding-xs) var(--y-padding-sm);
+    font: inherit;
+    font-size: var(--y-font-size-sm);
+    color: getCssVar('date-picker-content', 'today-color');
+    cursor: pointer;
+    background: transparent;
+    border: none;
+    border-radius: getCssVar('date-picker-content', 'cell-radius');
+
+    transition: color var(--y-motion-duration-fast);
+
+    &:hover:not(:disabled) {
+      color: getCssVar('date-picker-content', 'today-color-hover');
+    }
+
+    &:disabled {
+      color: getCssVar('date-picker-content', 'cell-color-disabled');
+      cursor: not-allowed;
+    }
+
+    @include focus-ring(getCssVar('date-picker-content', 'focus-ring'));
+  }
+
+  @include e('confirm') {
+    padding: var(--y-padding-xs) var(--y-padding-md);
+    font: inherit;
+    font-size: var(--y-font-size-sm);
+    // 与选中格同一条恒定关系：实心主色底上的文本必须是白色，不随主题翻转。
+    color: getCssVar('date-picker-content', 'cell-color-selected');
+    cursor: pointer;
+    background: getCssVar('date-picker-content', 'cell-bg-selected');
+    border: none;
+    border-radius: getCssVar('date-picker-content', 'cell-radius');
+
+    transition: background-color var(--y-motion-duration-fast);
+
+    &:hover {
+      background: var(--y-color-primary-hover);
+    }
+
+    @include focus-ring(getCssVar('date-picker-content', 'focus-ring'));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 时间选择（showTime）
+// ---------------------------------------------------------------------------
+//
+// 日历居左、时分秒三列居右。列是原生滚动容器：选项值域固定（24 / 60 / 60），
+// 全量渲染也只有 144 个节点，不值得虚拟滚动。滚动条按本组件的配色绘制，
+// 不用浏览器默认样式。
+
+@include b('date-picker-content') {
+  @include m('with-time') {
+    width: calc(
+      getCssVar('date-picker-content', 'width') + getCssVar('date-picker-content', 'time-width') +
+        var(--y-padding-sm)
+    );
+  }
+
+  @include e('body') {
+    display: flex;
+    gap: var(--y-padding-sm);
+  }
+
+  @include e('calendar') {
+    flex: 1;
+    min-width: 0;
+  }
+
+  @include e('time') {
+    display: flex;
+    flex-direction: column;
+    flex: none;
+    width: getCssVar('date-picker-content', 'time-width');
+    border-left: 1px solid getCssVar('date-picker-content', 'divider');
+    padding-left: var(--y-padding-sm);
+  }
+
+  @include e('time-header') {
+    padding-bottom: var(--y-padding-sm);
+    font-weight: 600;
+    text-align: center;
+    border-bottom: 1px solid getCssVar('date-picker-content', 'divider');
+    font-variant-numeric: tabular-nums;
+  }
+
+  @include e('time-body') {
+    display: flex;
+    gap: var(--y-padding-xs);
+    // 必须是确定高度：列的 height: 100% 与滚动都依赖它。用 flex: 1 会让高度
+    // 落回内容高度（144 个选项全撑开），百分比高度失效、面板被撑到上千像素。
+    height: getCssVar('date-picker-content', 'time-height');
+    padding-top: var(--y-padding-xs);
+  }
+
+  @include e('time-column') {
+    // 选中项居中滚动用 offsetTop 计算，列必须是它的定位上下文。
+    position: relative;
+    flex: 1;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-y: auto;
+    list-style: none;
+    scrollbar-width: thin;
+    scrollbar-color: getCssVar('date-picker-content', 'border') transparent;
+
+    &::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    &::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      background: getCssVar('date-picker-content', 'border');
+      border-radius: 2px;
+    }
+
+    &::-webkit-scrollbar-thumb:hover {
+      background: getCssVar('date-picker-content', 'header-color');
+    }
+  }
+
+  @include e('time-option') {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: getCssVar('date-picker-content', 'time-option-height');
+    cursor: pointer;
+    border-radius: getCssVar('date-picker-content', 'cell-radius');
+    font-variant-numeric: tabular-nums;
+    -webkit-user-select: none;
+    user-select: none;
+
+    transition:
+      background-color var(--y-motion-duration-fast),
+      color var(--y-motion-duration-fast);
+
+    &:hover:not([data-selected]) {
+      background: getCssVar('date-picker-content', 'cell-bg-hover');
+    }
+
+    &[data-selected] {
+      font-weight: 600;
+      color: getCssVar('date-picker-content', 'cell-color-selected');
+      background: getCssVar('date-picker-content', 'cell-bg-selected');
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 窄屏降级：并排放不下时时间区改挂日历下方，面板宽度回到日期模式的 280px。
+// ---------------------------------------------------------------------------
+
+@media (max-width: 560px) {
+  @include b('date-picker-content') {
+    @include m('with-time') {
+      width: getCssVar('date-picker-content', 'width');
+    }
+
+    @include e('body') {
+      flex-direction: column;
+    }
+
+    @include e('time') {
+      width: 100%;
+      padding-top: var(--y-padding-sm);
+      padding-left: 0;
+      margin-top: var(--y-padding-sm);
+      border-top: 1px solid getCssVar('date-picker-content', 'divider');
+      border-left: none;
+    }
+
+    @include e('time-body') {
+      height: 168px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+//
+// 进出场只压缩时长，不能写 animation: none —— Presence 靠 animationend 决定
+// 隐藏时机，关掉动画会让面板在关闭那一帧直接消失，失去「它收起来了」的反馈。
+
+@include b('date-picker') {
+  @include reduced-motion {
+    @include e('input') {
+      transition: none;
+    }
+  }
+}
+
+@include b('date-picker-content') {
+  @include reduced-motion {
+    &[data-state='open'],
+    &[data-state='closed'] {
+      animation-duration: 1ms;
+    }
+
+    [data-part='cell'] {
+      transition: none;
+    }
+
+    .#{$block}__time-option {
+      transition: none;
+    }
+  }
+}
