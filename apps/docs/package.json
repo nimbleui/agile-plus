@@ -4,7 +4,7 @@
   "type": "module",
   "description": "无头组件库文档站点",
   "scripts": {
-    "dev": "vitepress dev",
+    "dev": "vitepress dev --port 5180 --strictPort",
     "build": "vitepress build",
     "preview": "vitepress preview"
   },

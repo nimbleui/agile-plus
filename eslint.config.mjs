@@ -45,11 +45,14 @@ export default tseslint.config(
       'vue/attribute-hyphenation': ['error', 'always'],
       'vue/v-on-event-hyphenation': ['error', 'always'],
 
-      // 模板换行、单行元素排版与 void 元素写法属于格式化职责，统一交给 Prettier：
-      // Prettier 会把 void 元素输出成自闭合，保留这两条规则会与 format 结果持续冲突。
+      // 模板换行、缩进、单行元素排版与 void 元素写法属于格式化职责，统一交给 Prettier：
+      // Prettier 会把 void 元素输出成自闭合；闭合括号换行与缩进两者判定相反 —— 对 docs 的
+      // Demo SFC 跑 eslint --fix 后 prettier --check 立即失败，保留这些规则会与 format 来回拉锯。
       'vue/max-attributes-per-line': 'off',
       'vue/singleline-html-element-content-newline': 'off',
       'vue/html-self-closing': 'off',
+      'vue/html-closing-bracket-newline': 'off',
+      'vue/html-indent': 'off',
     },
   },
 

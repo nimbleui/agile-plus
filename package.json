@@ -6,6 +6,7 @@
     "node": ">=18.0.0",
     "pnpm": ">=9.0.0"
   },
+  "packageManager": "pnpm@12.3.4",
   "scripts": {
     "build": "pnpm --filter \"./packages/*\" run build",
     "publish": "pnpm -r --filter \"@agile-plus/*\" --filter \"!@agile-plus/monorepo\" publish",
@@ -14,16 +15,19 @@
     "docs:build": "pnpm --filter @agile-plus/docs run build",
     "docs:preview": "pnpm --filter @agile-plus/docs run preview",
     "test": "vitest run",
+    "test:coverage": "vitest run --coverage",
     "test:watch": "vitest",
-    "lint": "eslint \"packages/*/src/**/*.{ts,vue}\" \"apps/docs/**/*.{ts,vue,mts}\"",
+    "lint": "eslint --max-warnings 0 \"packages/*/src/**/*.{ts,vue}\" \"apps/docs/**/*.{ts,vue,mts}\" \"scripts/**/*.mts\" \"*.config.{ts,mjs}\"",
     "format": "prettier --write \"packages/**/*.{ts,vue,json,scss}\" \"apps/**/*.{ts,vue,json,scss,md}\"",
     "typecheck": "pnpm -r run typecheck",
+    "verify": "pnpm lint && pnpm typecheck && pnpm test:coverage && pnpm build && pnpm docs:build",
     "clean": "pnpm -r exec rm -rf dist node_modules/.cache"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@types/node": "^22.0.0",
     "@vitejs/plugin-vue": "^6.0.10",
+    "@vitest/coverage-v8": "3.2.7",
     "eslint": "^9.0.0",
     "eslint-plugin-vue": "^10.11.1",
     "globals": "^17.13.0",
