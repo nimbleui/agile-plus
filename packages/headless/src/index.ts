@@ -35,3 +35,5 @@ export * from './useToggleGroup';
 export * from './useSwitch';
 
 export * from './useSlider';
+
+export * from './useFloating';

@@ -111,6 +111,12 @@
       "types": "./dist/progress/index.d.ts",
       "import": "./dist/progress/index.js",
       "require": "./dist/progress/index.cjs"
+    },
+    "./floating": {
+      "source": "./src/floating/index.ts",
+      "types": "./dist/floating/index.d.ts",
+      "import": "./dist/floating/index.js",
+      "require": "./dist/floating/index.cjs"
     }
   },
   "files": [

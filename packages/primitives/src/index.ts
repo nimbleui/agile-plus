@@ -27,3 +27,5 @@ export * from './slider';
 export * from './progress';
 
 export * from './collapsible';
+
+export * from './floating';

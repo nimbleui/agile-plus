@@ -22,6 +22,7 @@ export default defineConfig({
     'useToggleGroup/index': 'src/useToggleGroup/index.ts',
     'useSwitch/index': 'src/useSwitch/index.ts',
     'useSlider/index': 'src/useSlider/index.ts',
+    'useFloating/index': 'src/useFloating/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

@@ -18,6 +18,7 @@ export default defineConfig({
     'form/index': 'src/form/index.ts',
     'progress/index': 'src/progress/index.ts',
     'collapsible/index': 'src/collapsible/index.ts',
+    'floating/index': 'src/floating/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

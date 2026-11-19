@@ -134,6 +134,12 @@
       "types": "./dist/useSlider/index.d.ts",
       "import": "./dist/useSlider/index.js",
       "require": "./dist/useSlider/index.cjs"
+    },
+    "./useFloating": {
+      "source": "./src/useFloating/index.ts",
+      "types": "./dist/useFloating/index.d.ts",
+      "import": "./dist/useFloating/index.js",
+      "require": "./dist/useFloating/index.cjs"
     }
   },
   "files": [
