@@ -85,6 +85,8 @@ export function useFocusTrap(options: UseFocusTrapOptions): void {
       return;
     }
 
+    // Radix 同级的近似判断：容器/首项都算环的起点。焦点若停在 tabindex=-1 的
+    // 程序化元素上，反向 Tab 可能先短暂跳出容器，但紧接着的 focusin 会把它收回。
     const atStart = current === container || current === first;
 
     if (event.shiftKey && atStart) {

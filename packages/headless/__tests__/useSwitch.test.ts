@@ -112,6 +112,16 @@ describe('bubble input 与表单', () => {
     scope.stop();
   });
 
+  it('显式空串 value 保留为空串，而不是回落到 on', async () => {
+    const { api, scope } = setup({ name: 'switch', value: '' });
+
+    await nextTick();
+
+    expect(api.getInputProps()?.value).toBe('');
+
+    scope.stop();
+  });
+
   it('在表单里时给出 input 属性与覆盖按钮的样式', async () => {
     const { api, scope } = setup({ name: 'agree', value: 'yes', required: true });
 

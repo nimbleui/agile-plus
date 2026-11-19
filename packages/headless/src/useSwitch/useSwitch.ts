@@ -40,7 +40,12 @@ export function useSwitch(options: UseSwitchOptions = {}): UseSwitchReturn {
 
   const formId = computed(() => toValue(options.form));
 
-  const submitValue = computed(() => toValue(options.value) ?? 'on');
+  // 空串是开发者显式提交的值，只有 undefined 才回落到 'on'。
+  const submitValue = computed(() => {
+    const value = toValue(options.value);
+
+    return value === undefined ? 'on' : value;
+  });
 
   const id = computed(() => toValue(options.id));
 

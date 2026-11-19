@@ -61,6 +61,12 @@ export function useFormControl(
 
   const controlElement = ref<ValidatableControl | null>(null);
 
+  /**
+   * 校验轮次。异步匹配器的 resolve 顺序不可控，旧一轮的结果若晚到会覆盖最新输入
+   * 的判定；每次 validate / resetValidation 都自增，只有最新一轮能写回状态。
+   */
+  let validationGeneration = 0;
+
   function setControlElement(node: unknown): void {
     /**
      * 只认领有约束校验 API 的元素。
@@ -96,6 +102,7 @@ export function useFormControl(
 
   async function validate(): Promise<void> {
     const control = controlElement.value;
+    const generation = ++validationGeneration;
 
     if (!control) return;
 
@@ -122,6 +129,8 @@ export function useFormControl(
       syncEntries.map((entry) => [entry.id, entry.match(control.value, formData)])
     );
 
+    if (generation !== validationGeneration) return;
+
     applyErrors(control, syncErrors);
 
     if (Object.values(syncErrors).some(Boolean) || asyncEntries.length === 0) return;
@@ -133,6 +142,8 @@ export function useFormControl(
         )
       )
     );
+
+    if (generation !== validationGeneration) return;
 
     applyErrors(control, asyncErrors);
   }
@@ -153,6 +164,8 @@ export function useFormControl(
   }
 
   function resetValidation(): void {
+    // 输入或 reset 会让在途的异步结果失效：即使它晚到，也不该把刚清空的状态写回去。
+    validationGeneration++;
     controlElement.value?.setCustomValidity('');
     form.clearFieldValidation(name);
   }

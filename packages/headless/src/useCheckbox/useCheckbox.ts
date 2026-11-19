@@ -107,11 +107,14 @@ export function useCheckbox(options: UseCheckboxOptions = {}): UseCheckboxReturn
   function getInputProps(): Record<string, unknown> | null {
     if (!bubble.isFormControl.value) return null;
 
+    const value = toValue(options.value);
+
     return {
       ...getHiddenInputAttrs({
         type: 'checkbox',
         name: toValue(options.name),
-        value: toValue(options.value) ?? 'on',
+        // 空串是显式提交值，不能被 ?? 当成未提供。
+        value: value === undefined ? 'on' : value,
         disabled: isDisabled.value,
         required: isRequired.value,
       }),

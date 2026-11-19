@@ -335,6 +335,39 @@ describe('useFormControl 校验', () => {
     scope.stop();
   });
 
+  it('并发异步校验只让最新一轮写回，晚到的旧结果不覆盖', async () => {
+    const { input, scope, formApi, field } = setup({ value: 'first' });
+
+    const control = createControl(scope, formApi, {}, field);
+    const resolvers: Array<(valid: boolean) => void> = [];
+
+    control.setControlElement(input);
+    formApi.addFieldMatcher('email', {
+      id: 'm-async',
+      match: async () =>
+        new Promise<boolean>((resolve) => {
+          resolvers.push(resolve);
+        }),
+    });
+
+    const first = control.validate();
+
+    input.value = 'second';
+
+    const second = control.validate();
+
+    resolvers[1]?.(false);
+    await second;
+
+    resolvers[0]?.(true);
+    await first;
+
+    expect(formApi.getFieldCustomErrors('email')).toEqual({ 'm-async': false });
+    expect(input.validity.customError).toBe(false);
+
+    scope.stop();
+  });
+
   it('用户改动值时清掉上一轮判定，但不重新判定', async () => {
     const { input, scope, formApi, field } = setup({ required: true });
 

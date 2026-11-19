@@ -28,7 +28,16 @@ type TokenField = (typeof TOKENS)[number]['field'];
 type FormatPart =
   { kind: 'token'; token: string; field: TokenField } | { kind: 'literal'; text: string };
 
-const TOKEN_PATTERN = /YYYY|YY|MM|M|DD|D|HH|H|mm|m|ss|s/g;
+const TOKEN_SOURCE = 'YYYY|YY|MM|M|DD|D|HH|H|mm|m|ss|s';
+
+/**
+ * 每次匹配都新建正则，避免模块级带 `g` 的正则被 `replace` / `matchAll` 共享 lastIndex。
+ *
+ * @returns 独立的全局匹配器。
+ */
+function createTokenPattern(): RegExp {
+  return new RegExp(TOKEN_SOURCE, 'g');
+}
 
 /** 两位年份的世纪归属：00-99 一律归 2000-2099，日期选择的场景里没人选 19xx 的短写。 */
 const SHORT_YEAR_BASE = 2000;
@@ -43,7 +52,7 @@ function pad(value: number): string {
  * 未识别的字符按字面量保留，因此 'YYYY年M月D日' 这类中文格式直接可用。
  */
 export function formatDate(date: Date, format: string): string {
-  return format.replace(TOKEN_PATTERN, (token) => {
+  return format.replace(createTokenPattern(), (token) => {
     switch (token) {
       case 'YYYY':
         return String(date.getFullYear()).padStart(4, '0');
@@ -79,14 +88,14 @@ function tokenize(format: string): FormatPart[] {
 
   let cursor = 0;
 
-  for (const match of format.matchAll(TOKEN_PATTERN)) {
+  for (const match of format.matchAll(createTokenPattern())) {
     const index = match.index ?? 0;
 
     if (index > cursor) parts.push({ kind: 'literal', text: format.slice(cursor, index) });
 
     const token = TOKENS.find((entry) => entry.token === match[0]);
 
-    // matchAll 用的就是 TOKEN_PATTERN，命中项必然在 TOKENS 里。
+    // matchAll 用的就是同一份 TOKEN_SOURCE，命中项必然在 TOKENS 里。
     if (token) parts.push({ kind: 'token', token: token.token, field: token.field });
 
     cursor = index + match[0].length;

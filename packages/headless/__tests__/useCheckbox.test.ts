@@ -89,6 +89,16 @@ describe('bubble input 与表单', () => {
     scope.stop();
   });
 
+  it('显式空串 value 不被当成未提供', async () => {
+    const { api, scope } = setup({ name: 'agree', value: '' });
+
+    await nextTick();
+
+    expect(api.getInputProps()?.value).toBe('');
+
+    scope.stop();
+  });
+
   it('提交值随勾选出现与消失，未提供 value 时用默认的 on', async () => {
     const { api, form, input, scope } = setup({ name: 'agree' });
 
