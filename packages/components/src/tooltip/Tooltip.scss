@@ -1,0 +1,132 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 提示是深色小浮层，与 Dialog 的浅色面板刻意不同：它叠加在任意内容之上，
+// 深底浅字在浅色与深色页面上都能保持对比度，不需要跟随页面主题反色。
+//
+// 箭头尺寸必须与组件的 arrowSize 属性一致：偏移由无头层按该尺寸算出，
+// 这里只负责把它画出来。两处不一致会让箭头偏离锚点中心。
+
+@include b('tooltip') {
+  @include set-component-css-var(
+    'tooltip',
+    (
+      'bg': var(--y-color-text-heading),
+      'color': var(--y-color-bg-container),
+      'font-size': var(--y-font-size-sm),
+      'padding-x': var(--y-padding-sm),
+      'padding-y': var(--y-padding-xs),
+      'radius': var(--y-border-radius),
+      'shadow': var(--y-shadow),
+      'max-width': 240px,
+      'arrow-size': 8px,
+      'duration': var(--y-motion-duration-fast),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 内容：根节点基础样式
+// ---------------------------------------------------------------------------
+//
+// 位置由无头层写成内联 transform，本层不碰 left/top，也不给 transform 加过渡：
+// 那会与逐帧定位打架，滚动跟随时看起来像浮层在拖影。
+//
+// opacity 过渡只在常驻（forceMount / keepMounted）下真的会跑：懒渲染时元素挂载的
+// 第一帧就已经是 delayed-open / instant-open，首帧即终值，没有可插值的起点；而
+// Presence 只认 @keyframes，动画名为 none 时关闭即卸载，也不会有淡出。
+
+@include b('tooltip') {
+  box-sizing: border-box;
+  max-width: getCssVar('tooltip', 'max-width');
+  padding: getCssVar('tooltip', 'padding-y') getCssVar('tooltip', 'padding-x');
+  font-family: var(--y-font-family);
+  font-size: getCssVar('tooltip', 'font-size');
+  line-height: var(--y-line-height);
+  color: getCssVar('tooltip', 'color');
+  word-wrap: break-word;
+  background: getCssVar('tooltip', 'bg');
+  border-radius: getCssVar('tooltip', 'radius');
+  box-shadow: getCssVar('tooltip', 'shadow');
+  z-index: var(--y-z-index-tooltip);
+  opacity: 0;
+  visibility: hidden;
+  // visibility 的翻转延迟到淡出结束：关闭时先淡出再隐藏，打开的状态里不列 visibility，
+  // 它立即恢复可见。常驻（forceMount / keepMounted）时 closed 的提示若只透明不隐藏，
+  // 会一直留在无障碍树里被读屏播报。
+  transition:
+    opacity getCssVar('tooltip', 'duration') var(--y-motion-ease-out),
+    visibility 0s linear getCssVar('tooltip', 'duration');
+
+  // ---------------------------------------------------------------------------
+  // 状态
+  // ---------------------------------------------------------------------------
+  //
+  // delayed-open 与 instant-open 都可见，区别只在是否值得给过渡：
+  // 连续触发时立即出现，避免淡入被看成闪烁。
+
+  &[data-state='delayed-open'] {
+    opacity: 1;
+    visibility: visible;
+    transition: opacity getCssVar('tooltip', 'duration') var(--y-motion-ease-out);
+  }
+
+  &[data-state='instant-open'] {
+    opacity: 1;
+    visibility: visible;
+    transition: none;
+  }
+
+  // transparent 不等于 inert：常驻时浮层关闭后仍留在 DOM 里，而它带着 tooltip
+  // 层级的 z-index。不关掉 pointer-events，一块看不见的深色矩形会盖在页面上吃掉点击。
+  // 箭头作为子元素一起继承。
+
+  &[data-state='closed'] {
+    pointer-events: none;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 箭头
+  // ---------------------------------------------------------------------------
+  //
+  // 交叉轴偏移由无头层内联给出（top/bottom 时是 left，left/right 时是 top），
+  // 这里只决定它贴哪条边：用 data-side 而不是写死，翻转后才仍然贴着正确的一侧。
+  // 旋转 45° 的方块比三角形好维护——不需要为四个朝向各写一套 border 拼接。
+
+  @include e('arrow') {
+    position: absolute;
+    width: getCssVar('tooltip', 'arrow-size');
+    height: getCssVar('tooltip', 'arrow-size');
+    background: getCssVar('tooltip', 'bg');
+    transform: rotate(45deg);
+
+    &[data-side='top'] {
+      bottom: calc(getCssVar('tooltip', 'arrow-size') / -2);
+    }
+
+    &[data-side='bottom'] {
+      top: calc(getCssVar('tooltip', 'arrow-size') / -2);
+    }
+
+    &[data-side='left'] {
+      right: calc(getCssVar('tooltip', 'arrow-size') / -2);
+    }
+
+    &[data-side='right'] {
+      left: calc(getCssVar('tooltip', 'arrow-size') / -2);
+    }
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reduced Motion
+  // ---------------------------------------------------------------------------
+  //
+  // 关掉淡入后状态仍然可辨：出现与消失本身就是反馈，不需要动画来表达。
+
+  @include reduced-motion {
+    transition: none;
+  }
+}

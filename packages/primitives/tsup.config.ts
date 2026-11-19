@@ -19,6 +19,7 @@ export default defineConfig({
     'progress/index': 'src/progress/index.ts',
     'collapsible/index': 'src/collapsible/index.ts',
     'floating/index': 'src/floating/index.ts',
+    'tooltip/index': 'src/tooltip/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

@@ -442,4 +442,46 @@ export const materials = [
     },
     container: true,
   }),
+  defineMaterial({
+    name: 'agile-plus.tooltip',
+    title: '提示',
+    category: '浮层',
+    icon: 'outline',
+    props: {
+      placement: {
+        type: 'string',
+        title: '位置',
+        enum: ['top', 'right', 'bottom', 'left'],
+        default: 'top',
+      },
+      delayDuration: { type: 'number', title: '打开延迟毫秒', default: 700 },
+      disableHoverableContent: {
+        type: 'boolean',
+        title: '内容不可悬停',
+        description: '提示里没有可点内容时开启，否则离开触发元素后提示会多停留一段',
+        default: false,
+      },
+      showArrow: { type: 'boolean', title: '显示箭头', default: true },
+    },
+    size: { width: 160, height: 60 },
+    container: true,
+    // 设计态只渲染触发元素，正文是 portal 出去的浮层；两格各占一半，
+    // 让设计师能分别往触发元素与正文里拖内容。窄条在前、兜底在后是落点判定的要求。
+    slots: [
+      {
+        name: 'trigger',
+        title: '触发元素',
+        maxChildren: 1,
+        region: { x: 0, y: 0, width: 1, height: 0.5 },
+      },
+      { name: 'default', title: '提示正文', region: { x: 0, y: 0.5, width: 1, height: 0.5 } },
+    ],
+    events: [
+      {
+        name: 'update:open',
+        title: '开合变化',
+        parameters: [{ name: 'value', type: 'boolean', description: '变化后的打开状态' }],
+      },
+    ],
+  }),
 ];

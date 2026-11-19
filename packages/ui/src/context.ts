@@ -12,6 +12,7 @@ import type {
   UseToastReturn,
   UseToggleGroupReturn,
   UseSwitchReturn,
+  UseTooltipReturn,
 } from '@agile-plus/headless';
 
 import type { ComputedRef } from 'vue';
@@ -93,6 +94,13 @@ interface ComponentContexts {
   /** Collapsible 的上下文：Root 下发给 Trigger 与 Content */
   collapsible: UseCollapsibleReturn;
   formField: UseFormFieldReturn;
+  /**
+   * Tooltip 的上下文：Root 下发给 Trigger / Content / Arrow。
+   *
+   * 只有一层——Tooltip 没有 Provider，跳过延迟的时间窗目前是实例级的。
+   * Arrow 也从这里读实际 placement，才能知道箭头该贴哪条边。
+   */
+  tooltip: UseTooltipReturn;
 }
 
 /**

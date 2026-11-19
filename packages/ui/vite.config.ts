@@ -20,6 +20,7 @@ export default defineConfig({
         'progress/index': 'src/progress/index.ts',
         'form/index': 'src/form/index.ts',
         'collapsible/index': 'src/collapsible/index.ts',
+        'tooltip/index': 'src/tooltip/index.ts',
       },
       formats: ['es', 'cjs'],
     },

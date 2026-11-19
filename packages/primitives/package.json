@@ -117,6 +117,12 @@
       "types": "./dist/floating/index.d.ts",
       "import": "./dist/floating/index.js",
       "require": "./dist/floating/index.cjs"
+    },
+    "./tooltip": {
+      "source": "./src/tooltip/index.ts",
+      "types": "./dist/tooltip/index.d.ts",
+      "import": "./dist/tooltip/index.js",
+      "require": "./dist/tooltip/index.cjs"
     }
   },
   "files": [

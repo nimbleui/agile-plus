@@ -146,6 +146,12 @@
       "types": "./dist/useFloating/index.d.ts",
       "import": "./dist/useFloating/index.js",
       "require": "./dist/useFloating/index.cjs"
+    },
+    "./useTooltip": {
+      "source": "./src/useTooltip/index.ts",
+      "types": "./dist/useTooltip/index.d.ts",
+      "import": "./dist/useTooltip/index.js",
+      "require": "./dist/useTooltip/index.cjs"
     }
   },
   "files": [

@@ -99,6 +99,12 @@
       "types": "./dist/progress/index.d.ts",
       "import": "./dist/progress/index.js",
       "require": "./dist/progress/index.cjs"
+    },
+    "./tooltip": {
+      "source": "./src/tooltip/index.ts",
+      "types": "./dist/tooltip/index.d.ts",
+      "import": "./dist/tooltip/index.js",
+      "require": "./dist/tooltip/index.cjs"
     }
   },
   "files": [

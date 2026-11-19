@@ -102,6 +102,8 @@ export * from './progress';
 
 export * from './form';
 
+export * from './tooltip';
+
 export * from './collapsible';
 
 export * from './slot';

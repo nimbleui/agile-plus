@@ -12,6 +12,7 @@ import { Switch } from '@agile-plus/components/switch';
 import { Tabs } from '@agile-plus/components/tabs';
 import { Toast, ToastViewport } from '@agile-plus/components/toast';
 import { Toggle, ToggleGroup, ToggleGroupItem } from '@agile-plus/components/toggle';
+import { Tooltip } from '@agile-plus/components/tooltip';
 
 /**
  * 成品组件层（`@agile-plus/components`）的名字表。
@@ -45,4 +46,5 @@ export const components: Record<string, Component> = {
   'agile-plus.checkbox-group': CheckboxGroup,
   'agile-plus.flex': Flex,
   'agile-plus.flex-item': FlexItem,
+  'agile-plus.tooltip': Tooltip,
 };

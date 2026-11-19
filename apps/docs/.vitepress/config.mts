@@ -47,6 +47,7 @@ export default defineConfig({
           text: '交互组件',
           items: [
             { text: 'Dialog 对话框', link: '/components/dialog' },
+            { text: 'Tooltip 提示', link: '/components/tooltip' },
             { text: 'Tabs 标签页', link: '/components/tabs' },
             { text: 'RadioGroup 单选组', link: '/components/radio-group' },
             { text: 'Slider 滑块', link: '/components/slider' },

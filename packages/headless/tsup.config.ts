@@ -24,6 +24,7 @@ export default defineConfig({
     'useSwitch/index': 'src/useSwitch/index.ts',
     'useSlider/index': 'src/useSlider/index.ts',
     'useFloating/index': 'src/useFloating/index.ts',
+    'useTooltip/index': 'src/useTooltip/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,
