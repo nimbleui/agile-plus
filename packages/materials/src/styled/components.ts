@@ -18,7 +18,7 @@ import { ScrollArea } from '@agile-plus/components/scroll-area';
 import { Select } from '@agile-plus/components/select';
 import { Slider } from '@agile-plus/components/slider';
 import { Switch } from '@agile-plus/components/switch';
-import { Tabs } from '@agile-plus/components/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@agile-plus/components/tabs';
 import { Textarea } from '@agile-plus/components/textarea';
 import { Toast, ToastViewport } from '@agile-plus/components/toast';
 import { Toggle, ToggleGroup, ToggleGroupItem } from '@agile-plus/components/toggle';
@@ -44,6 +44,9 @@ export const components: Record<string, Component> = {
   'agile-plus.progress': Progress,
   'agile-plus.dialog': Dialog,
   'agile-plus.tabs': Tabs,
+  'agile-plus.tabs-list': TabsList,
+  'agile-plus.tabs-trigger': TabsTrigger,
+  'agile-plus.tabs-content': TabsContent,
   'agile-plus.collapsible': Collapsible,
   'agile-plus.toast': Toast,
   'agile-plus.toast-viewport': ToastViewport,

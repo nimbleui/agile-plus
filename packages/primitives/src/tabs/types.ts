@@ -31,7 +31,12 @@ export interface TabsState {
   /** 所有已注册 tab 的 value 列表，保持注册顺序 */
   tabValues: string[];
 
-  /** 当前获得焦点的 tab value（可能与 activeValue 不同，仅在 manual 模式下） */
+  /**
+   * 当前获得焦点的 tab value。
+   *
+   * 键盘导航只写这个字段；激活值由适配层显式发送 SET_ACTIVE 更新，因此
+   * automatic 模式下两者也可能短暂不同（例如受控值尚未由外部回填时）。
+   */
   focusedValue: string | null;
 
   /** 激活模式 */

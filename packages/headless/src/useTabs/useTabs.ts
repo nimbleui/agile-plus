@@ -25,6 +25,14 @@ export function useTabs(options: UseTabsOptions = {}): UseTabsReturn {
    */
   const uid = useId();
 
+  /**
+   * trigger 元素登记表。
+   *
+   * 键盘导航必须用这里登记的元素入口，而不是 `document.getElementById`：
+   * 后者拿不到 Shadow DOM 内的节点，多实例 value 重名时还会聚焦到别的标签页。
+   */
+  const triggerElements = new Map<string, HTMLElement>();
+
   function getTriggerId(tabValue: string): string {
     return `${uid}-tab-${tabValue}`;
   }
@@ -44,6 +52,7 @@ export function useTabs(options: UseTabsOptions = {}): UseTabsReturn {
   });
 
   const internalActive = ref(machine.getState().activeValue);
+  const internalFocused = ref<string | null>(machine.getState().focusedValue);
 
   const activeValue = computed(() =>
     isControlled.value ? controlledActive.value! : internalActive.value
@@ -52,8 +61,8 @@ export function useTabs(options: UseTabsOptions = {}): UseTabsReturn {
   /**
    * 状态机是唯一的状态来源，向外部广播变化。
    *
-   * 键盘导航（方向键 / Home / End）通过 FOCUS_TAB 改变激活值而非 setActive，
-   * 因此必须在订阅回调中上报 onValueChange，否则受控模式下方向键无效。
+   * 键盘导航只通过 FOCUS_TAB 移动焦点；激活统一走 SET_ACTIVE（见 onTriggerKeydown），
+   * 所以这里只在激活值真的变化时上报，受控值不会被焦点态悄悄改写。
    * changed 需在写入 internalActive 之前捕获，否则比较恒等。
    */
   const unsubscribe = machine.subscribe((state) => {
@@ -62,6 +71,10 @@ export function useTabs(options: UseTabsOptions = {}): UseTabsReturn {
     if (!isControlled.value) {
       internalActive.value = state.activeValue;
     }
+
+    // 焦点是独立的响应式状态：manual 模式下它变化而 activeValue 不变，
+    // 依赖 getTriggerProps 的 computed 也必须跟着重算 roving tabindex。
+    internalFocused.value = state.focusedValue;
 
     if (changed) {
       options.onValueChange?.(state.activeValue);
@@ -99,12 +112,15 @@ export function useTabs(options: UseTabsOptions = {}): UseTabsReturn {
     machine.send({ type: 'SET_ACTIVE', payload: value });
   }
 
-  function registerTab(value: string): void {
+  function registerTab(value: string, element?: HTMLElement | null): void {
     machine.send({ type: 'REGISTER_TAB', payload: value });
+
+    if (element) triggerElements.set(value, element);
   }
 
   function unregisterTab(value: string): void {
     machine.send({ type: 'UNREGISTER_TAB', payload: value });
+    triggerElements.delete(value);
   }
 
   /**
@@ -128,9 +144,13 @@ export function useTabs(options: UseTabsOptions = {}): UseTabsReturn {
     }
 
     if (result.nextFocusedValue !== null) {
-      machine.send({ type: 'FOCUS_TAB', payload: result.nextFocusedValue });
+      const nextValue = result.nextFocusedValue;
 
-      document.getElementById(getTriggerId(result.nextFocusedValue))?.focus();
+      // 焦点态与激活态解耦：先只移动焦点，automatic 再显式走 setActive 触发激活。
+      machine.send({ type: 'FOCUS_TAB', payload: nextValue });
+      triggerElements.get(nextValue)?.focus();
+
+      if (activationMode === 'automatic' && result.shouldActivate) setActive(nextValue);
     }
 
     if (event.key === 'Enter' || event.key === ' ') {
@@ -157,13 +177,17 @@ export function useTabs(options: UseTabsOptions = {}): UseTabsReturn {
 
   function getTriggerProps(value: string): Record<string, unknown> {
     const isActive = activeValue.value === value;
+    // roving tabindex 跟的是真实焦点而非激活值：manual 模式下二者分离，
+    // 若用 activeValue 判定，方向键移过去的按钮仍不可 Tab 访问。
+    const focused = internalFocused.value ?? activeValue.value;
+    const isFocused = focused === value;
 
     return {
       role: 'tab' as const,
       'aria-selected': isActive,
       'aria-controls': getPanelId(value),
       id: getTriggerId(value),
-      tabindex: isActive ? 0 : -1,
+      tabindex: isFocused ? 0 : -1,
       'data-state': isActive ? 'active' : 'inactive',
       'data-value': value,
     };

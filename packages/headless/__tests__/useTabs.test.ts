@@ -46,7 +46,8 @@ function setup(options: UseTabsOptions = {}, values = ['a', 'b', 'c']) {
   app.mount(document.createElement('div'));
   apps.push(app);
 
-  for (const value of values) api.registerTab(value);
+  // 组件会在挂载后把真实元素入口补登记进来，键盘导航只认这个入口。
+  for (const [index, value] of values.entries()) api.registerTab(value, buttons[index]);
 
   /** 把属性表落到真实元素上，模拟组件渲染；id 必须先落地，导航才能找到焦点目标。 */
   function applyProps(): void {
@@ -250,12 +251,31 @@ describe('useTabs 键盘导航（automatic）', () => {
   it('方向键在受控模式下也上报 onValueChange', async () => {
     const onValueChange = vi.fn();
     const modelValue = ref('a');
-    const { buttons } = setup({ modelValue, onValueChange });
+    const { api, buttons } = setup({ modelValue, onValueChange });
 
     press(buttons[0] as HTMLButtonElement, 'ArrowRight');
     await nextTick();
 
     expect(onValueChange).toHaveBeenCalledWith('b');
+    // 键盘不绕过受控语义：外部没回填前 activeValue 仍是 a。
+    expect(api.activeValue.value).toBe('a');
+
+    modelValue.value = 'b';
+    await nextTick();
+
+    expect(api.activeValue.value).toBe('b');
+  });
+
+  it('聚焦登记的元素入口，即使 trigger 没有 id', async () => {
+    const { buttons } = setup();
+
+    for (const button of buttons) button.removeAttribute('id');
+
+    (buttons[0] as HTMLButtonElement).focus();
+    press(buttons[0] as HTMLButtonElement, 'ArrowRight');
+    await nextTick();
+
+    expect(document.activeElement).toBe(buttons[1]);
   });
 });
 
@@ -268,6 +288,9 @@ describe('useTabs 键盘导航（manual）', () => {
 
     expect(document.activeElement).toBe(buttons[1]);
     expect(api.activeValue.value).toBe('a');
+    // roving tabindex 跟焦点走，manual 模式下焦点项才能被 Tab 再次访问。
+    expect(api.getTriggerProps('b').tabindex).toBe(0);
+    expect(api.getTriggerProps('a').tabindex).toBe(-1);
   });
 
   it('Enter 与 Space 激活当前焦点项', async () => {

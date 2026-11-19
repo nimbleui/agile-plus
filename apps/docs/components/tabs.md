@@ -17,26 +17,25 @@ import TabsDemo from '../.vitepress/components/TabsDemo.vue';
 <script setup lang="ts">
 import { ref } from 'vue';
 
-import { Tabs } from '@agile-plus/components/tabs';
-import { TabsContent, TabsList, TabsTrigger } from '@agile-plus/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@agile-plus/components/tabs';
 
 const active = ref('basic');
 </script>
 
 <template>
   <Tabs v-model="active">
-    <TabsList class="y-tabs">
-      <TabsTrigger value="basic" class="y-tabs__trigger">基础配置</TabsTrigger>
-      <TabsTrigger value="advanced" class="y-tabs__trigger">高级配置</TabsTrigger>
+    <TabsList>
+      <TabsTrigger value="basic">基础配置</TabsTrigger>
+      <TabsTrigger value="advanced">高级配置</TabsTrigger>
     </TabsList>
 
-    <TabsContent value="basic" class="y-tabs">基础面板</TabsContent>
-    <TabsContent value="advanced" class="y-tabs">高级面板</TabsContent>
+    <TabsContent value="basic">基础面板</TabsContent>
+    <TabsContent value="advanced">高级面板</TabsContent>
   </Tabs>
 </template>
 ```
 
-带样式的 `Tabs` 只封装根节点，列表与面板仍来自 `@agile-plus/ui/tabs` 并需要显式传入样式 class——这是无头层的契约：样式类名由消费者决定。
+四个出口都来自 `@agile-plus/components/tabs`，各自注入对应的样式 class，开箱即用；需要完全自定义 DOM 与 class 时仍可直接使用 `@agile-plus/ui/tabs` 的原子件。
 
 ## Tabs
 
@@ -58,11 +57,11 @@ const active = ref('basic');
 
 ## 子组件
 
-| 组件          | 必填 Props      | 渲染                                                |
-| ------------- | --------------- | --------------------------------------------------- |
-| `TabsList`    | 无              | `<div role="tablist">`，`aria-orientation` 跟随方向 |
-| `TabsTrigger` | `value: string` | `<button role="tab">`                               |
-| `TabsContent` | `value: string` | `<div role="tabpanel">`，未激活时带 `hidden`        |
+| 组件          | 必填 Props      | 渲染                                                            |
+| ------------- | --------------- | --------------------------------------------------------------- |
+| `TabsList`    | 无              | `<div role="tablist">`，`aria-orientation` 跟随方向，带列表样式 |
+| `TabsTrigger` | `value: string` | `<button role="tab">`，带 trigger 样式                          |
+| `TabsContent` | `value: string` | `<div role="tabpanel">`，未激活时带 `hidden`，带面板样式        |
 
 `TabsTrigger` 与 `TabsContent` 通过相同的 `value` 建立 `aria-controls` / `aria-labelledby` 关联。
 

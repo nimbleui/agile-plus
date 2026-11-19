@@ -49,8 +49,12 @@ export interface UseTabsReturn {
    *
    * 由 TabsTrigger 在创建时调用，value 重复注册时幂等忽略。
    * 注册顺序决定键盘导航顺序，因此必须与 DOM 顺序一致。
+   *
+   * @param value tab 的唯一 value。
+   * @param element 对应的 trigger 元素。键盘导航直接聚焦这里登记的元素，
+   * 不做 `document.getElementById` 全局查询，因此 Shadow DOM 与多实例重名都安全。
    */
-  registerTab(value: string): void;
+  registerTab(value: string, element?: HTMLElement | null): void;
 
   /** 注销一个 tab，由 TabsTrigger 卸载时调用 */
   unregisterTab(value: string): void;

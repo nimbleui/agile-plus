@@ -81,8 +81,8 @@ export const materials = [
     title: '标签页',
     category: '交互',
     icon: 'grid',
-    // 样式层只转发默认插槽，标签列表 / 标签 / 面板这三个部件来自无头层
-    accepts: ['agile-plus.ui.tabs-list', 'agile-plus.ui.tabs-content'],
+    // 标签列表 / 标签 / 面板都用带样式的成品部件，拖出来无需手写 class 就有样式
+    accepts: ['agile-plus.tabs-list', 'agile-plus.tabs-content'],
     props: {
       defaultValue: {
         type: 'string',
@@ -112,6 +112,41 @@ export const materials = [
         parameters: [{ name: 'value', type: 'string', description: '新选中标签的 value' }],
       },
     ],
+  }),
+  defineMaterial({
+    name: 'agile-plus.tabs-list',
+    title: '标签页·标签列表',
+    category: '交互',
+    icon: 'list',
+    parent: 'agile-plus.tabs',
+    accepts: ['agile-plus.tabs-trigger'],
+    size: { width: 320, height: 36 },
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.tabs-trigger',
+    title: '标签页·标签',
+    category: '交互',
+    icon: 'square',
+    parent: 'agile-plus.tabs-list',
+    props: {
+      value: { type: 'string', title: '标签值', description: '与对应面板的 value 一致，必填' },
+    },
+    initial: { value: 'tab-1' },
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.tabs-content',
+    title: '标签页·面板',
+    category: '交互',
+    icon: 'outline',
+    parent: 'agile-plus.tabs',
+    size: { width: 320, height: 120 },
+    props: {
+      value: { type: 'string', title: '对应标签值', description: '与哪个标签联动，必填' },
+    },
+    initial: { value: 'tab-1' },
+    container: true,
   }),
   defineMaterial({
     name: 'agile-plus.collapsible',
@@ -748,7 +783,11 @@ export const materials = [
         name: 'update:value',
         title: '展开值变化',
         parameters: [
-          { name: 'value', type: 'string | string[]', description: 'single 为字符串，multiple 为数组' },
+          {
+            name: 'value',
+            type: 'string | string[]',
+            description: 'single 为字符串，multiple 为数组',
+          },
         ],
       },
     ],

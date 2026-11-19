@@ -101,12 +101,16 @@ describe('createTabsMachine 激活与注销', () => {
 });
 
 describe('createTabsMachine 两种激活模式', () => {
-  it('automatic 下移动焦点即激活', () => {
+  it('FOCUS_TAB 只移动焦点，激活动作由适配层另发 SET_ACTIVE', () => {
     const machine = machineWithThree('automatic');
 
     machine.send({ type: 'FOCUS_TAB', payload: 'b' });
 
     expect(machine.getState().focusedValue).toBe('b');
+    expect(machine.getState().activeValue).toBe('a');
+
+    machine.send({ type: 'SET_ACTIVE', payload: 'b' });
+
     expect(machine.getState().activeValue).toBe('b');
   });
 
@@ -161,7 +165,12 @@ describe('createTabsMachine 导航', () => {
   it('manual 下四个导航动作都只移动焦点', () => {
     const machine = machineWithThree('manual');
 
-    for (const type of ['NAVIGATE_NEXT', 'NAVIGATE_PREV', 'NAVIGATE_FIRST', 'NAVIGATE_LAST'] as const) {
+    for (const type of [
+      'NAVIGATE_NEXT',
+      'NAVIGATE_PREV',
+      'NAVIGATE_FIRST',
+      'NAVIGATE_LAST',
+    ] as const) {
       machine.send({ type });
 
       expect(machine.getState().activeValue).toBe('a');
@@ -178,6 +187,21 @@ describe('createTabsMachine 导航', () => {
     machine.send({ type: 'NAVIGATE_LAST' });
 
     expect(machine.getState()).toEqual(before);
+  });
+
+  it('空串是合法 tabValue，FIRST 与 LAST 不能把它当成空列表跳过', () => {
+    const machine = createTabsMachine();
+
+    machine.send({ type: 'REGISTER_TAB', payload: '' });
+    machine.send({ type: 'REGISTER_TAB', payload: 'b' });
+    machine.send({ type: 'NAVIGATE_LAST' });
+
+    expect(machine.getState().focusedValue).toBe('b');
+
+    machine.send({ type: 'NAVIGATE_FIRST' });
+
+    expect(machine.getState().focusedValue).toBe('');
+    expect(machine.getState().tabValues).toEqual(['', 'b']);
   });
 
   /**
@@ -283,9 +307,9 @@ describe('handleTabsKeydown 方向与循环', () => {
   });
 
   it('默认循环：末端往后回到首项，首项往前回到末端', () => {
-    expect(handleTabsKeydown('ArrowRight', { ...context, focusedValue: 'c' }).nextFocusedValue).toBe(
-      'a'
-    );
+    expect(
+      handleTabsKeydown('ArrowRight', { ...context, focusedValue: 'c' }).nextFocusedValue
+    ).toBe('a');
     expect(handleTabsKeydown('ArrowLeft', { ...context, focusedValue: 'a' }).nextFocusedValue).toBe(
       'c'
     );
@@ -307,9 +331,9 @@ describe('handleTabsKeydown 方向与循环', () => {
 
     expect(handleTabsKeydown('Home', noLoop).nextFocusedValue).toBe('a');
     expect(handleTabsKeydown('End', noLoop).nextFocusedValue).toBe('c');
-    expect(
-      handleTabsKeydown('End', { ...noLoop, orientation: 'vertical' }).nextFocusedValue
-    ).toBe('c');
+    expect(handleTabsKeydown('End', { ...noLoop, orientation: 'vertical' }).nextFocusedValue).toBe(
+      'c'
+    );
   });
 });
 

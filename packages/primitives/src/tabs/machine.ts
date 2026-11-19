@@ -91,13 +91,9 @@ export function createTabsMachine(options: TabsMachineOptions = {}): TabsMachine
       }
 
       case 'FOCUS_TAB': {
-        const nextFocused = action.payload;
-
-        if (state.activationMode === 'automatic') {
-          setState({ focusedValue: nextFocused, activeValue: nextFocused });
-        } else {
-          setState({ focusedValue: nextFocused });
-        }
+        // 焦点与激活值解耦：键盘导航只写 focusedValue，automatic 模式下的激活动作
+        // 由适配层另发 SET_ACTIVE。这样受控值始终只经 onValueChange 改变。
+        setState({ focusedValue: action.payload });
 
         break;
       }
@@ -138,9 +134,10 @@ export function createTabsMachine(options: TabsMachineOptions = {}): TabsMachine
       }
 
       case 'NAVIGATE_FIRST': {
-        const first = state.tabValues[0];
+        // 空串也是合法的 tabValue，不能用 falsy 判断，否则头尾是空串时导航会被吞掉。
+        if (state.tabValues.length === 0) return;
 
-        if (!first) return;
+        const first = state.tabValues[0];
 
         if (state.activationMode === 'automatic') {
           setState({ focusedValue: first, activeValue: first });
@@ -152,9 +149,9 @@ export function createTabsMachine(options: TabsMachineOptions = {}): TabsMachine
       }
 
       case 'NAVIGATE_LAST': {
-        const last = state.tabValues[state.tabValues.length - 1];
+        if (state.tabValues.length === 0) return;
 
-        if (!last) return;
+        const last = state.tabValues[state.tabValues.length - 1];
 
         if (state.activationMode === 'automatic') {
           setState({ focusedValue: last, activeValue: last });
