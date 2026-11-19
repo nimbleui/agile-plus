@@ -216,4 +216,45 @@ export const materials: MaterialContribution[] = [
       },
     ],
   },
+  {
+    name: 'agile-plus.textarea',
+    title: '多行输入',
+    category: '表单',
+    icon: 'type',
+    // 受控通道不登记，判据与输入框一致。
+    props: {
+      type: 'object',
+      properties: {
+        defaultValue: { type: 'string', title: '默认值', default: '' },
+        placeholder: { type: 'string', title: '占位提示' },
+        rows: { type: 'number', title: '可见行数', default: 3 },
+        name: { type: 'string', title: '字段名', description: '参与原生表单提交' },
+        disabled: { type: 'boolean', title: '禁用', default: false },
+        readOnly: { type: 'boolean', title: '只读', default: false },
+        required: { type: 'boolean', title: '必填', default: false },
+      },
+    },
+    module: './dist/index.js',
+    snippet: {
+      id: 'agile-plus-textarea-1',
+      componentName: 'agile-plus.textarea',
+      name: '多行输入',
+      layout: { mode: 'absolute', rect: { x: 0, y: 0, width: 240, height: 80 } },
+      props: { placeholder: '请输入', rows: 3 },
+    },
+    events: [
+      {
+        name: 'update:modelValue',
+        title: '值变化',
+        description: '用户输入后触发；中文输入法组合期间不触发，组合结束后一次性上报',
+        parameters: [{ name: 'value', type: 'string', description: '多行输入当前值' }],
+      },
+      {
+        name: 'change',
+        title: '确认输入',
+        description: '失焦确认时触发',
+        parameters: [{ name: 'event', type: 'Event', description: '原生 change 事件' }],
+      },
+    ],
+  },
 ];

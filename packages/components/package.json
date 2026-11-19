@@ -130,6 +130,12 @@
       "import": "./dist/input/index.js",
       "require": "./dist/input/index.cjs"
     },
+    "./textarea": {
+      "source": "./src/textarea/index.ts",
+      "types": "./dist/textarea/index.d.ts",
+      "import": "./dist/textarea/index.js",
+      "require": "./dist/textarea/index.cjs"
+    },
     "./style.css": "./dist/components.css"
   },
   "files": [

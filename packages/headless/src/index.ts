@@ -51,3 +51,5 @@ export * from './useSelect';
 export * from './useEllipsis';
 
 export * from './useInput';
+
+export * from './useTextarea';

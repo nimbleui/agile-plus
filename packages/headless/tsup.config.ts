@@ -30,6 +30,7 @@ export default defineConfig({
     'useSelect/index': 'src/useSelect/index.ts',
     'useEllipsis/index': 'src/useEllipsis/index.ts',
     'useInput/index': 'src/useInput/index.ts',
+    'useTextarea/index': 'src/useTextarea/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

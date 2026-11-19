@@ -15,6 +15,7 @@ import { Select } from '@agile-plus/components/select';
 import { Slider } from '@agile-plus/components/slider';
 import { Switch } from '@agile-plus/components/switch';
 import { Tabs } from '@agile-plus/components/tabs';
+import { Textarea } from '@agile-plus/components/textarea';
 import { Toast, ToastViewport } from '@agile-plus/components/toast';
 import { Toggle, ToggleGroup, ToggleGroupItem } from '@agile-plus/components/toggle';
 import { Tooltip } from '@agile-plus/components/tooltip';
@@ -58,4 +59,5 @@ export const components: Record<string, Component> = {
   'agile-plus.ellipsis': Ellipsis,
   'agile-plus.dropdown-menu-item': DropdownMenuItem,
   'agile-plus.input': Input,
+  'agile-plus.textarea': Textarea,
 };

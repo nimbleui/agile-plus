@@ -25,6 +25,7 @@ export default defineConfig({
         'select/index': 'src/select/index.ts',
         'ellipsis/index': 'src/ellipsis/index.ts',
         'input/index': 'src/input/index.ts',
+        'textarea/index': 'src/textarea/index.ts',
         'popover/index': 'src/popover/index.ts',
         'dropdown-menu/index': 'src/dropdown-menu/index.ts',
       },

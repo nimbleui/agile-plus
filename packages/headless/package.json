@@ -182,6 +182,12 @@
       "types": "./dist/useInput/index.d.ts",
       "import": "./dist/useInput/index.js",
       "require": "./dist/useInput/index.cjs"
+    },
+    "./useTextarea": {
+      "source": "./src/useTextarea/index.ts",
+      "types": "./dist/useTextarea/index.d.ts",
+      "import": "./dist/useTextarea/index.js",
+      "require": "./dist/useTextarea/index.cjs"
     }
   },
   "files": [

@@ -44,6 +44,7 @@ import {
 import { SliderRange, SliderRoot, SliderThumb, SliderTrack } from '@agile-plus/ui/slider';
 import { SwitchRoot, SwitchThumb } from '@agile-plus/ui/switch';
 import { TabsContent, TabsList, TabsRoot, TabsTrigger } from '@agile-plus/ui/tabs';
+import { Textarea } from '@agile-plus/ui/textarea';
 import {
   ToastAction,
   ToastClose,
@@ -125,4 +126,5 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.dropdown-menu-label': DropdownMenuLabel,
   'agile-plus.ui.dropdown-menu-separator': DropdownMenuSeparator,
   'agile-plus.ui.input': Input,
+  'agile-plus.ui.textarea': Textarea,
 };
