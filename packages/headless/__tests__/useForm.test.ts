@@ -1,4 +1,4 @@
-import { effectScope, nextTick } from 'vue';
+import { effectScope, nextTick, ref } from 'vue';
 
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
@@ -510,6 +510,62 @@ describe('useFormMessage', () => {
     const { formApi } = setup();
 
     expect(() => scope.run(() => useFormMessage({}, formApi, undefined))).toThrow(/name/);
+
+    scope.stop();
+  });
+
+  it('脱离字段但显式给 name 时照样登记到该字段', () => {
+    const scope = effectScope();
+    const { formApi } = setup();
+
+    const message = scope.run(() => useFormMessage({ name: 'email' }, formApi, undefined))!;
+
+    expect(message.name.value).toBe('email');
+    expect(message.matches.value).toBe(true);
+    expect(formApi.getFieldDescription('email')).toBe(message.id);
+
+    scope.stop();
+  });
+
+  it('match 以 Ref 形式传入时解包取值，而不是把 Ref 当匹配器', async () => {
+    const scope = effectScope();
+    const { formApi, field } = setup();
+    const match = ref<(value: string) => boolean>((value) => value.length < 6);
+
+    const message = scope.run(() => useFormMessage({ match }, formApi, field))!;
+
+    // 解包成功才会登记成匹配器；若把 Ref 本身当函数，这里会是 0 条。
+    expect(formApi.getFieldMatchers('email')).toHaveLength(1);
+    expect(message.matches.value).toBe(false);
+
+    match.value = 'valueMissing';
+    await nextTick();
+
+    expect(formApi.getFieldMatchers('email')).toHaveLength(0);
+
+    scope.stop();
+  });
+
+  it('函数式 match 没有可推导原文，缺省文案回落到通用文案', () => {
+    const scope = effectScope();
+    const { formApi, field } = setup();
+
+    const message = scope.run(() =>
+      useFormMessage({ match: (value: string) => value.length < 6 }, formApi, field)
+    )!;
+
+    expect(message.getDefaultText()).toBe('This value is not valid');
+
+    scope.stop();
+  });
+
+  it("match='valid' 没有内置错误文案，同样回落通用文案", () => {
+    const scope = effectScope();
+    const { formApi, field } = setup();
+
+    const message = scope.run(() => useFormMessage({ match: 'valid' }, formApi, field))!;
+
+    expect(message.getDefaultText()).toBe('This value is not valid');
 
     scope.stop();
   });
