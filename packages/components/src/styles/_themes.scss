@@ -1,0 +1,86 @@
+// ---------------------------------------------------------------------------
+// Design Token — 暗色主题预设
+// ---------------------------------------------------------------------------
+//
+// 只覆盖颜色类 token：字体、间距、圆角、控件高度、动效时长、z-index 与主题无关，
+// 不重复声明，避免切换主题时把这些维度也带偏。
+//
+// 挂载点是 html/body 上的 `data-theme="dark"`。选择器必须用 `:root[data-theme='dark']`
+// 而不是裸 `[data-theme='dark']`：后者与 `:root` 同特异性（0,1,0），谁生效取决于注入顺序，
+// 而 dev 下 :root 反而排在预设之后，会把暗色值整个压掉。`:root[data-theme='dark']` 是
+// (0,2,0)，无论顺序都稳赢 :root。再并列一个裸 `[data-theme='dark']`，保留「挂到任意祖先
+// 只翻局部」的作用域用法（那种元素上没有竞争的 :root 规则）。
+//
+// 组件级变量（set-component-css-var 生成的 --y-<组件>-*）都用 var(--y-color-*) 在使用点
+// 解析，覆盖全局颜色 token 后整棵组件树自动翻转，不需要改任何组件源码。
+//
+// 色值取自 Ant Design v5 暗色板，作为「开箱可用」的默认值；消费者要改配色仍然覆盖
+// --y-* 变量即可，本层不是硬编码终点。
+
+:root[data-theme='dark'],
+[data-theme='dark'] {
+  // -------------------------------------------------------------------------
+  // 颜色 — 基础色板
+  // -------------------------------------------------------------------------
+
+  --y-color-primary: #1668dc;
+  --y-color-primary-hover: #3c8ae5;
+  --y-color-primary-active: #0e4ba4;
+  --y-color-primary-bg: #111d2c;
+
+  --y-color-success: #49aa19;
+  --y-color-success-hover: #73d13d;
+  --y-color-success-active: #3c8618;
+  --y-color-success-bg: #162312;
+
+  --y-color-warning: #d89614;
+  --y-color-warning-hover: #ffc53d;
+  --y-color-warning-active: #b87d0a;
+  --y-color-warning-bg: #2b2111;
+
+  --y-color-danger: #d32029;
+  --y-color-danger-hover: #f56266;
+  --y-color-danger-active: #a8071a;
+  --y-color-danger-bg: #2a1215;
+
+  --y-color-info: #1668dc;
+  --y-color-info-hover: #3c8ae5;
+  --y-color-info-active: #0e4ba4;
+  --y-color-info-bg: #111d2c;
+
+  // -------------------------------------------------------------------------
+  // 颜色 — 中性色
+  // -------------------------------------------------------------------------
+
+  --y-color-text: rgba(255, 255, 255, 0.85);
+  --y-color-text-secondary: rgba(255, 255, 255, 0.65);
+  --y-color-text-tertiary: rgba(255, 255, 255, 0.45);
+  --y-color-text-disabled: rgba(255, 255, 255, 0.25);
+  --y-color-text-heading: rgba(255, 255, 255, 0.85);
+
+  --y-color-bg-container: #141414;
+  --y-color-bg-elevated: #1f1f1f;
+  --y-color-bg-layout: #000000;
+
+  --y-color-border: #424242;
+  --y-color-border-secondary: #303030;
+
+  --y-color-fill: rgba(255, 255, 255, 0.18);
+  --y-color-fill-secondary: rgba(255, 255, 255, 0.12);
+  --y-color-fill-tertiary: rgba(255, 255, 255, 0.08);
+  --y-color-fill-quaternary: rgba(255, 255, 255, 0.04);
+
+  // -------------------------------------------------------------------------
+  // 阴影：暗色下用更实的黑，浅色那套半透黑在深底上几乎看不见
+  // -------------------------------------------------------------------------
+
+  --y-shadow-sm:
+    0 1px 2px 0 rgba(0, 0, 0, 0.3), 0 1px 6px -1px rgba(0, 0, 0, 0.2),
+    0 2px 4px 0 rgba(0, 0, 0, 0.2);
+  --y-shadow:
+    0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 3px 6px -4px rgba(0, 0, 0, 0.4),
+    0 9px 28px 8px rgba(0, 0, 0, 0.2);
+  --y-shadow-modal:
+    0 6px 16px 0 rgba(0, 0, 0, 0.32), 0 3px 6px -4px rgba(0, 0, 0, 0.4),
+    0 9px 28px 8px rgba(0, 0, 0, 0.2);
+}
