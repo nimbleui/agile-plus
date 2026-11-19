@@ -631,4 +631,141 @@ export const materials = [
     size: { width: 160, height: 1 },
     parent: 'agile-plus.dropdown-menu',
   }),
+  // Pagination 的页码项来自 Root 作用域里的 items，由消费者 v-for 分发；画布拖不出
+  // v-for，所以页码/省略号要逐个手动拖入，或直接用成品件 agile-plus.pagination。
+  // 所有部件都渲染成 li，而 li 的直接父级必须是列表元素，因此它们一律挂在「页码列表」
+  // 之下，Root 只接受这一个容器件。
+  defineMaterial({
+    name: 'agile-plus.ui.pagination',
+    title: '分页·根',
+    category: '原子件·容器',
+    icon: 'grid',
+    accepts: ['agile-plus.ui.pagination-list'],
+    props: {
+      defaultValue: { type: 'number', title: '默认页码', default: 1 },
+      total: { type: 'number', title: '数据总条数', default: 100 },
+      pageSize: { type: 'number', title: '每页条数', default: 10 },
+      siblingCount: {
+        type: 'number',
+        title: '当前页两侧页码数',
+        description: '0 也合法',
+        default: 1,
+      },
+      boundaryCount: {
+        type: 'number',
+        title: '首尾固定页码数',
+        description: '0 也合法',
+        default: 1,
+      },
+      disabled: { type: 'boolean', title: '整条禁用', default: false },
+      ariaLabel: {
+        type: 'string',
+        title: '地标名称',
+        description: '屏幕阅读器区分多个分页条',
+        default: '分页',
+      },
+    },
+    size: { width: 320, height: 32 },
+    container: true,
+    events: [
+      {
+        name: 'update:modelValue',
+        title: '页码变化',
+        parameters: [{ name: 'value', type: 'number', description: '切换后的页码' }],
+      },
+    ],
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.pagination-list',
+    title: '分页·页码列表',
+    category: '原子件·部件',
+    icon: 'list',
+    parent: 'agile-plus.ui.pagination',
+    accepts: [
+      'agile-plus.ui.pagination-prev',
+      'agile-plus.ui.pagination-page',
+      'agile-plus.ui.pagination-ellipsis',
+      'agile-plus.ui.pagination-next',
+      'agile-plus.ui.pagination-jumper',
+    ],
+    size: { width: 320, height: 32 },
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.pagination-page',
+    title: '分页·页码',
+    category: '原子件·部件',
+    icon: 'square',
+    parent: 'agile-plus.ui.pagination-list',
+    props: {
+      page: { type: 'number', title: '页码', description: '既是按钮文本也是点击目标，必填' },
+    },
+    initial: { page: 1 },
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.pagination-ellipsis',
+    title: '分页·省略号',
+    category: '原子件·部件',
+    icon: 'list',
+    parent: 'agile-plus.ui.pagination-list',
+    props: {
+      side: {
+        type: 'string',
+        title: '所属侧',
+        enum: ['start', 'end'],
+        description: '只影响样式挂钩，不影响交互',
+        default: 'start',
+      },
+    },
+    initial: { side: 'end' },
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.pagination-prev',
+    title: '分页·上一页',
+    category: '原子件·部件',
+    icon: 'chevronRight',
+    parent: 'agile-plus.ui.pagination-list',
+    props: {
+      label: {
+        type: 'string',
+        title: '可访问名',
+        description: '样式层换成箭头后靠它朗读',
+        default: '上一页',
+      },
+    },
+    initial: { label: '上一页' },
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.pagination-next',
+    title: '分页·下一页',
+    category: '原子件·部件',
+    icon: 'chevronRight',
+    parent: 'agile-plus.ui.pagination-list',
+    props: {
+      label: {
+        type: 'string',
+        title: '可访问名',
+        description: '样式层换成箭头后靠它朗读',
+        default: '下一页',
+      },
+    },
+    initial: { label: '下一页' },
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.pagination-jumper',
+    title: '分页·页码跳转',
+    category: '原子件·部件',
+    icon: 'type',
+    parent: 'agile-plus.ui.pagination-list',
+    props: {
+      label: { type: 'string', title: '前缀文字', default: '跳至' },
+      suffix: { type: 'string', title: '后缀单位', default: '页' },
+      ariaLabel: { type: 'string', title: '输入框可访问名', default: '页码' },
+    },
+    initial: { label: '跳至' },
+    container: true,
+  }),
 ];

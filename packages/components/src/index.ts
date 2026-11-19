@@ -26,6 +26,8 @@ export * from './slider';
 
 export * from './progress';
 
+export * from './pagination';
+
 export * from './collapsible';
 
 export * from './tooltip';

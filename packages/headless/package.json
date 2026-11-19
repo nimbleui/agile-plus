@@ -200,6 +200,12 @@
       "types": "./dist/useTextarea/index.d.ts",
       "import": "./dist/useTextarea/index.js",
       "require": "./dist/useTextarea/index.cjs"
+    },
+    "./usePagination": {
+      "source": "./src/usePagination/index.ts",
+      "types": "./dist/usePagination/index.d.ts",
+      "import": "./dist/usePagination/index.js",
+      "require": "./dist/usePagination/index.cjs"
     }
   },
   "files": [

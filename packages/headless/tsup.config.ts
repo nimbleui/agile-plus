@@ -33,6 +33,7 @@ export default defineConfig({
     'useEllipsis/index': 'src/useEllipsis/index.ts',
     'useInput/index': 'src/useInput/index.ts',
     'useTextarea/index': 'src/useTextarea/index.ts',
+    'usePagination/index': 'src/usePagination/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

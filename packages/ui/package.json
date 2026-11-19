@@ -100,6 +100,12 @@
       "import": "./dist/progress/index.js",
       "require": "./dist/progress/index.cjs"
     },
+    "./pagination": {
+      "source": "./src/pagination/index.ts",
+      "types": "./dist/pagination/index.d.ts",
+      "import": "./dist/pagination/index.js",
+      "require": "./dist/pagination/index.cjs"
+    },
     "./tooltip": {
       "source": "./src/tooltip/index.ts",
       "types": "./dist/tooltip/index.d.ts",

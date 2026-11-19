@@ -57,3 +57,5 @@ export * from './useEllipsis';
 export * from './useInput';
 
 export * from './useTextarea';
+
+export * from './usePagination';

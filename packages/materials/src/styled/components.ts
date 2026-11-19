@@ -8,6 +8,7 @@ import { DropdownMenu, DropdownMenuItem } from '@agile-plus/components/dropdown-
 import { Ellipsis } from '@agile-plus/components/ellipsis';
 import { Flex, FlexItem } from '@agile-plus/components/flex';
 import { Input } from '@agile-plus/components/input';
+import { Pagination } from '@agile-plus/components/pagination';
 import { Popover } from '@agile-plus/components/popover';
 import { Progress } from '@agile-plus/components/progress';
 import { RadioGroup, RadioGroupItem } from '@agile-plus/components/radio-group';
@@ -60,6 +61,7 @@ export const components: Record<string, Component> = {
   'agile-plus.ellipsis': Ellipsis,
   'agile-plus.dropdown-menu-item': DropdownMenuItem,
   'agile-plus.input': Input,
+  'agile-plus.pagination': Pagination,
   'agile-plus.textarea': Textarea,
   'agile-plus.button': Button,
 };

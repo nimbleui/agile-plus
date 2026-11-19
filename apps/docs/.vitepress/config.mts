@@ -66,6 +66,7 @@ export default defineConfig({
             { text: 'Input 输入框', link: '/components/input' },
             { text: 'Textarea 多行输入', link: '/components/textarea' },
             { text: 'Button 按钮', link: '/components/button' },
+            { text: 'Pagination 分页', link: '/components/pagination' },
           ],
         },
         {

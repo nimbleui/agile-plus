@@ -257,4 +257,64 @@ export const materials: MaterialContribution[] = [
       },
     ],
   },
+  {
+    name: 'agile-plus.pagination',
+    title: '分页',
+    category: '展示',
+    icon: 'list',
+    // `modelValue` 是受控通道，刻意不登记，判据与输入框一致：画布设计态不接线事件，
+    // 面板写死受控页码后分页会钉死在该页。设计态初值走 defaultValue。
+    // `pageCount` 也不登记：它一旦给出就压过 total/pageSize，面板同时暴露两个来源
+    // 只会让人写出自相矛盾的组合。
+    props: {
+      type: 'object',
+      properties: {
+        defaultValue: { type: 'number', title: '默认页码', default: 1 },
+        total: { type: 'number', title: '数据总条数', default: 100 },
+        pageSize: { type: 'number', title: '每页条数', default: 10 },
+        siblingCount: {
+          type: 'number',
+          title: '当前页两侧页码数',
+          description: '0 表示不保留兄弟页',
+          default: 1,
+        },
+        boundaryCount: {
+          type: 'number',
+          title: '首尾固定页码数',
+          description: '0 表示不固定首尾页',
+          default: 1,
+        },
+        size: {
+          type: 'string',
+          title: '尺寸',
+          enum: ['small', 'middle', 'large'],
+          default: 'middle',
+        },
+        ariaLabel: { type: 'string', title: '地标名称', default: '分页' },
+        showJumper: {
+          type: 'boolean',
+          title: '页码跳转',
+          description: '输入页码后回车或失焦跳转，越界自动夹到首尾页',
+          default: false,
+        },
+        disabled: { type: 'boolean', title: '禁用', default: false },
+      },
+    },
+    module: './dist/index.js',
+    snippet: {
+      id: 'agile-plus-pagination-1',
+      componentName: 'agile-plus.pagination',
+      name: '分页',
+      layout: { mode: 'absolute', rect: { x: 0, y: 0, width: 320, height: 32 } },
+      props: { total: 100, pageSize: 10 },
+    },
+    events: [
+      {
+        name: 'update:modelValue',
+        title: '页码变化',
+        description: '用户点击页码或前后翻页后触发',
+        parameters: [{ name: 'value', type: 'number', description: '切换后的页码' }],
+      },
+    ],
+  },
 ];

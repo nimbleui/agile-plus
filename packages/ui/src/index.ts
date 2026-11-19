@@ -72,6 +72,16 @@ export type {
 export type { ProgressContext, ProgressIndicatorProps, ProgressRootProps } from './progress/types';
 
 export type {
+  PaginationEllipsisProps,
+  PaginationJumperProps,
+  PaginationPageProps,
+  PaginationRootEmits,
+  PaginationRootProps,
+  PaginationRootSlotProps,
+  PaginationStepProps,
+} from './pagination/types';
+
+export type {
   CollapsibleContentProps,
   CollapsibleRootEmits,
   CollapsibleRootProps,
@@ -137,6 +147,8 @@ export * from './switch';
 export * from './slider';
 
 export * from './progress';
+
+export * from './pagination';
 
 export * from './form';
 

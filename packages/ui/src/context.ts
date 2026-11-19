@@ -7,6 +7,7 @@ import type {
   UseDateRangePickerReturn,
   UseDialogReturn,
   UseDropdownMenuReturn,
+  UsePaginationReturn,
   UsePopoverReturn,
   UseRadioGroupReturn,
   UseScrollAreaReturn,
@@ -143,6 +144,14 @@ interface ComponentContexts {
    * 共用一个键会让两套部件互相注入到错误的实例。
    */
   dateRangePicker: UseDateRangePickerReturn;
+  /**
+   * Pagination 的上下文：Root 下发给 List / Page / Ellipsis / Prev / Next。
+   *
+   * 只有一层——页码窗口、当前页与禁用状态都挂在 Root 的 usePagination 实例上，
+   * 页码项的属性表由 getPageProps / getStepProps 统一派生。List 不取用这份上下文：
+   * ul 自带 list 语义，没有属性要绑。
+   */
+  pagination: UsePaginationReturn;
 }
 
 /**

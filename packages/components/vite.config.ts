@@ -18,6 +18,7 @@ export default defineConfig({
         'switch/index': 'src/switch/index.ts',
         'slider/index': 'src/slider/index.ts',
         'progress/index': 'src/progress/index.ts',
+        'pagination/index': 'src/pagination/index.ts',
         'collapsible/index': 'src/collapsible/index.ts',
         'tooltip/index': 'src/tooltip/index.ts',
         'popover/index': 'src/popover/index.ts',

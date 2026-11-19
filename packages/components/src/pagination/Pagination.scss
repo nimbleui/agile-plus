@@ -1,0 +1,240 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// Pagination
+// ---------------------------------------------------------------------------
+//
+// 页码项由 ui 层生成，内部 DOM 只有 data-part 契约可依（与 DatePicker 同一约定），
+// 因此部件样式挂 [data-part] 而不是再传一层 class。尺寸通过根节点上的
+// --y-pagination-item-size 下传，部件只读这一个变量。
+
+@include b('pagination') {
+  @include set-component-css-var(
+    'pagination',
+    (
+      'color': var(--y-color-primary),
+      'hover-color': var(--y-color-primary-hover),
+      'active-color': var(--y-color-primary-active),
+      'on-color': var(--y-color-bg-container),
+      'text': var(--y-color-text),
+      'text-secondary': var(--y-color-text-secondary),
+      'disabled-text': var(--y-color-text-disabled),
+      'border': var(--y-color-border),
+      'hover-bg': var(--y-color-fill-tertiary),
+      'active-bg': var(--y-color-fill-secondary),
+      'disabled-bg': var(--y-color-fill-tertiary),
+      'disabled-border': var(--y-color-border),
+      'radius': var(--y-border-radius),
+      'gap': var(--y-padding-xs),
+    )
+  );
+
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: getCssVar('pagination', 'gap');
+  font-family: var(--y-font-family);
+
+  // ---------------------------------------------------------------------------
+  // 尺寸变体
+  // ---------------------------------------------------------------------------
+
+  @include m('small') {
+    --y-pagination-item-size: var(--y-control-height-sm);
+
+    font-size: var(--y-font-size-sm);
+  }
+
+  @include m('middle') {
+    --y-pagination-item-size: var(--y-control-height);
+
+    font-size: var(--y-font-size);
+  }
+
+  @include m('large') {
+    --y-pagination-item-size: var(--y-control-height-lg);
+
+    font-size: var(--y-font-size-lg);
+  }
+
+  // ---------------------------------------------------------------------------
+  // 结构容器
+  // ---------------------------------------------------------------------------
+
+  [data-part='list'] {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: getCssVar('pagination', 'gap');
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  // 宿主文档常给 `li + li` 加纵向间距（VitePress 的 `.vp-doc li + li` 就是 8px），
+  // 横向排列的页码会被逐个推离基线；外边距必须由组件自己钉死，不能指望页面重置。
+  [data-part='item'] {
+    display: flex;
+    align-items: center;
+    margin: 0;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 可交互项：页码与前后翻页共用同一套底座，状态差异单独覆盖
+  // ---------------------------------------------------------------------------
+
+  [data-part='page'],
+  [data-part='previous'],
+  [data-part='next'] {
+    box-sizing: border-box;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--y-pagination-item-size);
+    height: var(--y-pagination-item-size);
+    padding: 0 var(--y-padding-xs);
+    font-family: inherit;
+    line-height: 1;
+    white-space: nowrap;
+    color: getCssVar('pagination', 'text');
+    background: getCssVar('pagination', 'on-color');
+    border: 1px solid getCssVar('pagination', 'border');
+    border-radius: getCssVar('pagination', 'radius');
+    cursor: pointer;
+    -webkit-user-select: none;
+    user-select: none;
+
+    transition:
+      background-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out),
+      border-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out),
+      color var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+
+    @include focus-ring(getCssVar('pagination', 'color'));
+
+    @include light-interactions(
+      getCssVar('pagination', 'hover-bg'),
+      getCssVar('pagination', 'active-bg')
+    );
+
+    &:hover:not(:disabled):not(.is-disabled) {
+      color: getCssVar('pagination', 'hover-color');
+      border-color: getCssVar('pagination', 'hover-color');
+    }
+
+    &:active:not(:disabled):not(.is-disabled) {
+      color: getCssVar('pagination', 'active-color');
+      border-color: getCssVar('pagination', 'active-color');
+    }
+  }
+
+  // 当前页是实心主色，hover 沿用实心交互而不是浅色底
+  [data-part='page'][data-state='active'] {
+    color: getCssVar('pagination', 'on-color');
+    background: getCssVar('pagination', 'color');
+    border-color: getCssVar('pagination', 'color');
+    cursor: default;
+
+    @include solid-interactions(
+      getCssVar('pagination', 'hover-color'),
+      getCssVar('pagination', 'active-color')
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // 状态
+  // ---------------------------------------------------------------------------
+
+  [data-part='page']:disabled,
+  [data-part='previous']:disabled,
+  [data-part='next']:disabled,
+  [data-part='page'][data-disabled],
+  [data-part='previous'][data-disabled],
+  [data-part='next'][data-disabled] {
+    color: getCssVar('pagination', 'disabled-text');
+    background: getCssVar('pagination', 'disabled-bg');
+    border-color: getCssVar('pagination', 'disabled-border');
+    cursor: not-allowed;
+  }
+
+  // ---------------------------------------------------------------------------
+  // 子元素
+  // ---------------------------------------------------------------------------
+
+  // 省略号不是按钮，只占一个格位；空档信息由两侧页码间距表达，颜色随之淡化
+  [data-part='ellipsis'] {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: var(--y-pagination-item-size);
+    height: var(--y-pagination-item-size);
+    color: getCssVar('pagination', 'text-secondary');
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  // 跳转框与页码同高，宽度按「两位页码 + 内边距」给：页码最多到 pageCount，
+  // 而超过两位的输入本来就会被夹回末页，不需要更宽的格子。
+  [data-part='jumper'] {
+    display: inline-flex;
+    gap: var(--y-padding-xs);
+    align-items: center;
+    color: getCssVar('pagination', 'text-secondary');
+    white-space: nowrap;
+  }
+
+  [data-part='jumper-input'] {
+    box-sizing: border-box;
+    width: calc(var(--y-pagination-item-size) * 2);
+    height: var(--y-pagination-item-size);
+    padding: 0 var(--y-padding-xs);
+    font-family: inherit;
+    font-size: inherit;
+    line-height: 1;
+    color: getCssVar('pagination', 'text');
+    text-align: center;
+    background: getCssVar('pagination', 'on-color');
+    border: 1px solid getCssVar('pagination', 'border');
+    border-radius: getCssVar('pagination', 'radius');
+    appearance: textfield;
+    -moz-appearance: textfield;
+
+    // type=number 的步进按钮占掉宽度还会抢走居中，页码条里已有翻页件，这里去掉
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      width: auto;
+      appearance: none;
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    transition:
+      border-color var(--y-motion-duration-mid) var(--y-motion-ease-in-out),
+      color var(--y-motion-duration-mid) var(--y-motion-ease-in-out);
+
+    @include focus-ring(getCssVar('pagination', 'color'));
+  }
+
+  // ---------------------------------------------------------------------------
+  // 跳转框状态
+  // ---------------------------------------------------------------------------
+
+  [data-part='jumper'][data-disabled] {
+    color: getCssVar('pagination', 'disabled-text');
+    cursor: not-allowed;
+  }
+
+  [data-part='jumper-input']:disabled {
+    color: getCssVar('pagination', 'disabled-text');
+    background: getCssVar('pagination', 'disabled-bg');
+    border-color: getCssVar('pagination', 'disabled-border');
+    cursor: not-allowed;
+  }
+
+  // ---------------------------------------------------------------------------
+  // Reduced Motion
+  // ---------------------------------------------------------------------------
+
+  @include reduced-motion {
+    transition: none;
+  }
+}

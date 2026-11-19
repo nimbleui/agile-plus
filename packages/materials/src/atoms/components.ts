@@ -33,6 +33,15 @@ import {
   FormSubmit,
 } from '@agile-plus/ui/form';
 import { Input } from '@agile-plus/ui/input';
+import {
+  PaginationEllipsis,
+  PaginationJumper,
+  PaginationList,
+  PaginationNext,
+  PaginationPage,
+  PaginationPrev,
+  PaginationRoot,
+} from '@agile-plus/ui/pagination';
 import { ProgressIndicator, ProgressRoot } from '@agile-plus/ui/progress';
 import { RadioGroupIndicator, RadioGroupItem, RadioGroupRoot } from '@agile-plus/ui/radio-group';
 import {
@@ -119,6 +128,13 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.scroll-area-scrollbar': ScrollAreaScrollbar,
   'agile-plus.ui.scroll-area-thumb': ScrollAreaThumb,
   'agile-plus.ui.scroll-area-corner': ScrollAreaCorner,
+  'agile-plus.ui.pagination': PaginationRoot,
+  'agile-plus.ui.pagination-list': PaginationList,
+  'agile-plus.ui.pagination-page': PaginationPage,
+  'agile-plus.ui.pagination-ellipsis': PaginationEllipsis,
+  'agile-plus.ui.pagination-prev': PaginationPrev,
+  'agile-plus.ui.pagination-next': PaginationNext,
+  'agile-plus.ui.pagination-jumper': PaginationJumper,
   'agile-plus.ui.flex': FlexRoot,
   'agile-plus.ui.flex-item': FlexItem,
   'agile-plus.ui.ellipsis': Ellipsis,
