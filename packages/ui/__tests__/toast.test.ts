@@ -139,6 +139,30 @@ describe('Toast UI 结构', () => {
     app.unmount();
   });
 
+  it('Action / Close 改成非 button 渲染时不再写 type="button"', async () => {
+    const { app } = mountToast(() =>
+      h(ToastProvider, () => [
+        h(ToastViewport),
+        h(ToastRoot, {}, () => [
+          h(ToastAction, { as: 'a', altText: '前往收件箱查看' }, () => '查看'),
+          h(ToastClose, { asChild: true }, () => h('a', { href: '#' }, '关闭')),
+        ]),
+      ])
+    );
+
+    await nextTick();
+
+    const action = document.querySelector<HTMLElement>('[data-part="action"]');
+    const close = document.querySelector<HTMLElement>('[data-part="close"]');
+
+    expect(action?.tagName).toBe('A');
+    expect(action?.hasAttribute('type')).toBe(false);
+    expect(close?.tagName).toBe('A');
+    expect(close?.hasAttribute('type')).toBe(false);
+
+    app.unmount();
+  });
+
   it('asChild 时用子元素替换 li，元素引用依然有效', async () => {
     const { app } = mountToast(() =>
       h(ToastProvider, () => [

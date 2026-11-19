@@ -76,6 +76,8 @@ export function useToast(options: UseToastOptions): UseToastReturn {
 
   let timerId = 0;
   let snapshot = createToastTimerSnapshot(duration.value, isBrowser ? Date.now() : 0);
+  let timerKey = '';
+  let isCounting = false;
 
   function setOpen(value: boolean): void {
     state.set(value);
@@ -100,49 +102,64 @@ export function useToast(options: UseToastOptions): UseToastReturn {
   }
 
   /**
-   * 启动（或重启）一段计时。
+   * 计时的唯一入口：watch 与 Provider 的 pause/resume 广播都经过这里。
    *
-   * 快照与句柄必须一起更新：暂停时要从快照扣时间，而重入时旧的 setTimeout 已经无效。
+   * 之前两条路径各自维护快照，初始化时订阅先于 watch 注册，暂停广播会先扣一份快照、
+   * 紧接着 watch 又重建一份，恢复时按错误剩余时间续期。现在用 `(open, duration)` 作为
+   * 重建键：只有这两个输入变化才重置快照，暂停/恢复只在同一份快照上扣减或续期。
+   *
+   * @param open 通知是否打开。
+   * @param paused Provider 当前是否暂停关闭。
+   * @param nextDuration 本条通知的有效时长。
    */
-  function startTimer(delay: number): void {
-    if (isToastTimerDisabled(delay)) return;
+  function syncTimer(open: boolean, paused: boolean, nextDuration: number): void {
+    if (!isBrowser) return;
 
-    window.clearTimeout(timerId);
-    snapshot = createToastTimerSnapshot(delay, Date.now());
-    timerId = window.setTimeout(handleClose, delay);
-  }
+    const key = `${open ? 'open' : 'closed'}|${String(nextDuration)}`;
 
-  function pauseTimer(): void {
-    snapshot = pauseToastTimer(snapshot, Date.now());
-    window.clearTimeout(timerId);
-    options.onPause?.();
-  }
+    if (key !== timerKey) {
+      timerKey = key;
+      window.clearTimeout(timerId);
+      timerId = 0;
+      isCounting = false;
+      // open 或 duration 变化都重置剩余时间：常驻通知改成有限时长后，
+      // 若沿用 Infinity 的剩余值就永远不会关闭（Radix issue #2233）。
+      snapshot = createToastTimerSnapshot(nextDuration, Date.now());
+    }
 
-  function resumeTimer(): void {
+    if (!open) return;
+
+    if (paused || isToastTimerDisabled(nextDuration)) {
+      if (isCounting) snapshot = pauseToastTimer(snapshot, Date.now());
+
+      isCounting = false;
+      window.clearTimeout(timerId);
+      timerId = 0;
+
+      return;
+    }
+
+    if (isCounting) return;
+
     snapshot = resumeToastTimer(snapshot, Date.now());
-    startTimer(snapshot.remaining);
-    options.onResume?.();
+    isCounting = true;
+    timerId = window.setTimeout(handleClose, snapshot.remaining);
   }
 
   // 正在关闭的通知不再响应暂停/恢复：动画期间重设计时只会留下一个无意义的定时器。
   const unsubscribeClosing = provider.subscribeClosing((paused) => {
     if (!isOpen.value) return;
 
-    if (paused) pauseTimer();
-    else resumeTimer();
+    syncTimer(true, paused, duration.value);
+
+    if (paused) options.onPause?.();
+    else options.onResume?.();
   });
 
   watch(
     [isOpen, duration],
     ([open, nextDuration]) => {
-      // 每次 open/duration 变化都重置剩余时间：常驻加载通知改成有限时长后，
-      // 若沿用 Infinity 的剩余值就永远不会关闭（Radix issue #2233）。
-      snapshot = createToastTimerSnapshot(nextDuration, Date.now());
-
-      if (!isBrowser) return;
-
-      if (open && !provider.isClosePaused.value) startTimer(nextDuration);
-      else window.clearTimeout(timerId);
+      syncTimer(open, provider.isClosePaused.value, nextDuration);
     },
     { immediate: true }
   );

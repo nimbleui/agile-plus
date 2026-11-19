@@ -28,7 +28,11 @@ proto.hasPointerCapture = () => false;
 
 const apps: App[] = [];
 
-function setup(options: Partial<UseToastOptions> = {}, providerOptions = {}) {
+function setup(
+  options: Partial<UseToastOptions> = {},
+  providerOptions = {},
+  configureProvider?: (provider: UseToastProviderReturn) => void
+) {
   const element = document.createElement('div');
   const button = document.createElement('button');
   const viewport = document.createElement('div');
@@ -45,6 +49,7 @@ function setup(options: Partial<UseToastOptions> = {}, providerOptions = {}) {
     defineComponent({
       setup() {
         provider = useToastProvider(providerOptions);
+        configureProvider?.(provider);
         api = useToast({ provider, ...options } as UseToastOptions);
 
         return () => null;
@@ -216,6 +221,27 @@ describe('useToast 自动关闭计时', () => {
 
     expect(document.activeElement).toBe(outside);
     expect(document.activeElement).not.toBe(viewport);
+  });
+
+  it('open 时已暂停：恢复前不计时，恢复后按完整时长关闭', async () => {
+    vi.useFakeTimers();
+
+    const { api, provider } = setup({ duration: 1_000 }, {}, (instance) => instance.pauseClosing());
+
+    await nextTick();
+
+    vi.advanceTimersByTime(5_000);
+
+    expect(api.isOpen.value).toBe(true);
+
+    provider.resumeClosing();
+    vi.advanceTimersByTime(999);
+
+    expect(api.isOpen.value).toBe(true);
+
+    vi.advanceTimersByTime(1);
+
+    expect(api.isOpen.value).toBe(false);
   });
 
   it('暂停后按剩余时间继续，而不是重新计满', () => {

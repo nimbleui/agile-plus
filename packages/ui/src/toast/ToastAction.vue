@@ -31,8 +31,11 @@ if (!isValid.value) {
   console.error('Invalid prop `altText` supplied to `ToastAction`. Expected non-empty `string`.');
 }
 
+// 只有渲染成原生 button 时才补 type；asChild / 非 button 的 as 写 type 是错误语义。
+const typeProp = computed(() => (props.asChild || props.as !== 'button' ? {} : { type: 'button' }));
+
 const actionProps = computed(() => ({
-  type: 'button',
+  ...typeProp.value,
   [TOAST_ANNOUNCE_EXCLUDE_ATTR]: '',
   [TOAST_ANNOUNCE_ALT_ATTR]: props.altText,
 }));

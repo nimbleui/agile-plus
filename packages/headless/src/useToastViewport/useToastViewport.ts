@@ -67,15 +67,16 @@ export function useToastViewport(options: UseToastViewportOptions): UseToastView
    * 逻辑最容易写反的地方，这里拆开写清楚。
    */
   function getSortedCandidates(direction: 'forwards' | 'backwards'): HTMLElement[] {
-    const perToast = provider.toasts.value.map((entry) => {
-      const node = entry.element.value;
+    // 先摘掉未挂载的通知再决定顺序；空项若留在二维数组里，reverse 会让 Tab 序列
+    // 随通知挂载时机的不同而抖动（焦点忽然跳到下一条）。
+    const perToast = provider.toasts.value
+      .map((entry) => entry.element.value)
+      .filter((node): node is HTMLElement => node !== null)
+      .map((node) => {
+        const candidates = [node, ...getTabbableCandidates(node)];
 
-      if (!node) return [];
-
-      const candidates = [node, ...getTabbableCandidates(node)];
-
-      return direction === 'forwards' ? candidates : candidates.reverse();
-    });
+        return direction === 'forwards' ? candidates : candidates.reverse();
+      });
 
     const ordered = direction === 'forwards' ? perToast.reverse() : perToast;
 

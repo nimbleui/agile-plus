@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { computed } from 'vue';
+
 import { TOAST_ANNOUNCE_EXCLUDE_ATTR } from '@agile-plus/primitives/toast';
 
 import { useComponentContext } from '../context';
@@ -22,10 +24,13 @@ const props = withDefaults(defineProps<ToastCloseProps>(), {
 
 const toast = useComponentContext('toast');
 
-const closeProps = {
-  type: 'button',
+// 与 ToastAction 一致：type="button" 只对原生 button 有意义。
+const typeProp = computed(() => (props.asChild || props.as !== 'button' ? {} : { type: 'button' }));
+
+const closeProps = computed(() => ({
+  ...typeProp.value,
   [TOAST_ANNOUNCE_EXCLUDE_ATTR]: '',
-};
+}));
 </script>
 
 <template>
