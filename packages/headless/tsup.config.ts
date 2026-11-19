@@ -35,6 +35,7 @@ export default defineConfig({
     'useTextarea/index': 'src/useTextarea/index.ts',
     'usePagination/index': 'src/usePagination/index.ts',
     'useTable/index': 'src/useTable/index.ts',
+    'useAccordion/index': 'src/useAccordion/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

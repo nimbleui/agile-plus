@@ -27,6 +27,7 @@ export default defineConfig({
     'button/index': 'src/button/index.ts',
     'pagination/index': 'src/pagination/index.ts',
     'table/index': 'src/table/index.ts',
+    'accordion/index': 'src/accordion/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

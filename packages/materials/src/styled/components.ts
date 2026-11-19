@@ -1,5 +1,6 @@
 import type { Component } from 'vue';
 
+import { Accordion, AccordionItem } from '@agile-plus/components/accordion';
 import { Button } from '@agile-plus/components/button';
 import { Checkbox, CheckboxGroup } from '@agile-plus/components/checkbox';
 import { Collapsible } from '@agile-plus/components/collapsible';
@@ -64,4 +65,6 @@ export const components: Record<string, Component> = {
   'agile-plus.pagination': Pagination,
   'agile-plus.textarea': Textarea,
   'agile-plus.button': Button,
+  'agile-plus.accordion': Accordion,
+  'agile-plus.accordion-item': AccordionItem,
 };

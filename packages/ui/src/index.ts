@@ -126,6 +126,15 @@ export type {
   DateRangePickerRootProps,
 } from './date-range-picker/types';
 
+export type {
+  AccordionContentProps,
+  AccordionItemContext,
+  AccordionItemProps,
+  AccordionRootEmits,
+  AccordionRootProps,
+  AccordionTriggerProps,
+} from './accordion/types';
+
 export * from './dialog';
 
 export * from './tabs';
@@ -177,3 +186,5 @@ export * from './button';
 export * from './slot';
 
 export * from './table';
+
+export * from './accordion';

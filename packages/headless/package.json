@@ -212,6 +212,12 @@
       "types": "./dist/useTable/index.d.ts",
       "import": "./dist/useTable/index.js",
       "require": "./dist/useTable/index.cjs"
+    },
+    "./useAccordion": {
+      "source": "./src/useAccordion/index.ts",
+      "types": "./dist/useAccordion/index.d.ts",
+      "import": "./dist/useAccordion/index.js",
+      "require": "./dist/useAccordion/index.cjs"
     }
   },
   "files": [

@@ -716,4 +716,64 @@ export const materials = [
     container: true,
     // 不声明事件：Button 不 emit 自定义事件，照抄原生 click 会违反「只声明真的 emit」的判据。
   }),
+  defineMaterial({
+    name: 'agile-plus.accordion',
+    title: '手风琴',
+    category: '交互',
+    icon: 'chevronDown',
+    accepts: ['agile-plus.accordion-item'],
+    // value / defaultValue 是 string | string[] 联合，multiple 的数组写不进面板，
+    // 留给代码侧；设计态只暴露 type / collapsible / disabled。
+    props: {
+      type: {
+        type: 'string',
+        title: '展开模式',
+        enum: ['single', 'multiple'],
+        default: 'single',
+        description: 'single 至多展开一项，multiple 可同时展开多项',
+      },
+      collapsible: {
+        type: 'boolean',
+        title: '允许全部收起',
+        description: '仅 single 生效：关闭后点击已展开项不收起',
+        default: false,
+      },
+      disabled: { type: 'boolean', title: '整组禁用', default: false },
+    },
+    size: { width: 280, height: 180 },
+    initial: { type: 'single' },
+    container: true,
+    events: [
+      {
+        name: 'update:value',
+        title: '展开值变化',
+        parameters: [
+          { name: 'value', type: 'string | string[]', description: 'single 为字符串，multiple 为数组' },
+        ],
+      },
+    ],
+  }),
+  defineMaterial({
+    name: 'agile-plus.accordion-item',
+    title: '手风琴项',
+    category: '交互',
+    icon: 'square',
+    parent: 'agile-plus.accordion',
+    props: {
+      value: { type: 'string', title: '项值', description: '组内唯一' },
+      disabled: { type: 'boolean', title: '禁用', default: false },
+    },
+    size: { width: 280, height: 120 },
+    initial: { value: 'item-1' },
+    container: true,
+    slots: [
+      {
+        name: 'trigger',
+        title: '触发标题条',
+        maxChildren: 1,
+        region: { x: 0, y: 0, width: 1, height: 0.18 },
+      },
+      { name: 'default', title: '展开内容', region: { x: 0, y: 0.18, width: 1, height: 0.82 } },
+    ],
+  }),
 ];

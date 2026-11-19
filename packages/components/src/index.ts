@@ -51,3 +51,5 @@ export * from './textarea';
 export * from './button';
 
 export * from './table';
+
+export * from './accordion';

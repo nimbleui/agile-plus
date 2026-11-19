@@ -1,5 +1,11 @@
 import type { Component } from 'vue';
 
+import {
+  AccordionContent,
+  AccordionItem,
+  AccordionRoot,
+  AccordionTrigger,
+} from '@agile-plus/ui/accordion';
 import { Button } from '@agile-plus/ui/button';
 import { CheckboxGroupRoot, CheckboxIndicator, CheckboxRoot } from '@agile-plus/ui/checkbox';
 import {
@@ -145,4 +151,8 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.input': Input,
   'agile-plus.ui.textarea': Textarea,
   'agile-plus.ui.button': Button,
+  'agile-plus.ui.accordion': AccordionRoot,
+  'agile-plus.ui.accordion-item': AccordionItem,
+  'agile-plus.ui.accordion-trigger': AccordionTrigger,
+  'agile-plus.ui.accordion-content': AccordionContent,
 };

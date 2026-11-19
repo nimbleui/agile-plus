@@ -472,4 +472,75 @@ export const materials = [
     container: true,
     // 不声明事件：ui Button 不 emit 自定义事件。
   }),
+  defineMaterial({
+    name: 'agile-plus.ui.accordion',
+    title: '手风琴·根',
+    category: '原子件·控件',
+    icon: 'chevronDown',
+    accepts: ['agile-plus.ui.accordion-item'],
+    // value / defaultValue 是 string | string[] 联合，数组写不进面板，留给代码侧。
+    props: {
+      type: {
+        type: 'string',
+        title: '展开模式',
+        enum: ['single', 'multiple'],
+        default: 'single',
+        description: '决定 value 是单个字符串还是字符串数组',
+      },
+      collapsible: { type: 'boolean', title: '允许全部收起', default: false },
+      disabled: { type: 'boolean', title: '整组禁用', default: false },
+    },
+    size: { width: 240, height: 160 },
+    initial: { type: 'single' },
+    container: true,
+    events: [
+      {
+        name: 'update:value',
+        title: '展开值变化',
+        parameters: [
+          { name: 'value', type: 'string | string[]', description: 'single 为字符串，multiple 为数组' },
+        ],
+      },
+    ],
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.accordion-item',
+    title: '手风琴·项',
+    category: '原子件·部件',
+    icon: 'square',
+    parent: 'agile-plus.ui.accordion',
+    accepts: ['agile-plus.ui.accordion-trigger', 'agile-plus.ui.accordion-content'],
+    props: {
+      value: { type: 'string', title: '项值', description: '组内唯一' },
+      disabled: { type: 'boolean', title: '禁用', default: false },
+    },
+    size: { width: 240, height: 120 },
+    initial: { value: 'item-1' },
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.accordion-trigger',
+    title: '手风琴·触发器',
+    category: '原子件·部件',
+    icon: 'chevronRight',
+    parent: 'agile-plus.ui.accordion-item',
+    container: true,
+  }),
+  defineMaterial({
+    name: 'agile-plus.ui.accordion-content',
+    title: '手风琴·内容',
+    category: '原子件·部件',
+    icon: 'type',
+    parent: 'agile-plus.ui.accordion-item',
+    size: { width: 240, height: 100 },
+    container: true,
+    props: {
+      forceMount: {
+        type: 'boolean',
+        title: '常驻挂载',
+        description: '收起后不卸载，播退场动画时要开',
+        default: false,
+      },
+    },
+  }),
 ];

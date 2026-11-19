@@ -1,0 +1,173 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 高度动画的终点来自无头层测量的 --y-collapsible-content-height（项内部复用
+// Collapsible，测量变量内联在 Content 上）。这里只声明视觉与节奏变量，不重复声明
+// 测量变量，否则会把内联值盖掉。
+
+@include b('accordion') {
+  @include set-component-css-var(
+    'accordion',
+    (
+      'radius': var(--y-border-radius),
+      'border': var(--y-color-border-secondary),
+      'bg': var(--y-color-bg-container),
+      'trigger-hover-bg': var(--y-color-fill-tertiary),
+      'padding-block': var(--y-padding-sm),
+      'padding-inline': var(--y-padding),
+      'content-padding-inline': var(--y-padding),
+      'duration': var(--y-motion-duration-mid),
+      'ease': var(--y-motion-ease-in-out),
+      'arrow-size': 7px,
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点基础样式
+// ---------------------------------------------------------------------------
+
+@include b('accordion') {
+  overflow: hidden;
+  background: getCssVar('accordion', 'bg');
+  border: 1px solid getCssVar('accordion', 'border');
+  border-radius: getCssVar('accordion', 'radius');
+}
+
+// ---------------------------------------------------------------------------
+// 项与分隔线
+// ---------------------------------------------------------------------------
+
+@include b('accordion') {
+  @include e('item') {
+    border-bottom: 1px solid getCssVar('accordion', 'border');
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 触发按钮
+// ---------------------------------------------------------------------------
+
+@include b('accordion') {
+  @include e('trigger') {
+    display: flex;
+    gap: var(--y-padding-xs);
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    padding: getCssVar('accordion', 'padding-block') getCssVar('accordion', 'padding-inline');
+    font: inherit;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    transition: background-color getCssVar('accordion', 'duration');
+
+    @include focus-ring(getCssVar('color-primary'));
+
+    &:hover:not([data-disabled]) {
+      background: getCssVar('accordion', 'trigger-hover-bg');
+    }
+
+    &[data-disabled] {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+
+    // 箭头是两条边拼出的 chevron，旋转角度由 data-state 决定：纯 CSS 表达状态。
+    &::after {
+      flex: none;
+      width: getCssVar('accordion', 'arrow-size');
+      height: getCssVar('accordion', 'arrow-size');
+      content: '';
+      border-right: 1.5px solid currentcolor;
+      border-bottom: 1.5px solid currentcolor;
+      transform: rotate(45deg) translate(-1px, -1px);
+      transition: transform getCssVar('accordion', 'duration') getCssVar('accordion', 'ease');
+    }
+
+    &[data-state='open']::after {
+      transform: rotate(-135deg) translate(-1px, -1px);
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 内容区与进出场动画
+// ---------------------------------------------------------------------------
+
+@include b('accordion') {
+  @include e('content') {
+    // 纵向内距不能落在做高度动画的元素上：border-box 下它最低只能压到内距本身，
+    // 于是动画前 ~100ms 全在「0 → 内距」这段无效行程里，看着就是点完停一下才动。
+    // 末段间距改由 ::after 占位提供：它随内容一起被裁切，收起时高度也能真正回到 0。
+    overflow: hidden;
+    padding: 0 getCssVar('accordion', 'content-padding-inline');
+
+    &::after {
+      display: block;
+      height: getCssVar('accordion', 'padding-block');
+      content: '';
+    }
+
+    &[data-state='open'] {
+      animation: #{$block}-open getCssVar('accordion', 'duration') getCssVar('accordion', 'ease');
+    }
+
+    // forwards 让收起停在 height: 0，直到 Presence 在动画结束后卸载节点。
+    &[data-state='closed'] {
+      animation: #{$block}-close getCssVar('accordion', 'duration') getCssVar('accordion', 'ease')
+        forwards;
+    }
+  }
+
+  @keyframes #{$block}-open {
+    from {
+      height: 0;
+      opacity: 0;
+    }
+
+    to {
+      height: var(--y-collapsible-content-height);
+      opacity: 1;
+    }
+  }
+
+  @keyframes #{$block}-close {
+    from {
+      height: var(--y-collapsible-content-height);
+      opacity: 1;
+    }
+
+    to {
+      height: 0;
+      opacity: 0;
+    }
+  }
+
+  // 减少动效：动画整体关闭，Presence 判定「没有退出动画」回到即时卸载，手风琴仍可用。
+  @include reduced-motion {
+    @include e('content') {
+      &[data-state='open'],
+      &[data-state='closed'] {
+        animation: none;
+      }
+    }
+
+    @include e('trigger') {
+      transition: none;
+
+      &::after {
+        transition: none;
+      }
+    }
+  }
+}

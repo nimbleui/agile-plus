@@ -68,6 +68,7 @@ export default defineConfig({
             { text: 'Button 按钮', link: '/components/button' },
             { text: 'Pagination 分页', link: '/components/pagination' },
             { text: 'Table 表格', link: '/components/table' },
+            { text: 'Accordion 手风琴', link: '/components/accordion' },
           ],
         },
         {

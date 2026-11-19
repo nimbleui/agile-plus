@@ -166,6 +166,12 @@
       "import": "./dist/table/index.js",
       "require": "./dist/table/index.cjs"
     },
+    "./accordion": {
+      "source": "./src/accordion/index.ts",
+      "types": "./dist/accordion/index.d.ts",
+      "import": "./dist/accordion/index.js",
+      "require": "./dist/accordion/index.cjs"
+    },
     "./style.css": "./dist/components.css"
   },
   "files": [

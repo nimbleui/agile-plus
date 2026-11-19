@@ -1,6 +1,7 @@
 import { inject } from 'vue';
 
 import type {
+  UseAccordionReturn,
   UseCheckboxGroupReturn,
   UseCheckboxReturn,
   UseDatePickerReturn,
@@ -27,6 +28,8 @@ import type { ComputedRef } from 'vue';
 import type { ScrollAreaOrientation } from '@agile-plus/primitives/scroll-area';
 
 import type { RadioGroupItemContext } from './radio-group/types';
+
+import type { AccordionItemContext } from './accordion/types';
 
 import type { SelectGroupContext, SelectItemContext } from './select/types';
 
@@ -170,6 +173,14 @@ interface ComponentContexts {
    * 表头行无 item，注入值为 undefined。
    */
   tableRow: TableRowContext;
+  /**
+   * Accordion 的两层上下文：组级值与键盘导航实例，与项级 Collapsible 转发。
+   *
+   * 项级单独登记，理由与 radioGroupItem 相同——Trigger / Content 只关心自己所属的
+   * 那一个项（值、合成禁用态、内部 Collapsible），不该从组级实例里再解析一遍。
+   */
+  accordion: UseAccordionReturn;
+  accordionItem: AccordionItemContext;
 }
 
 /**

@@ -61,3 +61,5 @@ export * from './useTextarea';
 export * from './usePagination';
 
 export * from './useTable';
+
+export * from './useAccordion';
