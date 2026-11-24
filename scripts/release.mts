@@ -18,6 +18,7 @@ import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
 const MANIFEST_PATH = 'packages/materials/src/manifest.ts';
 const CHANGELOG_PATH = 'CHANGELOG.md';
 const RELEASE_BRANCHES = ['master', 'main'];
+const RELEASE_COMMIT_PATTERN = /^chore\(release\):\s*(?:发布|让到)\s+\d+\.\d+\.\d+/;
 
 const CHANGELOG_HEADER =
   '# 更新日志\n\n条目由 `pnpm release` 生成，取自上一次发布以来的提交主题。\n';
@@ -156,7 +157,7 @@ function writeVersions(packagePaths: string[], version: string): void {
 /**
  * 确定 CHANGELOG 的起点。
  *
- * 优先用当前版本的 tag；0.1.1 与 0.1.2 发布时没打 tag，所以回退到最近一条 chore(release) 提交。
+ * 优先用当前版本的 tag；0.1.1 与 0.1.2 发布时没打 tag，所以回退到最近一条实际版本发布提交。
  * 两者都找不到就抛错，而不是悄悄从仓库开头生成一份包含全部历史的假日志。
  */
 function findLastReleasePoint(currentVersion: string): string {
@@ -165,10 +166,10 @@ function findLastReleasePoint(currentVersion: string): string {
 
   for (const line of git('log', '--pretty=%H%x09%s').split('\n')) {
     const [sha, subject] = line.split('\t');
-    if (sha && subject?.startsWith('chore(release)')) return sha;
+    if (sha && subject && RELEASE_COMMIT_PATTERN.test(subject)) return sha;
   }
 
-  throw new Error(`找不到 tag ${tag}，也没有 chore(release) 提交，无法确定 CHANGELOG 起点`);
+  throw new Error(`找不到 tag ${tag}，也没有实际版本发布提交，无法确定 CHANGELOG 起点`);
 }
 
 function buildChangelogEntry(version: string, since: string): string {
@@ -176,7 +177,7 @@ function buildChangelogEntry(version: string, since: string): string {
   const subjects = git('log', `${since}..HEAD`, '--pretty=%s').split('\n').filter(Boolean);
 
   for (const subject of subjects) {
-    if (subject.startsWith('chore(release)')) continue;
+    if (RELEASE_COMMIT_PATTERN.test(subject)) continue;
 
     const match = /^(\w+)(?:\(([^)]+)\))?:\s*(.+)$/.exec(subject);
     const title = GROUP_TITLES[match?.[1] ?? ''] ?? '其他';
