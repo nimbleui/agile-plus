@@ -22,7 +22,7 @@ pnpm add @agile-plus/headless
 
 ## 入口
 
-根入口导出全部 composable；34 个子路径按控件切分，便于只打包用到的控件：
+根入口导出全部 composable；36 个子路径按控件切分，便于只打包用到的控件：
 
 ```ts
 import { useSwitch } from '@agile-plus/headless';
@@ -33,7 +33,7 @@ import { useSwitch } from '@agile-plus/headless/useSwitch';
 `./useForm` `./useFormField` `./useFormControl` `./useFormMessage` `./useCollapsible`
 `./useScrollArea` `./usePresence` `./useKeepMounted` `./useToastProvider` `./useToastViewport`
 `./useToast` `./useToggle` `./useToggleGroup` `./useSwitch` `./useSlider` `./useFloating`
-`./useTooltip` `./usePopover` `./useDropdownMenu` `./useSelect` `./useDatePicker` `./useDateRangePicker` `./useEllipsis` `./useInput` `./useTextarea` `./usePagination` `./useTable` `./useAccordion` `./useAvatar`
+`./useTooltip` `./usePopover` `./useDropdownMenu` `./useSelect` `./useDatePicker` `./useDateRangePicker` `./useEllipsis` `./useInput` `./useTextarea` `./usePagination` `./useTable` `./useAccordion` `./useAvatar` `./useSplitter`
 
 `./useAvatar` 一个子路径导出三个配套 composable：`useAvatar`（根，持有加载状态）、
 `useAvatarImage`（图片加载生命周期）、`useAvatarFallback`（补位延迟）。
@@ -87,6 +87,7 @@ const state = useControllable<boolean>({
 | `useTabs` `useRadioGroup` `useCheckboxGroup` `useSelect` `useDatePicker` `useDateRangePicker`         | `modelValue` | `defaultValue`    | `onValueChange`                                |
 | `useToggleGroup` `useSlider` `useAccordion`                                                         | `value`      | `defaultValue`    | `onValueChange`（Slider 另有 `onValueCommit`） |
 | `useInput` `useTextarea`                                                                              | `modelValue` | `defaultValue`    | `onModelValueChange`                           |
+| `useSplitterPanel`                                                                                    | `size`       | `defaultSize`     | `onSizeChange`（像素与 `'30%'` 两种单位原样回写） |
 
 另两处不对称也照实说：`useCollapsible` 的 props 生成函数叫 `getRootAttrs` / `getTriggerAttrs` /
 `getContentAttrs`（其余控件都是 `get*Props`）；元素入口的命名也不统一，按源码逐个抄为：

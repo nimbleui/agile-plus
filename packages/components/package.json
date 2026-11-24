@@ -184,6 +184,12 @@
       "import": "./dist/avatar/index.js",
       "require": "./dist/avatar/index.cjs"
     },
+    "./splitter": {
+      "source": "./src/splitter/index.ts",
+      "types": "./dist/splitter/index.d.ts",
+      "import": "./dist/splitter/index.js",
+      "require": "./dist/splitter/index.cjs"
+    },
     "./style.css": "./dist/components.css"
   },
   "files": [

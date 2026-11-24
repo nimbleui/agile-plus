@@ -67,3 +67,4 @@ export * from './useTable';
 export * from './useAccordion';
 
 export * from './useAvatar';
+export * from './useSplitter';

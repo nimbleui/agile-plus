@@ -184,6 +184,12 @@
       "import": "./dist/accordion/index.js",
       "require": "./dist/accordion/index.cjs"
     },
+    "./splitter": {
+      "source": "./src/splitter/index.ts",
+      "types": "./dist/splitter/index.d.ts",
+      "import": "./dist/splitter/index.js",
+      "require": "./dist/splitter/index.cjs"
+    },
     "./avatar": {
       "source": "./src/avatar/index.ts",
       "types": "./dist/avatar/index.d.ts",

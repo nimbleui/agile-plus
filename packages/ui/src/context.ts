@@ -15,6 +15,7 @@ import type {
   UseScrollAreaReturn,
   UseSelectReturn,
   UseSliderReturn,
+  UseSplitterReturn,
   UseTabsReturn,
   UseToastProviderReturn,
   UseToastReturn,
@@ -195,6 +196,13 @@ interface ComponentContexts {
    * 只有一层——图片加载状态是唯一真源，Image 上报、Fallback 读取，都挂在 Root 上。
    */
   avatar: UseAvatarReturn;
+  /**
+   * Splitter 的上下文：Root 下发给 Panel，Panel 再画出的 Bar 从这里取回根实例。
+   *
+   * 只有一层——容器尺寸、像素数组与折叠凭据都挂在 Root 的 useSplitter 上，面板只上交
+   * 自己的作者单位与约束，因此不需要面板级上下文。
+   */
+  splitter: UseSplitterReturn;
 }
 
 /**

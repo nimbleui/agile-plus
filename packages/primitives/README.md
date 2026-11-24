@@ -22,7 +22,7 @@ pnpm add @agile-plus/primitives
 
 ## 入口
 
-根入口一次性引入全部原语；26 个子路径各自独立，按需引入便于 tree-shaking：
+根入口一次性引入全部原语；28 个子路径各自独立，按需引入便于 tree-shaking：
 
 ```ts
 import { getSwitchAttrs } from '@agile-plus/primitives';
@@ -30,7 +30,7 @@ import { getSwitchAttrs } from '@agile-plus/primitives/switch';
 ```
 
 `dialog` `flex` `tabs` `radio-group` `checkbox` `scroll-area` `toast` `presence` `toggle`
-`switch` `slider` `dom` `form` `collapsible` `progress` `floating` `tooltip` `select` `date` `ellipsis` `input` `button` `pagination` `table` `accordion` `avatar`
+`switch` `slider` `dom` `form` `collapsible` `progress` `floating` `tooltip` `select` `date` `ellipsis` `input` `button` `pagination` `table` `accordion` `avatar` `splitter`
 
 ## 三类 API
 
@@ -70,6 +70,7 @@ import { getSwitchAttrs } from '@agile-plus/primitives/switch';
 | `button`      | `getButtonAttrs`（`data-disabled` / `data-loading` / `aria-busy`；loading 合并进禁用由调用方判定）                                                                                                                                                                                                                                                                                                    |
 | `accordion`   | `normalizeAccordionValue` `serializeAccordionValue` `isAccordionItemOpen` `resolveAccordionValue` `getAccordionRootAttrs` `getAccordionItemAttrs`（single / multiple 集合值转移，含 `collapsible` 闸门；键盘导航复用 `tabs` 的 `handleTabsKeydown`）                                                                                                                                                     |
 | `avatar`      | `getAvatarInitials` `getAvatarRootAttrs` `getAvatarImageAttrs` `resolveAvatarFallback`（文字缩写生成、加载状态属性、补位可见性纯判定）                                                                                                                                                                                                                                                                  |
+| `splitter`    | `getSplitterAvailableSize` `resolveSplitterSizes` `resizeSplitterPair` `moveSplitterSpace` `parseSplitterUnit` `normalizeSplitterCollapsible` `getSplitterBarControls` `getSplitterPointerDelta` `getSplitterKeyboardIntent` `getSplitterPanelStyles` `getSplitterBarStyles`（容器尺寸由调用方量好传入，这层只做像素解析、约束钳制、折叠让渡与按键 / 位移归一化，不读 DOM） |
 
 ## 状态机
 

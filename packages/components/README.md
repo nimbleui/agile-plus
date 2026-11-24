@@ -37,7 +37,7 @@ import '@agile-plus/components/style.css'; // 用子路径时必须自行引入
 ```
 
 可用子路径：`dialog` `tabs` `radio-group` `flex` `checkbox` `scroll-area` `toast` `toggle`
-`switch` `slider` `collapsible` `progress` `tooltip` `popover` `dropdown-menu` `select` `date-picker` `date-range-picker` `ellipsis` `input` `textarea` `button` `pagination` `table` `accordion` `avatar` `style.css`。
+`switch` `slider` `collapsible` `progress` `tooltip` `popover` `dropdown-menu` `select` `date-picker` `date-range-picker` `ellipsis` `input` `textarea` `button` `pagination` `table` `accordion` `avatar` `splitter` `style.css`。
 
 `Form` 系列与 `Slot` 不在这层（前者留在 `@agile-plus/ui/form`）。`ToastProvider` 是 provide 根，
 一棵树只需要一个实例，放在 `App.vue` 而不是放在某个页面里。
@@ -72,6 +72,7 @@ import '@agile-plus/components/style.css'; // 用子路径时必须自行引入
 | `table`             | `Table`                                  | `v-model:sort` / `v-model:selectedKeys` / `v-model:expandedKeys`；另有 `@rowClick` `@rowDblclick`                                      |
 | `accordion`         | `Accordion` `AccordionItem`              | `v-model:value` 且 `type` 必填（`'single' \| 'multiple'`）；`AccordionItem` 的 `value` 必填，single 另有 `collapsible`                  |
 | `avatar`            | `Avatar`                                 | —（另有 `@loading-status-change`；`name` 自动生成文字缩写，默认插槽覆盖补位）                                                          |
+| `splitter`          | `Splitter` `SplitterPanel`               | `SplitterPanel` 用 `v-model:size`（`number \| string`），根另有 `@resize-start` `@resize` `@resize-end` `@collapse` `@dragger-double-click` |
 
 布尔受控入参缺省是 `undefined`（表示「用户没传，交给非受控」），不是 `false`；
 `Slot` / `asChild` 的行为与 `@agile-plus/ui` 一致，但这层不是每个组件都透传：
@@ -79,7 +80,7 @@ import '@agile-plus/components/style.css'; // 用子路径时必须自行引入
 | 透传情况               | 组件                                                                                                |
 | ---------------------- | --------------------------------------------------------------------------------------------------- |
 | `as` 与 `asChild` 都有 | `Button` `Checkbox` `Flex` `FlexItem` `Input` `ScrollArea` `Switch` `Textarea` `Toast` `Toggle` `ToggleGroup` `ToggleGroupItem` |
-| 只有 `as`              | `CheckboxGroup` `Progress` `Slider`                                                                 |
+| 只有 `as`              | `CheckboxGroup` `Progress` `Slider` `Splitter` `SplitterPanel`                                    |
 | 两者都不透传           | `Accordion` `AccordionItem` `Avatar` `Collapsible` `Dialog` `RadioGroup` `RadioGroupItem` `Tabs` `ToastViewport`                         |
 
 ## 主题定制

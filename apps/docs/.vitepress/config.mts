@@ -80,7 +80,10 @@ export default defineConfig({
         },
         {
           text: '布局组件',
-          items: [{ text: 'Flex 弹性布局', link: '/components/flex' }],
+          items: [
+            { text: 'Flex 弹性布局', link: '/components/flex' },
+            { text: 'Splitter 分隔面板', link: '/components/splitter' },
+          ],
         },
         {
           text: '反馈组件',

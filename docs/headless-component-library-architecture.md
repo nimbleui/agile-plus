@@ -564,6 +564,7 @@ UI 层推荐复合组件（Compound Components）API，而非单一巨型组件�
 | Toast / Notification | 队列管理、自动关闭、暂停计时 |
 | Scroll Area | 自定义滚动条、虚拟滚动接口 |
 | Avatar | 图片加载回退、文字缩写生成 |
+| Splitter | 排列轴几何解析、min / max / 百分比、折叠让渡与还原、键盘调宽、lazy 预览 |
 
 ---
 

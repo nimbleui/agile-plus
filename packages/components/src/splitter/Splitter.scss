@@ -1,0 +1,277 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 分隔条占多宽不在这里：无头层按 barSize 同时写进几何计算与内联 flex-basis，
+// 两处若不是同一个数，面板总和就会与容器宽度不符。样式层只负责在里面画线。
+
+@include b('splitter') {
+  @include set-component-css-var(
+    'splitter',
+    (
+      'radius': var(--y-border-radius),
+      'border': var(--y-color-border-secondary),
+      'bg': var(--y-color-bg-container),
+      'padding': var(--y-padding),
+      'line-size': 2px,
+      'line-bg': var(--y-color-border),
+      'line-bg-active': var(--y-color-primary),
+      'bar-bg': var(--y-color-bg-container),
+      'bar-bg-hover': var(--y-color-fill-tertiary),
+      'control-size': 16px,
+      'control-bg': var(--y-color-bg-elevated),
+      'control-bg-hover': var(--y-color-primary-bg),
+      'control-border': var(--y-color-border),
+      'control-radius': var(--y-border-radius-sm),
+      'control-color': var(--y-color-text-secondary),
+      'control-color-hover': var(--y-color-primary),
+      'icon-size': 6px,
+      'duration': var(--y-motion-duration-fast),
+      'ease': var(--y-motion-ease-out),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 根节点：一条弹性轴
+// ---------------------------------------------------------------------------
+
+@include b('splitter') {
+  box-sizing: border-box;
+  display: flex;
+  overflow: hidden;
+  background: getCssVar('splitter', 'bg');
+  border: 1px solid getCssVar('splitter', 'border');
+  border-radius: getCssVar('splitter', 'radius');
+
+  // 排列轴由 data-layout 决定，作者不必再写一次 flex-direction。
+  &[data-layout='horizontal'] {
+    flex-direction: row;
+  }
+
+  &[data-layout='vertical'] {
+    flex-direction: column;
+  }
+
+  &[dir='rtl'] {
+    direction: rtl;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 面板
+// ---------------------------------------------------------------------------
+
+@include b('splitter') {
+  @include e('panel') {
+    box-sizing: border-box;
+    // 弹性伸缩与基准由无头层内联下发，这里只保证内容能把面板压到任意小。
+    min-width: 0;
+    min-height: 0;
+    padding: getCssVar('splitter', 'padding');
+    overflow: auto;
+
+    // 折叠必须连内距一起收掉：border-box 下 padding 撑起来的宽度压不进 flex-basis: 0。
+    &[data-collapsed] {
+      padding: 0;
+      overflow: hidden;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 分隔条
+// ---------------------------------------------------------------------------
+
+@include b('splitter') {
+  // 分隔条由面板自动画出，作者没有位置写 class，因此以 data-part 作为样式钩子
+  // （与 DatePicker 的 [data-part='cell'] 同一取舍）。
+  [data-part='bar'] {
+    position: relative;
+    box-sizing: border-box;
+    display: flex;
+    flex: none;
+    gap: var(--y-padding-xs);
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    // 分隔条的厚度必须就是无头层扣减过的 barSize。flex 项的自动最小尺寸等于
+    // min-content，箭头一进来就会把它顶到 16px：面板总和随之超出容器，末段被根的
+    // overflow 裁掉一条。箭头允许向两侧溢出到面板上，宽度不让它参与。
+    min-width: 0;
+    min-height: 0;
+    background: getCssVar('splitter', 'bar-bg');
+    touch-action: none;
+    user-select: none;
+    transition: background-color getCssVar('splitter', 'duration') getCssVar('splitter', 'ease');
+
+    // 两个箭头沿分隔条的长轴排布：横向条上下叠、纵向条左右排，
+    // 挤在短轴上会互相压掉命中区。
+    &[data-layout='horizontal'] {
+      flex-direction: column;
+    }
+
+    &[data-layout='vertical'] {
+      flex-direction: row;
+    }
+
+    // 分隔线只钉住排列方向上的厚度：inset: 0 + margin: auto 让另一个轴自动拉满，
+    // 既不用按 barSize 算居中位移，也不给 RTL 留特例。
+    &::before {
+      content: '';
+      background: getCssVar('splitter', 'line-bg');
+      transition: background-color getCssVar('splitter', 'duration') getCssVar('splitter', 'ease');
+    }
+
+    &[data-layout='horizontal']::before {
+      position: absolute;
+      inset: 0;
+      width: getCssVar('splitter', 'line-size');
+      margin: auto;
+    }
+
+    &[data-layout='vertical']::before {
+      position: absolute;
+      inset: 0;
+      height: getCssVar('splitter', 'line-size');
+      margin: auto;
+    }
+
+    // 悬停与拖拽中共用同一套高亮：拖到中途指针短暂离开时也不该掉色。
+    &:hover:not([data-disabled]) {
+      background: getCssVar('splitter', 'bar-bg-hover');
+
+      &::before {
+        background: getCssVar('splitter', 'line-bg-active');
+      }
+    }
+
+    &[data-resizing]:not([data-disabled])::before {
+      background: getCssVar('splitter', 'line-bg-active');
+    }
+
+    &[data-disabled] {
+      cursor: default;
+    }
+
+    &[data-layout='horizontal']:not([data-disabled]) {
+      cursor: col-resize;
+    }
+
+    &[data-layout='vertical']:not([data-disabled]) {
+      cursor: row-resize;
+    }
+
+    @include focus-ring(getCssVar('color-primary'));
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 折叠箭头
+// ---------------------------------------------------------------------------
+
+@include b('splitter') {
+  [data-part='bar'] [data-part='bar-control'] {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: getCssVar('splitter', 'control-size');
+    height: getCssVar('splitter', 'control-size');
+    padding: 0;
+    color: getCssVar('splitter', 'control-color');
+    cursor: pointer;
+    background: getCssVar('splitter', 'control-bg');
+    border: 1px solid getCssVar('splitter', 'control-border');
+    border-radius: getCssVar('splitter', 'control-radius');
+
+    // showIcon 缺省是 auto：淡出但保留占位，箭头出现时分隔线不会左右抖动。
+    // 透明度为 0 的同时要撤掉点击，否则分隔条上会埋着两个隐形的命中区。
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity getCssVar('splitter', 'duration') getCssVar('splitter', 'ease'),
+      color getCssVar('splitter', 'duration') getCssVar('splitter', 'ease'),
+      background-color getCssVar('splitter', 'duration') getCssVar('splitter', 'ease');
+  }
+
+  [data-part='bar']:hover [data-part='bar-control'],
+  [data-part='bar']:focus-within [data-part='bar-control'],
+  [data-part='bar'] [data-part='bar-control'][data-always] {
+    opacity: 1;
+    pointer-events: auto;
+  }
+
+  [data-part='bar']:hover [data-part='bar-control']:hover {
+    color: getCssVar('splitter', 'control-color-hover');
+    background: getCssVar('splitter', 'control-bg-hover');
+  }
+
+  // 箭头指向「按下去会发生什么」：结束边向左收、起始边向右收，已折叠的那条反向。
+  [data-part='bar'][data-layout='horizontal'] [data-part='bar-control'] {
+    --y-splitter-arrow-rotate: -45deg;
+  }
+
+  [data-part='bar'][data-layout='horizontal']
+    [data-part='bar-control'][data-edge='end']:not([data-collapsed]),
+  [data-part='bar'][data-layout='horizontal']
+    [data-part='bar-control'][data-edge='start'][data-collapsed] {
+    --y-splitter-arrow-rotate: 135deg;
+  }
+
+  // 纵向时同一对语义换成上下，文本方向不再参与。
+  [data-part='bar'][data-layout='vertical'] [data-part='bar-control'] {
+    --y-splitter-arrow-rotate: 45deg;
+  }
+
+  [data-part='bar'][data-layout='vertical']
+    [data-part='bar-control'][data-edge='end']:not([data-collapsed]),
+  [data-part='bar'][data-layout='vertical']
+    [data-part='bar-control'][data-edge='start'][data-collapsed] {
+    --y-splitter-arrow-rotate: -135deg;
+  }
+
+  [data-part='bar-control'] [data-part='bar-icon'] {
+    width: getCssVar('splitter', 'icon-size');
+    height: getCssVar('splitter', 'icon-size');
+    border-right: 1.5px solid currentcolor;
+    border-bottom: 1.5px solid currentcolor;
+    transform: rotate(var(--y-splitter-arrow-rotate, -45deg));
+    transition: transform getCssVar('splitter', 'duration') getCssVar('splitter', 'ease');
+  }
+
+  // RTL 只镜像左右指向，四个角度不必各写一套。
+  [dir='rtl']
+    [data-part='bar'][data-layout='horizontal']
+    [data-part='bar-control']
+    [data-part='bar-icon'] {
+    scale: -1 1;
+  }
+
+  // 该条不可用时箭头没有可执行的动作，整组禁用时同理，直接让位给分隔条本身。
+  [data-part='bar'][data-disabled] [data-part='bar-control'] {
+    display: none;
+  }
+
+  &[data-disabled] [data-part='bar-control'] {
+    display: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 减少动效
+// ---------------------------------------------------------------------------
+
+@include b('splitter') {
+  @include reduced-motion {
+    [data-part='bar'],
+    [data-part='bar']::before,
+    [data-part='bar'] [data-part='bar-control'],
+    [data-part='bar'] [data-part='bar-icon'] {
+      transition: none;
+    }
+  }
+}

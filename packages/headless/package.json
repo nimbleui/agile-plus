@@ -230,6 +230,12 @@
       "types": "./dist/useAvatar/index.d.ts",
       "import": "./dist/useAvatar/index.js",
       "require": "./dist/useAvatar/index.cjs"
+    },
+    "./useSplitter": {
+      "source": "./src/useSplitter/index.ts",
+      "types": "./dist/useSplitter/index.d.ts",
+      "import": "./dist/useSplitter/index.js",
+      "require": "./dist/useSplitter/index.cjs"
     }
   },
   "files": [

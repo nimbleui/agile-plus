@@ -23,7 +23,7 @@ pnpm add @agile-plus/ui
 
 ## 入口
 
-根入口导出全部组件；27 个子路径按控件切分（`slot` 只从根入口导出）：
+根入口导出全部组件；29 个子路径按控件切分（`slot` 只从根入口导出）：
 
 ```vue
 import { SwitchRoot, SwitchThumb } from '@agile-plus/ui'; import { SwitchRoot } from
@@ -43,6 +43,7 @@ import { SwitchRoot, SwitchThumb } from '@agile-plus/ui'; import { SwitchRoot } 
 `./table`
 `./accordion`
 `./avatar`
+`./splitter`
 
 ## 组合结构
 
@@ -74,6 +75,7 @@ import { SwitchRoot, SwitchThumb } from '@agile-plus/ui'; import { SwitchRoot } 
 | `accordion`         | `AccordionRoot` `AccordionItem` `AccordionTrigger` `AccordionContent`；另转出 `AccordionItemContext` 与各部件 Props / Emits 类型                                                                                                     |
 | `avatar`            | `AvatarRoot` `AvatarImage` `AvatarFallback`；另转出 `getAvatarInitials`（primitives 纯算法经本层转发给成品层）与各部件 Props / Emits 类型                                                                                              |
 | `table`             | `TableRoot` `TableCaption` `TableHeader` `TableBody` `TableFooter` `TableRow` `TableHead` `TableCell` `TableEmpty` `TableSelectionHead` `TableSelectionCell` `TableExpandTrigger` `TableExpandedRow`；另转出表格类型与 `resolveTableCssSize` `resolveTableLayout` |
+| `splitter`          | `SplitterRoot` `SplitterPanel` `SplitterBar`；分隔条由面板自动画在自己与后一个面板之间，`SplitterPanel` 因此没有 `asChild`（它本来就是多根片段），另转出 `SplitterLayout` `SplitterDirection` `SplitterSizeInput` `SplitterCollapsible`（尺寸与折叠入参形状经本层转出，下游不必依赖 primitives） |
 | 根入口              | 额外导出 `Slot`，以及它的两个类型 `SlotElementType` / `SlotElementRef`（`slot` 子路径本身不存在）                                                                                                                                   |
 
 `ToastProvider` 是 provide 根，一棵组件树只需要一个实例。
@@ -132,6 +134,7 @@ useSwitch({
 | tabs trigger 与 content                        | `active` / `inactive`，并带 `data-value`                                                                                                                           |
 | progress                                       | `loading` / `complete` / `indeterminate`，带 `data-value` / `data-max`                                                                                             |
 | scroll-area 滚动条与 corner                    | `visible` / `hidden`，带 `data-orientation`                                                                                                                        |
+| splitter 面板 / 分隔条 / 箭头                  | 没有 `data-state`：面板带 `data-index` / `data-collapsed`，分隔条带 `data-layout` / `data-index` / `data-resizing`，箭头带 `data-edge`（`start` / `end`）/ `data-collapsed` / `data-always` |
 | 禁用态                                         | `data-disabled=""`（存在即禁用）                                                                                                                                   |
 | form                                           | `data-valid=""` / `data-invalid=""`                                                                                                                                |
 
@@ -145,12 +148,13 @@ useSwitch({
 | ToggleGroup                | 同上，方向键按 `dir` 做 RTL 换算；可聚焦项同样走 roving `tabindex`                                                                                        |
 | Accordion                  | `ArrowUp/Down` 在可用项之间移动焦点（不展开）、`Home` / `End` 跳首尾，禁用项跳过；每个标题是独立 Tab 停靠点（不做 roving tabindex），`Enter` / `Space` 或点击才展开 |
 | Slider                     | `ArrowUp/Right` 增、`ArrowDown/Left` 减、`Home`→min、`End`→max；`PageUp` / `PageDown` 与 `Shift+方向键` 的步长倍数为 10；拖动时指针可以越出轨道边界       |
+| Splitter                   | 只接管与排列轴同向的方向键（横向 `ArrowLeft/Right`、纵向 `ArrowUp/Down`），`Shift` 倍率 5，`Home` / `End` 推到该侧边界；另一轴的按键不 `preventDefault`，交还页面滚动。可拖动的分隔条 `tabindex="0"` 且带 `aria-value*`，折叠按钮是 `tabindex="-1"` 的真 `button` |
 | Toast                      | `Escape` 关闭当前（`@escape-keydown` 可 `preventDefault`）；视口 `F8` 聚焦列表，Tab 经首尾代理在「视口 ↔ 页面内容」间移动                                 |
 | Switch / Checkbox / Toggle | 默认标签是 `button`，`Space` / `Enter` 由浏览器原生触发，这层不写 keydown                                                                                 |
 
 ## 作用域插槽
 
-10 个模板给默认插槽传载荷，其余都是纯插槽：
+下表列出的模板给默认插槽传载荷，其余都是纯插槽：
 
 | 组件                                   | 插槽载荷                                 |
 | -------------------------------------- | ---------------------------------------- |
@@ -163,6 +167,8 @@ useSwitch({
 | `AccordionContent`                     | `{ open }`                               |
 | `FormField`                            | `{ validity, serverInvalid }`            |
 | `FormFieldValidityState`               | `{ validity }`（该组件不渲染自己的元素） |
+| `SplitterPanel`                        | `{ index, size, collapsed }`             |
+| `SplitterBar`                          | `{ controls }`（该条上要画的折叠按钮）   |
 
 ## 示例：一只开关的全部 CSS
 
