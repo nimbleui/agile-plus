@@ -22,8 +22,8 @@ export type FloatingStrategy = 'absolute' | 'fixed';
 
 /** useFloating 的配置。几何相关字段与 primitives 的同名选项一一对应。 */
 export interface UseFloatingOptions {
-  /** 期望位置，默认 'bottom' */
-  placement?: FloatingPlacement;
+  /** 期望位置，默认 'bottom'；可为响应式来源，变化后由使用方请求更新。 */
+  placement?: MaybeRefOrGetter<FloatingPlacement>;
   /** 与锚点的间距 */
   offset?: number | FloatingOffset;
   /** 空间不足时翻转，默认 true */

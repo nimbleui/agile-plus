@@ -4,6 +4,8 @@ export * from './flex';
 
 export * from './tabs';
 
+export * from './menu';
+
 export * from './radio-group';
 
 export * from './checkbox';

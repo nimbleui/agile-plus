@@ -5,6 +5,7 @@ export default defineConfig({
     index: 'src/index.ts',
     'useDialog/index': 'src/useDialog/index.ts',
     'useTabs/index': 'src/useTabs/index.ts',
+    'useMenu/index': 'src/useMenu/index.ts',
     'useRadioGroup/index': 'src/useRadioGroup/index.ts',
     'useCheckbox/index': 'src/useCheckbox/index.ts',
     'useForm/index': 'src/useForm/index.ts',

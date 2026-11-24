@@ -40,6 +40,12 @@
       "import": "./dist/tabs/index.js",
       "require": "./dist/tabs/index.cjs"
     },
+    "./menu": {
+      "source": "./src/menu/index.ts",
+      "types": "./dist/menu/index.d.ts",
+      "import": "./dist/menu/index.js",
+      "require": "./dist/menu/index.cjs"
+    },
     "./radio-group": {
       "source": "./src/radio-group/index.ts",
       "types": "./dist/radio-group/index.d.ts",

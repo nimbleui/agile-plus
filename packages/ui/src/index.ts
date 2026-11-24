@@ -15,6 +15,17 @@ export type { DialogRootEmits, DialogRootProps } from './dialog/types';
 export type { TabsRootEmits, TabsRootProps } from './tabs/types';
 
 export type {
+  MenuItemGroupProps,
+  MenuItemProps,
+  MenuRootEmits,
+  MenuRootProps,
+  MenuSubContentProps,
+  MenuSubContext,
+  MenuSubProps,
+  MenuSubTriggerProps,
+} from './menu/types';
+
+export type {
   RadioGroupIndicatorProps,
   RadioGroupItemContext,
   RadioGroupItemProps,
@@ -175,6 +186,8 @@ export * from './popover';
 export * from './dropdown-menu';
 
 export * from './collapsible';
+
+export * from './menu';
 
 export * from './select';
 

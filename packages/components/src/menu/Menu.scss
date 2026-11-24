@@ -1,0 +1,390 @@
+@use '../styles' as *;
+@use '../tooltip/Tooltip.scss';
+
+$menu-vars: (
+  'width': 240px,
+  'collapsed-width': 64px,
+  'popup-min-width': 200px,
+  'item-height': 40px,
+  'item-padding-x': var(--y-padding-md),
+  'item-indent': 16px,
+  'item-radius': var(--y-border-radius),
+  'item-color': var(--y-color-text),
+  'item-color-hover': var(--y-color-text),
+  'item-color-disabled': var(--y-color-text-disabled),
+  'item-bg-hover': var(--y-color-fill-quaternary),
+  'item-bg-active': var(--y-color-primary-bg),
+  'item-color-active': var(--y-color-primary),
+  'item-color-danger': var(--y-color-danger),
+  'item-bg-danger-active': var(--y-color-danger-bg),
+  'label-color': var(--y-color-text-tertiary),
+  'border': var(--y-color-border-secondary),
+  'bg': var(--y-color-bg-container),
+  'popup-shadow': var(--y-shadow),
+  'indicator-width': 3px,
+  'duration': var(--y-motion-duration-fast),
+);
+
+@include b('menu') {
+  @include set-component-css-var('menu', $menu-vars);
+}
+
+@include b('menu') {
+  @include e('submenu-content') {
+    @include set-component-css-var('menu', $menu-vars);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 根布局
+// ---------------------------------------------------------------------------
+
+@include b('menu') {
+  box-sizing: border-box;
+  width: getCssVar('menu', 'width');
+  min-width: getCssVar('menu', 'width');
+  margin: 0;
+  padding: var(--y-padding-xs);
+  font-family: var(--y-font-family);
+  font-size: var(--y-font-size);
+  line-height: var(--y-line-height);
+  color: getCssVar('menu', 'item-color');
+  background: getCssVar('menu', 'bg');
+  border-right: 1px solid getCssVar('menu', 'border');
+  list-style: none;
+
+  &[data-mode='horizontal'] {
+    width: auto;
+    min-width: 0;
+    border-right: 0;
+    border-bottom: 1px solid getCssVar('menu', 'border');
+  }
+
+  &[data-collapsed] {
+    width: getCssVar('menu', 'collapsed-width');
+    min-width: getCssVar('menu', 'collapsed-width');
+    overflow: visible;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 菜单项
+// ---------------------------------------------------------------------------
+
+@include b('menu') {
+  @include e('item') {
+    position: relative;
+    list-style: none;
+
+    & > [data-part='item-content'] {
+      position: relative;
+      display: flex;
+      box-sizing: border-box;
+      gap: var(--y-padding-sm);
+      align-items: center;
+      width: 100%;
+      min-height: getCssVar('menu', 'item-height');
+      padding: 0
+        calc(
+          getCssVar('menu', 'item-padding-x') + var(--y-menu-level, 0) *
+            getCssVar('menu', 'item-indent')
+        );
+      color: getCssVar('menu', 'item-color');
+      font: inherit;
+      text-align: left;
+      text-decoration: none;
+      white-space: nowrap;
+      cursor: pointer;
+      background: transparent;
+      border: 0;
+      border-radius: getCssVar('menu', 'item-radius');
+      appearance: none;
+      transition:
+        color getCssVar('menu', 'duration'),
+        background-color getCssVar('menu', 'duration');
+
+      &:hover:not([data-disabled]) {
+        color: getCssVar('menu', 'item-color-hover');
+        background: getCssVar('menu', 'item-bg-hover');
+      }
+
+      &[data-state='active'] {
+        color: getCssVar('menu', 'item-color-active');
+        background: getCssVar('menu', 'item-bg-active');
+
+        &::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 0;
+          width: getCssVar('menu', 'indicator-width');
+          height: 16px;
+          background: currentcolor;
+          border-radius: 0 getCssVar('menu', 'indicator-width') getCssVar('menu', 'indicator-width')
+            0;
+          transform: translateY(-50%);
+        }
+      }
+
+      &[data-danger][data-state='active'] {
+        color: getCssVar('menu', 'item-color-danger');
+        background: getCssVar('menu', 'item-bg-danger-active');
+      }
+
+      &[data-danger]:not([data-state='active']):hover:not([data-disabled]) {
+        color: getCssVar('menu', 'item-color-danger');
+      }
+
+      &[data-disabled] {
+        color: getCssVar('menu', 'item-color-disabled');
+        cursor: not-allowed;
+        background: transparent;
+      }
+
+      @include focus-ring(getCssVar('color-primary'));
+    }
+
+    [data-part='icon'] {
+      display: inline-flex;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+      width: 1em;
+      font-size: 16px;
+    }
+
+    [data-part='title'] {
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    [data-part='suffix'] {
+      flex: none;
+      margin-left: auto;
+      color: getCssVar('menu', 'label-color');
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 子菜单
+// ---------------------------------------------------------------------------
+
+@include b('menu') {
+  @include e('submenu') {
+    position: relative;
+    list-style: none;
+  }
+
+  @include e('submenu-trigger') {
+    display: flex;
+    box-sizing: border-box;
+    gap: var(--y-padding-sm);
+    align-items: center;
+    width: 100%;
+    min-height: getCssVar('menu', 'item-height');
+    padding: 0
+      calc(
+        getCssVar('menu', 'item-padding-x') + var(--y-menu-level, 0) *
+          getCssVar('menu', 'item-indent')
+      );
+    color: getCssVar('menu', 'item-color');
+    font: inherit;
+    text-align: left;
+    white-space: nowrap;
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    border-radius: getCssVar('menu', 'item-radius');
+    appearance: none;
+    transition:
+      color getCssVar('menu', 'duration'),
+      background-color getCssVar('menu', 'duration');
+
+    &:hover:not([data-disabled]),
+    &[data-state='open'] {
+      color: getCssVar('menu', 'item-color-hover');
+      background: getCssVar('menu', 'item-bg-hover');
+    }
+
+    &[data-disabled] {
+      color: getCssVar('menu', 'item-color-disabled');
+      cursor: not-allowed;
+      background: transparent;
+    }
+
+    @include focus-ring(getCssVar('color-primary'));
+
+    [data-part='submenu-arrow'] {
+      display: inline-flex;
+      flex: none;
+      align-items: center;
+      justify-content: center;
+      width: 8px;
+      height: 8px;
+      margin-left: auto;
+
+      &::after {
+        content: '';
+        width: 5px;
+        height: 5px;
+        border-right: 1.5px solid currentcolor;
+        border-bottom: 1.5px solid currentcolor;
+        transform: rotate(-45deg);
+        transition: transform getCssVar('menu', 'duration');
+      }
+    }
+
+    &[data-state='open'] [data-part='submenu-arrow']::after {
+      transform: rotate(45deg);
+    }
+  }
+
+  @include e('submenu-content') {
+    box-sizing: border-box;
+    min-width: getCssVar('menu', 'popup-min-width');
+    margin: 0;
+    padding: var(--y-padding-xs);
+    color: getCssVar('menu', 'item-color');
+    background: getCssVar('menu', 'bg');
+    border: 1px solid getCssVar('menu', 'border');
+    border-radius: var(--y-border-radius-lg);
+    box-shadow: getCssVar('menu', 'popup-shadow');
+    list-style: none;
+    outline: none;
+    z-index: var(--y-z-index-dropdown);
+
+    &[data-state='open'] {
+      animation: y-menu-fade-in getCssVar('menu', 'duration') var(--y-motion-ease-out);
+    }
+
+    &[hidden] {
+      display: none;
+    }
+  }
+
+  &[data-mode='inline'] .y-menu__submenu-content {
+    min-width: 0;
+    padding: 0 0 0 var(--y-padding-xs);
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+    animation: none;
+  }
+}
+
+@keyframes y-menu-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 分组
+// ---------------------------------------------------------------------------
+
+@include b('menu') {
+  @include e('group') {
+    list-style: none;
+
+    [data-part='group-label'] {
+      padding: var(--y-padding-sm) getCssVar('menu', 'item-padding-x') var(--y-padding-xs);
+      font-size: var(--y-font-size-sm);
+      color: getCssVar('menu', 'label-color');
+      -webkit-user-select: none;
+      user-select: none;
+    }
+
+    [data-part='group-list'] {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 横向与折叠模式
+// ---------------------------------------------------------------------------
+
+@include b('menu') {
+  &[data-mode='horizontal'] {
+    [data-part='item-content'],
+    .y-menu__submenu-trigger {
+      width: auto;
+      min-width: 96px;
+      padding: 0 var(--y-padding-md);
+    }
+
+    [data-part='item-content'][data-state='active']::after {
+      content: '';
+      position: absolute;
+      right: var(--y-padding-md);
+      bottom: -5px;
+      left: var(--y-padding-md);
+      height: 2px;
+      background: currentcolor;
+      border-radius: 2px 2px 0 0;
+    }
+
+    [data-part='item-content'][data-state='active']::before {
+      display: none;
+    }
+  }
+
+  &[data-collapsed] {
+    [data-part='item-content'],
+    .y-menu__submenu-trigger {
+      justify-content: center;
+      padding: 0;
+    }
+
+    [data-part='title'],
+    [data-part='suffix'],
+    [data-part='submenu-arrow'] {
+      display: none;
+    }
+
+    [data-part='icon'] {
+      font-size: 18px;
+    }
+
+    [data-part='item-content'][data-state='active']::before {
+      left: -4px;
+    }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+
+@include b('menu') {
+  @include e('item') {
+    @include reduced-motion {
+      & > [data-part='item-content'] {
+        transition: none;
+      }
+    }
+  }
+
+  @include e('submenu-trigger') {
+    @include reduced-motion {
+      transition: none;
+
+      & [data-part='submenu-arrow']::after {
+        transition: none;
+      }
+    }
+  }
+
+  @include e('submenu-content') {
+    @include reduced-motion {
+      &[data-state='open'] {
+        animation: none;
+      }
+    }
+  }
+}

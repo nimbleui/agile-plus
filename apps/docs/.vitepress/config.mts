@@ -55,6 +55,7 @@ export default defineConfig({
             { text: 'Tooltip 提示', link: '/components/tooltip' },
             { text: 'Popover 气泡卡片', link: '/components/popover' },
             { text: 'DropdownMenu 下拉菜单', link: '/components/dropdown-menu' },
+            { text: 'Menu 导航菜单', link: '/components/menu' },
             { text: 'Tabs 标签页', link: '/components/tabs' },
             { text: 'RadioGroup 单选组', link: '/components/radio-group' },
             { text: 'Select 下拉选择', link: '/components/select' },

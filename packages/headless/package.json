@@ -33,6 +33,12 @@
       "import": "./dist/useTabs/index.js",
       "require": "./dist/useTabs/index.cjs"
     },
+    "./useMenu": {
+      "source": "./src/useMenu/index.ts",
+      "types": "./dist/useMenu/index.d.ts",
+      "import": "./dist/useMenu/index.js",
+      "require": "./dist/useMenu/index.cjs"
+    },
     "./useRadioGroup": {
       "source": "./src/useRadioGroup/index.ts",
       "types": "./dist/useRadioGroup/index.d.ts",

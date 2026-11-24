@@ -2,6 +2,8 @@ export * from './useDialog';
 
 export * from './useTabs';
 
+export * from './useMenu';
+
 export * from './useRadioGroup';
 
 export * from './useCheckbox';

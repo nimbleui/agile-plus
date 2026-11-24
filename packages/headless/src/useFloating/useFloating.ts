@@ -35,7 +35,7 @@ export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn
 
   const x = ref(0);
   const y = ref(0);
-  const placement = ref<FloatingPlacement>(options.placement ?? 'bottom');
+  const placement = ref<FloatingPlacement>(toValue(options.placement) ?? 'bottom');
   const arrow = ref<FloatingArrowPosition | null>(null);
   const availableSpace = ref<FloatingAvailableSpace | null>(null);
 
@@ -99,7 +99,7 @@ export function useFloating(options: UseFloatingOptions = {}): UseFloatingReturn
 
     // ---- Calculate ----
     const floatingOptions = {
-      placement: options.placement,
+      placement: toValue(options.placement),
       offset: options.offset,
       flip: options.flip,
       shift: options.shift,

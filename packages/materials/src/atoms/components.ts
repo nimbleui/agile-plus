@@ -32,6 +32,14 @@ import {
   DropdownMenuSeparator,
 } from '@agile-plus/ui/dropdown-menu';
 import {
+  MenuItem,
+  MenuItemGroup,
+  MenuRoot,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
+} from '@agile-plus/ui/menu';
+import {
   FormField,
   FormFieldControl,
   FormFieldLabel,
@@ -149,6 +157,12 @@ export const components: Record<string, Component> = {
   'agile-plus.ui.dropdown-menu-checkbox-item': DropdownMenuCheckboxItem,
   'agile-plus.ui.dropdown-menu-label': DropdownMenuLabel,
   'agile-plus.ui.dropdown-menu-separator': DropdownMenuSeparator,
+  'agile-plus.ui.menu': MenuRoot,
+  'agile-plus.ui.menu-item': MenuItem,
+  'agile-plus.ui.menu-sub': MenuSub,
+  'agile-plus.ui.menu-sub-trigger': MenuSubTrigger,
+  'agile-plus.ui.menu-sub-content': MenuSubContent,
+  'agile-plus.ui.menu-item-group': MenuItemGroup,
   'agile-plus.ui.input': Input,
   'agile-plus.ui.textarea': Textarea,
   'agile-plus.ui.button': Button,

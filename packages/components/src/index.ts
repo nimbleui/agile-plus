@@ -40,6 +40,8 @@ export * from './popover';
 
 export * from './dropdown-menu';
 
+export * from './menu';
+
 export * from './select';
 
 export * from './date-picker';

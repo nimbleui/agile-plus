@@ -6,6 +6,7 @@ export default defineConfig({
     'dialog/index': 'src/dialog/index.ts',
     'flex/index': 'src/flex/index.ts',
     'tabs/index': 'src/tabs/index.ts',
+    'menu/index': 'src/menu/index.ts',
     'radio-group/index': 'src/radio-group/index.ts',
     'checkbox/index': 'src/checkbox/index.ts',
     'scroll-area/index': 'src/scroll-area/index.ts',
