@@ -79,6 +79,42 @@ function mountMenu(rootProps: Record<string, unknown> = {}) {
   );
 }
 
+function mountNestedMenu(rootProps: Record<string, unknown> = {}) {
+  return mount(() =>
+    h(MenuRoot, rootProps, {
+      default: () => [
+        h(
+          MenuSub,
+          { value: 'first' },
+          {
+            default: () => [
+              h(MenuSubTrigger, null, { default: () => ['第一层'] }),
+              h(MenuSubContent, null, {
+                default: () => [
+                  h(
+                    MenuSub,
+                    { value: 'second' },
+                    {
+                      default: () => [
+                        h(MenuSubTrigger, null, { default: () => ['第二层'] }),
+                        h(MenuSubContent, null, {
+                          default: () => [
+                            h(MenuItem, { value: 'leaf' }, { default: () => ['第三层'] }),
+                          ],
+                        }),
+                      ],
+                    }
+                  ),
+                ],
+              }),
+            ],
+          }
+        ),
+      ],
+    })
+  );
+}
+
 afterEach(() => {
   for (const app of apps.splice(0)) app.unmount();
 
@@ -265,6 +301,85 @@ describe('Menu 选中与子菜单交互', () => {
     expect(host.contains(content as HTMLElement)).toBe(false);
     expect(document.body.contains(content as HTMLElement)).toBe(true);
     expect(document.activeElement).toBe(menuItems()[2]);
+  });
+
+  it('指针跨入嵌套浮层时取消祖先的关闭计时', async () => {
+    vi.useFakeTimers();
+    mountNestedMenu({ mode: 'vertical', defaultOpenKeys: ['first', 'second'] });
+    await settle();
+
+    const [first, second] = subContents();
+
+    first?.dispatchEvent(new PointerEvent('pointerleave'));
+    vi.advanceTimersByTime(100);
+    second?.dispatchEvent(new PointerEvent('pointerenter'));
+    vi.advanceTimersByTime(200);
+    await nextTick();
+
+    expect(first?.hidden).toBe(false);
+    expect(second?.hidden).toBe(false);
+  });
+
+  it('指针离开父浮层并直接指向后代浮层时不排关闭', async () => {
+    vi.useFakeTimers();
+    mountNestedMenu({ mode: 'vertical', defaultOpenKeys: ['first', 'second'] });
+    await settle();
+
+    const [first, second] = subContents();
+
+    first?.dispatchEvent(new PointerEvent('pointerleave', { relatedTarget: second }));
+    vi.advanceTimersByTime(200);
+    await nextTick();
+
+    expect(first?.hidden).toBe(false);
+    expect(second?.hidden).toBe(false);
+  });
+
+  it('指针从后代浮层返回父浮层时保持整棵子弹菜单展开', async () => {
+    vi.useFakeTimers();
+    mountNestedMenu({ mode: 'vertical', defaultOpenKeys: ['first', 'second'] });
+    await settle();
+
+    const [first, second] = subContents();
+
+    second?.dispatchEvent(new PointerEvent('pointerleave', { relatedTarget: first }));
+    vi.advanceTimersByTime(200);
+    await nextTick();
+
+    expect(first?.hidden).toBe(false);
+    expect(second?.hidden).toBe(false);
+  });
+
+  it('指针真正离开菜单树后仍延迟关闭当前子弹菜单', async () => {
+    vi.useFakeTimers();
+    mountNestedMenu({ mode: 'vertical', defaultOpenKeys: ['first', 'second'] });
+    await settle();
+
+    const [first, second] = subContents();
+
+    second?.dispatchEvent(new PointerEvent('pointerleave', { relatedTarget: document.body }));
+    vi.advanceTimersByTime(200);
+    await nextTick();
+
+    expect(first?.hidden).toBe(false);
+    expect(subContents()).toHaveLength(1);
+    expect(subContents()[0]).toBe(first);
+  });
+
+  it('折叠态嵌套浮层保留层级标记并同时显示', async () => {
+    mountNestedMenu({
+      mode: 'inline',
+      inlineCollapsed: true,
+      defaultOpenKeys: ['first', 'second'],
+    });
+    await settle();
+
+    const [first, second] = subContents();
+
+    expect(first?.style.getPropertyValue('--y-menu-depth')).toBe('0');
+    expect(second?.style.getPropertyValue('--y-menu-depth')).toBe('1');
+    expect(first?.hidden).toBe(false);
+    expect(second?.hidden).toBe(false);
   });
 });
 

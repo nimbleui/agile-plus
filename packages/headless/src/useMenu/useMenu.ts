@@ -17,7 +17,7 @@ import type { MenuKey } from '@agile-plus/primitives/menu';
 
 import type { MenuItemEntry, MenuSelectInfo, UseMenuOptions, UseMenuReturn } from './types';
 
-const SUBMENU_CLOSE_DELAY = 120;
+const SUBMENU_CLOSE_DELAY = 180;
 
 /** 判断两个键数组是否按字符串身份完全一致。 */
 function sameKeys(left: MenuKey[], right: MenuKey[]): boolean {
@@ -266,6 +266,23 @@ export function useMenu(options: UseMenuOptions = {}): UseMenuReturn {
     closeTimers.delete(identity);
   }
 
+  function cancelSubClosePath(value: MenuKey): void {
+    cancelSubClose(value);
+
+    let parentValue = getEntryByValue(value)?.parentValue.value ?? null;
+    const visited = new Set<string>();
+
+    while (parentValue !== null) {
+      const identity = String(parentValue);
+
+      if (visited.has(identity)) return;
+
+      visited.add(identity);
+      cancelSubClose(parentValue);
+      parentValue = getEntryByValue(parentValue)?.parentValue.value ?? null;
+    }
+  }
+
   function setSubOpen(value: MenuKey, open: boolean, focusFirst = false): void {
     const entry = getEntryByValue(value);
 
@@ -307,7 +324,19 @@ export function useMenu(options: UseMenuOptions = {}): UseMenuReturn {
     setSubOpen(value, !isSubOpen(value), !isSubOpen(value));
   }
 
-  function scheduleSubClose(value: MenuKey): void {
+  function isTargetInsideMenuTree(target: Node): boolean {
+    if (rootElement.value?.contains(target)) return true;
+
+    for (const element of popupElements.values()) {
+      if (element.contains(target)) return true;
+    }
+
+    return false;
+  }
+
+  function scheduleSubClose(value: MenuKey, relatedTarget?: EventTarget | null): void {
+    if (relatedTarget instanceof Node && isTargetInsideMenuTree(relatedTarget)) return;
+
     cancelSubClose(value);
 
     const identity = String(value);
@@ -495,6 +524,7 @@ export function useMenu(options: UseMenuOptions = {}): UseMenuReturn {
     closeSub,
     scheduleSubClose,
     cancelSubClose,
+    cancelSubClosePath,
     closePopups,
     focusItem,
     onItemFocus,

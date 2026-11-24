@@ -109,10 +109,12 @@ export interface UseMenuReturn {
   openSub(value: MenuKey): void;
   /** 关闭子菜单及其后代。 */
   closeSub(value: MenuKey): void;
-  /** 延迟关闭子菜单，供指针在触发器与弹出层之间移动。 */
-  scheduleSubClose(value: MenuKey): void;
+  /** 延迟关闭子菜单；指针仍在整棵菜单树内时跳过关闭。 */
+  scheduleSubClose(value: MenuKey, relatedTarget?: EventTarget | null): void;
   /** 取消待关闭的子菜单。 */
   cancelSubClose(value: MenuKey): void;
+  /** 取消当前子菜单及全部祖先的待关闭计时，用于跨浮层指针移动。 */
+  cancelSubClosePath(value: MenuKey): void;
   /** 关闭全部弹出子菜单。 */
   closePopups(): void;
   /** 聚焦指定注册项。 */

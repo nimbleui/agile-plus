@@ -52,7 +52,11 @@ const contentAttrs = computed(() => menu.getSubContentAttrs(sub.id));
 const side = computed(() => parsePlacement(floating.placement.value).side);
 const contentStyle = computed(() =>
   isPopup.value
-    ? { ...floating.floatingStyle.value, '--y-menu-level': 0 }
+    ? {
+        ...floating.floatingStyle.value,
+        '--y-menu-level': 0,
+        '--y-menu-depth': sub.depth.value,
+      }
     : { '--y-menu-level': sub.depth.value + 1 }
 );
 
@@ -75,8 +79,8 @@ function setElement(node: unknown): void {
       :style="contentStyle"
       :data-side="side"
       data-part="submenu-content"
-      @pointerenter="menu.cancelSubClose(sub.value.value)"
-      @pointerleave="menu.scheduleSubClose(sub.value.value)"
+      @pointerenter="menu.cancelSubClosePath(sub.value.value)"
+      @pointerleave="menu.scheduleSubClose(sub.value.value, $event.relatedTarget)"
     >
       <slot />
     </Slot>

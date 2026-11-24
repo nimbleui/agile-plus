@@ -53,7 +53,13 @@ $menu-vars: (
   border-right: 1px solid getCssVar('menu', 'border');
   list-style: none;
 
+  & > li[data-part] {
+    margin: 0;
+  }
+
   &[data-mode='horizontal'] {
+    display: flex;
+    align-items: stretch;
     width: auto;
     min-width: 0;
     border-right: 0;
@@ -253,7 +259,7 @@ $menu-vars: (
     box-shadow: getCssVar('menu', 'popup-shadow');
     list-style: none;
     outline: none;
-    z-index: var(--y-z-index-dropdown);
+    z-index: calc(var(--y-z-index-dropdown) + var(--y-menu-depth, 0));
 
     &[data-state='open'] {
       animation: y-menu-fade-in getCssVar('menu', 'duration') var(--y-motion-ease-out);

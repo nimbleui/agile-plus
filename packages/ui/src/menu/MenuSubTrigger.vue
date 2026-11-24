@@ -65,13 +65,16 @@ function onPointerEnter(event: PointerEvent): void {
   if (menu.isInline.value || disabled.value || event.pointerType === 'touch') return;
 
   openedByHover.value = true;
+  menu.cancelSubClosePath(sub.value.value);
   menu.openSub(sub.value.value);
 }
 
-function onPointerLeave(): void {
+function onPointerLeave(event: PointerEvent): void {
   tooltip.onPointerLeave();
 
-  if (!menu.isInline.value && !disabled.value) menu.scheduleSubClose(sub.value.value);
+  if (!menu.isInline.value && !disabled.value) {
+    menu.scheduleSubClose(sub.value.value, event.relatedTarget);
+  }
 }
 
 function onClick(event: MouseEvent): void {
