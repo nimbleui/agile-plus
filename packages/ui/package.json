@@ -1,6 +1,6 @@
 {
   "name": "@agile-plus/ui",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "type": "module",
   "description": "无样式组件层：WAI-ARIA、键盘交互、Slots 契约",
   "homepage": "https://nimbleui.github.io/agile-plus/",

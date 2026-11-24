@@ -18,7 +18,7 @@ import { materials as leafComponentMaterials } from './styled/materials';
 export const manifest: PluginManifest = {
   name: 'materials-agile-plus',
   displayName: '组件库物料',
-  version: '0.1.2',
+  version: '0.2.0',
   engines: { lowcode: '^0.1.0' },
   certification: 'verified',
   executionProfile: 'inline',

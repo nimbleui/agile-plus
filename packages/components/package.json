@@ -1,6 +1,6 @@
 {
   "name": "@agile-plus/components",
-  "version": "0.1.2",
+  "version": "0.2.0",
   "type": "module",
   "description": "带样式组件层：Design Token、BEM、主题化",
   "homepage": "https://nimbleui.github.io/agile-plus/",
