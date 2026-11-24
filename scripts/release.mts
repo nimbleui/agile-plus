@@ -269,7 +269,8 @@ function main(): void {
   pnpm('verify');
 
   stage = '发布干跑 pnpm publish:dry';
-  pnpm('publish:dry');
+  // 版本与 CHANGELOG 已写入但尚未提交，dry-run 必须跳过 pnpm 的工作区检查。
+  pnpm('publish:dry --no-git-checks');
 
   stage = '提交与打 tag';
   git('add', ...packagePaths, MANIFEST_PATH, CHANGELOG_PATH);
