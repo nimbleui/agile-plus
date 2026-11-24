@@ -185,9 +185,9 @@ export * from './popover';
 
 export * from './dropdown-menu';
 
-export * from './collapsible';
-
 export * from './menu';
+
+export * from './collapsible';
 
 export * from './select';
 
