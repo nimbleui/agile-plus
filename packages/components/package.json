@@ -190,6 +190,18 @@
       "import": "./dist/splitter/index.js",
       "require": "./dist/splitter/index.cjs"
     },
+    "./virtual-list": {
+      "source": "./src/virtual-list/index.ts",
+      "types": "./dist/virtual-list/index.d.ts",
+      "import": "./dist/virtual-list/index.js",
+      "require": "./dist/virtual-list/index.cjs"
+    },
+    "./virtual-tree": {
+      "source": "./src/virtual-tree/index.ts",
+      "types": "./dist/virtual-tree/index.d.ts",
+      "import": "./dist/virtual-tree/index.js",
+      "require": "./dist/virtual-tree/index.cjs"
+    },
     "./style.css": "./dist/components.css"
   },
   "files": [

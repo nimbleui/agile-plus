@@ -231,11 +231,23 @@
       "import": "./dist/useAvatar/index.js",
       "require": "./dist/useAvatar/index.cjs"
     },
+    "./useVirtualList": {
+      "source": "./src/useVirtualList/index.ts",
+      "types": "./dist/useVirtualList/index.d.ts",
+      "import": "./dist/useVirtualList/index.js",
+      "require": "./dist/useVirtualList/index.cjs"
+    },
     "./useSplitter": {
       "source": "./src/useSplitter/index.ts",
       "types": "./dist/useSplitter/index.d.ts",
       "import": "./dist/useSplitter/index.js",
       "require": "./dist/useSplitter/index.cjs"
+    },
+    "./useVirtualTree": {
+      "source": "./src/useVirtualTree/index.ts",
+      "types": "./dist/useVirtualTree/index.d.ts",
+      "import": "./dist/useVirtualTree/index.js",
+      "require": "./dist/useVirtualTree/index.cjs"
     }
   },
   "files": [

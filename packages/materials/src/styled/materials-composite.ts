@@ -940,4 +940,38 @@ export const materials = [
       },
     ],
   }),
+  defineMaterial({
+    name: 'agile-plus.virtual-list',
+    title: '虚拟列表',
+    category: '展示',
+    icon: 'list',
+    // `items` 不登记：面板目前把 array 型属性当文本框，写回的是字符串，交给组件当数据源
+    // 会得到「长度为 1 的字符串列表」（见 protocol.ts 的平台约束）。数据一律由代码或
+    // 表达式绑定给出，面板只调这三个几何参数。
+    props: {
+      height: {
+        type: 'string',
+        title: '容器高度',
+        description: 'CSS 长度值；虚拟滚动必须有确定的可视高度',
+      },
+      estimateSize: {
+        type: 'number',
+        title: '预估行高',
+        description: '未测量项按此高度撑住位置，量到真实高度后自动校正',
+        default: 40,
+      },
+      overscan: {
+        type: 'number',
+        title: '预渲染行数',
+        description: '视口上下各多渲染几行，0 表示关闭',
+        default: 3,
+      },
+    },
+    initial: { height: '320px' },
+    size: { width: 320, height: 320 },
+    // 只有一个内容分发点，而且是带作用域的默认插槽，因此不写 `slots`：`defineMaterial` 会给
+    // container 补一格不限类型的 default。要留意这一格的内容是**逐行渲染**的——拖进去一个
+    // Button 会得到「每个可见行一个按钮」，与 Select 的 item 格同一语义。
+    container: true,
+  }),
 ];

@@ -153,6 +153,8 @@ export type {
   AvatarRootProps,
 } from './avatar/types';
 
+export type { VirtualListProps } from './virtual-list/types';
+
 export * from './dialog';
 
 export * from './tabs';
@@ -211,3 +213,7 @@ export * from './accordion';
 
 export * from './avatar';
 export * from './splitter';
+
+export * from './virtual-list';
+
+export * from './virtual-tree';

@@ -62,3 +62,7 @@ export * from './accordion';
 
 export * from './avatar';
 export * from './splitter';
+
+export * from './virtual-list';
+
+export * from './virtual-tree';

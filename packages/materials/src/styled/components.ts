@@ -24,6 +24,7 @@ import { Textarea } from '@agile-plus/components/textarea';
 import { Toast, ToastViewport } from '@agile-plus/components/toast';
 import { Toggle, ToggleGroup, ToggleGroupItem } from '@agile-plus/components/toggle';
 import { Tooltip } from '@agile-plus/components/tooltip';
+import { VirtualList } from '@agile-plus/components/virtual-list';
 
 /**
  * 成品组件层（`@agile-plus/components`）的名字表。
@@ -77,4 +78,5 @@ export const components: Record<string, Component> = {
   'agile-plus.accordion': Accordion,
   'agile-plus.accordion-item': AccordionItem,
   'agile-plus.avatar': Avatar,
+  'agile-plus.virtual-list': VirtualList,
 };

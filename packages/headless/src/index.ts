@@ -67,4 +67,9 @@ export * from './useTable';
 export * from './useAccordion';
 
 export * from './useAvatar';
+
+export * from './useVirtualList';
+
 export * from './useSplitter';
+
+export * from './useVirtualTree';

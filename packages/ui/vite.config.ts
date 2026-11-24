@@ -36,6 +36,8 @@ export default defineConfig({
         'accordion/index': 'src/accordion/index.ts',
         'avatar/index': 'src/avatar/index.ts',
         'splitter/index': 'src/splitter/index.ts',
+        'virtual-list/index': 'src/virtual-list/index.ts',
+        'virtual-tree/index': 'src/virtual-tree/index.ts',
         'popover/index': 'src/popover/index.ts',
         'dropdown-menu/index': 'src/dropdown-menu/index.ts',
       },

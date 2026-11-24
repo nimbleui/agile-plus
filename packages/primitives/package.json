@@ -189,6 +189,18 @@
       "types": "./dist/splitter/index.d.ts",
       "import": "./dist/splitter/index.js",
       "require": "./dist/splitter/index.cjs"
+    },
+    "./virtual": {
+      "source": "./src/virtual/index.ts",
+      "types": "./dist/virtual/index.d.ts",
+      "import": "./dist/virtual/index.js",
+      "require": "./dist/virtual/index.cjs"
+    },
+    "./tree": {
+      "source": "./src/tree/index.ts",
+      "types": "./dist/tree/index.d.ts",
+      "import": "./dist/tree/index.js",
+      "require": "./dist/tree/index.cjs"
     }
   },
   "files": [

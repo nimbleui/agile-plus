@@ -1,0 +1,51 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 这里刻意没有「行高」这一项：动态高度虚拟列表的前提是行有多高量出来就是多高，样式写死
+// height / min-height 会让 estimateSize 与实测长期不符，滚动条长度与跳转落点一起失真。
+// 行的大小由内容决定，本层只能决定内容周围的排版与分隔线。
+
+@include b('virtual-list') {
+  @include set-component-css-var(
+    'virtual-list',
+    (
+      'font-size': var(--y-font-size),
+      'row-padding': var(--y-padding-sm) var(--y-padding),
+      'divider': var(--y-color-border-secondary),
+    )
+  );
+}
+
+// ---------------------------------------------------------------------------
+// 视口
+// ---------------------------------------------------------------------------
+
+@include b('virtual-list') {
+  box-sizing: border-box;
+  // 行内排版上下文留在视口上：滚动条宽度按 px 从可视高度里扣掉，字号与行高不参与测量，
+  // 放在这里能让每一行继承到同一组文字度量。
+  font-size: getCssVar('virtual-list', 'font-size');
+  line-height: var(--y-line-height);
+  color: var(--y-color-text);
+}
+
+// ---------------------------------------------------------------------------
+// 行
+// ---------------------------------------------------------------------------
+
+@include b('virtual-list') {
+  // 行节点由无样式层渲染，作者没有位置写 class，因此以 data-part 作为样式钩子
+  // （与 Splitter 的分隔条、DatePicker 的单元格同一取舍）。
+  [data-part='row'] {
+    padding: getCssVar('virtual-list', 'row-padding');
+    border-bottom: 1px solid getCssVar('virtual-list', 'divider');
+  }
+
+  // 刻意不写 `:last-child { border-bottom: none }`，也不写斑马纹 `:nth-child(odd)`：
+  // DOM 里只有当前窗口那十几行，`last-child` 与奇偶都会随滚动翻面——分界线会在中间某行
+  // 消失、斑马纹会在滚动时整体换色。结构类选择器在窗口化渲染下不是一个稳定的语义。
+  // 需要「最后一项不画线」时按数据自己判定：行插槽里的 index 与 items 长度都在手边。
+}

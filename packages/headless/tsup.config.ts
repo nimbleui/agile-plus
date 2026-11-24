@@ -38,6 +38,8 @@ export default defineConfig({
     'useTable/index': 'src/useTable/index.ts',
     'useAccordion/index': 'src/useAccordion/index.ts',
     'useAvatar/index': 'src/useAvatar/index.ts',
+    'useVirtualList/index': 'src/useVirtualList/index.ts',
+    'useVirtualTree/index': 'src/useVirtualTree/index.ts',
     'useSplitter/index': 'src/useSplitter/index.ts',
   },
   format: ['esm', 'cjs'],

@@ -1,0 +1,248 @@
+@use '../styles' as *;
+
+// ---------------------------------------------------------------------------
+// 组件级 CSS Variables
+// ---------------------------------------------------------------------------
+//
+// 这里刻意没有「行高」这一项：动态高度虚拟列表的前提是行有多高量出来就是多高，样式写死
+// height / min-height 会让 estimateSize 与实测长期不符，滚动条长度与跳转落点一起失真
+// （与 VirtualList 同一条约束）。树比列表更需要这一条——缩进、箭头、换行的标签都在改变
+// 行的高度，写死一个行高等于把测量作废。
+//
+// 'indent' 由 'toggle-size' 与 'gap' 推出来，而不是另给一个互不相干的数字：分支行的标签在
+// 箭头右侧（indent × level + 箭头 + 间距），叶子行的标签直接跟在缩进后（indent × level）。
+// 只有 indent = toggle-size + gap 时父行与它的叶子子节点才落在同一条竖线上；两个值分开写，
+// 对齐就成了碰运气。勾选框在两种行里都出现，等式两边同时多出一份，不影响结论。
+
+@include b('virtual-tree') {
+  @include set-component-css-var(
+    'virtual-tree',
+    (
+      'font-size': var(--y-font-size),
+      'row-padding-block': var(--y-padding-xs),
+      'row-padding-inline-end': var(--y-padding-sm),
+      'toggle-size': 16px,
+      'gap': var(--y-padding-xs),
+      'indent': calc(var(--y-virtual-tree-toggle-size) + var(--y-virtual-tree-gap)),
+      'checkbox-size': 16px,
+      'checkbox-radius': var(--y-border-radius-sm),
+      'checkbox-border': var(--y-color-border),
+      'checkbox-border-hover': var(--y-color-primary-hover),
+      'checkbox-border-checked': var(--y-color-primary),
+      'checkbox-bg': var(--y-color-bg-container),
+      'checkbox-bg-checked': var(--y-color-primary),
+      'checkbox-bg-disabled': var(--y-color-fill-secondary),
+      'checkbox-color-on-checked': var(--y-color-bg-container),
+      'dash-width': 8px,
+      'dash-height': 2px,
+      'arrow-color': var(--y-color-text-secondary),
+      'bg-hover': var(--y-color-fill-tertiary),
+      'bg-active': var(--y-color-fill-secondary),
+      'bg-selected': var(--y-color-primary-bg),
+      'color-selected': var(--y-color-primary),
+      'color-disabled': var(--y-color-text-disabled),
+    )
+  );
+
+  // 行底色与勾选框边框都走「状态层变量 + 最后一条声明生效」的写法，避免与上面的设计层同名
+  // 造成循环引用（Checkbox 同一手法）。
+  --y-virtual-tree-row-bg: transparent;
+  --y-virtual-tree-state-border: var(--y-virtual-tree-checkbox-border);
+  --y-virtual-tree-state-bg: var(--y-virtual-tree-checkbox-bg);
+}
+
+// ---------------------------------------------------------------------------
+// 视口
+// ---------------------------------------------------------------------------
+
+@include b('virtual-tree') {
+  box-sizing: border-box;
+  font-size: getCssVar('virtual-tree', 'font-size');
+  line-height: var(--y-line-height);
+  color: var(--y-color-text);
+
+  // 焦点环挂在视口上：单一 tab 停靠点在 content，而 content 盒子带着上下 padding，高度等于
+  // 整棵树的总高而不是可见区域——环画在它身上时，滚动之后落在视口外，等于没有环。
+  // DateRangePicker 的容器环同一手法，用负 offset 把环收进被裁剪的视口内。
+  &:focus-within {
+    outline: var(--y-focus-ring-width) solid getCssVar('focus-ring-color');
+    outline-offset: calc(var(--y-focus-ring-width) * -1);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 焦点宿主（role="tree"）
+// ---------------------------------------------------------------------------
+
+@include b('virtual-tree') {
+  [data-part='content'] {
+    // 视口的 focus-within 已经给出环，这里去掉浏览器给 tabindex 元素的默认描边，
+    // 否则是「框中框」。不是关掉焦点指示：环换了地方，没有消失。
+    outline: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 行
+// ---------------------------------------------------------------------------
+
+@include b('virtual-tree') {
+  // 行由无样式层渲染，作者没有位置写 class，因此以 data-part 作为样式钩子
+  // （与 VirtualList 的 `[data-part='row']` 同一取舍）。
+  [data-part='row'] {
+    display: flex;
+    align-items: center;
+    gap: getCssVar('virtual-tree', 'gap');
+    padding: getCssVar('virtual-tree', 'row-padding-block') 0;
+    cursor: pointer;
+    background: var(--y-virtual-tree-row-bg);
+
+    transition: background-color var(--y-motion-duration-fast) var(--y-motion-ease-out);
+
+    // 缩进的真源是无样式层写进行上的 `--y-tree-level`，它与 `aria-level` 是同一个数字；
+    // 本层只决定每层让进多少。
+    padding-inline-start: calc(var(--y-tree-level, 0) * getCssVar('virtual-tree', 'indent'));
+    padding-inline-end: getCssVar('virtual-tree', 'row-padding-inline-end');
+  }
+
+  // hover 只作用于没有持久状态的行；选中与键盘游标不能被瞬时悬停覆盖。
+  [data-part='row']:hover:not([data-disabled]):not([data-selected]):not([data-active]) {
+    --y-virtual-tree-row-bg: var(--y-virtual-tree-bg-hover);
+  }
+
+  [data-part='row'][data-active] {
+    --y-virtual-tree-row-bg: var(--y-virtual-tree-bg-active);
+  }
+
+  [data-part='row'][data-selected] {
+    --y-virtual-tree-row-bg: var(--y-virtual-tree-bg-selected);
+    color: getCssVar('virtual-tree', 'color-selected');
+  }
+
+  // 禁用行：整行不响应（无样式层已把点击与键盘都挡在外面），这里只负责看起来点不动。
+  [data-part='row'][data-disabled] {
+    color: getCssVar('virtual-tree', 'color-disabled');
+    cursor: not-allowed;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 箭头（只有分支行有）
+// ---------------------------------------------------------------------------
+
+@include b('virtual-tree') {
+  [data-part='toggle'] {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: getCssVar('virtual-tree', 'toggle-size');
+    color: getCssVar('virtual-tree', 'arrow-color');
+    cursor: pointer;
+  }
+
+  // 展开态写在行的 data-expanded 上而不是箭头自己身上：状态属于行，箭头只是它的一个视图。
+  [data-part='row'][data-expanded] [data-part='arrow'] {
+    transform: rotate(90deg);
+  }
+
+  [data-part='arrow'] {
+    flex: none;
+
+    transition: transform var(--y-motion-duration-fast) var(--y-motion-ease-out);
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 勾选框（只有 checkable 时有）
+// ---------------------------------------------------------------------------
+
+@include b('virtual-tree') {
+  [data-part='checkbox'] {
+    display: inline-flex;
+    flex: none;
+    cursor: pointer;
+  }
+
+  @include e('checkbox') {
+    position: relative;
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: getCssVar('virtual-tree', 'checkbox-size');
+    height: getCssVar('virtual-tree', 'checkbox-size');
+    background: var(--y-virtual-tree-state-bg);
+    border: 1px solid var(--y-virtual-tree-state-border);
+    border-radius: getCssVar('virtual-tree', 'checkbox-radius');
+
+    transition:
+      background-color var(--y-motion-duration-fast),
+      border-color var(--y-motion-duration-fast);
+  }
+
+  [data-part='row']:hover:not([data-disabled]) [data-part='box'] {
+    --y-virtual-tree-state-border: var(--y-virtual-tree-checkbox-border-hover);
+  }
+
+  [data-part='box'][data-state='checked'],
+  [data-part='box'][data-state='indeterminate'] {
+    --y-virtual-tree-state-border: var(--y-virtual-tree-checkbox-border-checked);
+    --y-virtual-tree-state-bg: var(--y-virtual-tree-checkbox-bg-checked);
+  }
+
+  [data-part='row'][data-disabled] [data-part='box'] {
+    --y-virtual-tree-state-border: var(--y-virtual-tree-checkbox-border);
+    --y-virtual-tree-state-bg: var(--y-virtual-tree-checkbox-bg-disabled);
+  }
+
+  // 勾与横线靠 box 自己的 data-state 二选一显示，与 Checkbox 的 Indicator 同一写法：
+  // 半选是一个减号而不是「选了一半的勾」。
+  [data-part='check'],
+  [data-part='dash'] {
+    display: none;
+  }
+
+  [data-part='box'][data-state='checked'] [data-part='check'] {
+    display: block;
+    color: getCssVar('virtual-tree', 'checkbox-color-on-checked');
+  }
+
+  [data-part='box'][data-state='indeterminate'] [data-part='dash'] {
+    display: block;
+    width: getCssVar('virtual-tree', 'dash-width');
+    height: getCssVar('virtual-tree', 'dash-height');
+    background: var(--y-virtual-tree-checkbox-color-on-checked);
+    border-radius: 1px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// 标签
+// ---------------------------------------------------------------------------
+
+@include b('virtual-tree') {
+  @include e('label') {
+    // min-width 是省略号生效的前提：flex 项的默认最小宽度是内容宽度，不加这一条长文本会把
+    // 行横向撑开而不是截断，而横向滚动条会让每一行的实测宽度与测量假设不一致。
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Reduced Motion
+// ---------------------------------------------------------------------------
+
+@include b('virtual-tree') {
+  @include reduced-motion {
+    [data-part='row'],
+    [data-part='arrow'],
+    [data-part='box'] {
+      transition: none;
+    }
+  }
+}

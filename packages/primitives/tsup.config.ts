@@ -31,6 +31,8 @@ export default defineConfig({
     'accordion/index': 'src/accordion/index.ts',
     'avatar/index': 'src/avatar/index.ts',
     'splitter/index': 'src/splitter/index.ts',
+    'virtual/index': 'src/virtual/index.ts',
+    'tree/index': 'src/tree/index.ts',
   },
   format: ['esm', 'cjs'],
   dts: true,

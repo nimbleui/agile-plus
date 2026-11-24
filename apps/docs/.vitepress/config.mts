@@ -76,6 +76,8 @@ export default defineConfig({
             { text: 'Table 表格', link: '/components/table' },
             { text: 'Accordion 手风琴', link: '/components/accordion' },
             { text: 'Avatar 头像', link: '/components/avatar' },
+            { text: 'VirtualList 虚拟列表', link: '/components/virtual-list' },
+            { text: 'VirtualTree 虚拟树形控件', link: '/components/virtual-tree' },
           ],
         },
         {
