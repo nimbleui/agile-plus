@@ -3,6 +3,11 @@
   "version": "0.1.2",
   "type": "module",
   "description": "框架无关的无头组件原语层：状态机、纯计算、稳定协议",
+  "homepage": "https://nimbleui.github.io/agile-plus/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nimbleui/agile-plus.git"
+  },
   "license": "MIT",
   "keywords": [
     "headless",

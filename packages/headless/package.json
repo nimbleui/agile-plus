@@ -3,6 +3,11 @@
   "version": "0.1.2",
   "type": "module",
   "description": "Vue Composables 适配层：响应式桥接、生命周期、DOM 绑定",
+  "homepage": "https://nimbleui.github.io/agile-plus/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nimbleui/agile-plus.git"
+  },
   "license": "MIT",
   "keywords": [
     "headless",

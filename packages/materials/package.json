@@ -3,6 +3,11 @@
   "version": "0.1.2",
   "type": "module",
   "description": "低代码物料插件：把成品组件与 ui 原子件登记成平台的 materials 贡献，纯数据清单与组件名字表分两个产物",
+  "homepage": "https://nimbleui.github.io/agile-plus/",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/nimbleui/agile-plus.git"
+  },
   "license": "MIT",
   "keywords": [
     "lowcode",
