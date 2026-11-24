@@ -51,6 +51,7 @@ export * from './table';
 export * from './accordion';
 
 export * from './avatar';
+
 export * from './splitter';
 
 export * from './virtual';

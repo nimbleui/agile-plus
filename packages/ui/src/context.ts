@@ -23,16 +23,16 @@ import type {
   UseSwitchReturn,
   UseTableReturn,
   UseTooltipReturn,
-} from '@agile-plus/headless';
   UseMenuReturn,
+} from '@agile-plus/headless';
 
 import type { ComputedRef } from 'vue';
 
 import type { ScrollAreaOrientation } from '@agile-plus/primitives/scroll-area';
 
-import type { RadioGroupItemContext } from './radio-group/types';
 import type { MenuSubContext } from './menu/types';
 
+import type { RadioGroupItemContext } from './radio-group/types';
 
 import type { AccordionItemContext } from './accordion/types';
 
@@ -132,11 +132,11 @@ interface ComponentContexts {
    * 只有一层——菜单没有 Provider，开合、项登记与 roving focus 都挂在 Root 上。
    */
   dropdownMenu: UseDropdownMenuReturn;
-  /**
   /** Menu 的根级上下文：选中/展开状态、注册表与键盘导航。 */
   menu: UseMenuReturn;
   /** MenuSub 的子级上下文：层级、键、禁用态与触发器元素。 */
   menuSub: MenuSubContext;
+  /**
    * Select 的三层上下文：列表级实例、项级选中态、分组标题 id。
    *
    * 项级与分组级分开登记，理由与 radioGroupItem 相同——ItemText / Indicator 只关心
